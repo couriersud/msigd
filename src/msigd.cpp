@@ -12,12 +12,6 @@
   #include <usb.h>        // this is libusb, see http://libusb.sourceforge.net/
 #endif
 
-#define DEBUGL(...) 	do { if (debug) printf(__VA_ARGS__); } while (false)
-#define CHECKERR_RET(retval, val, ...) 	do { int result = val; if (result<0) { if (debug) printf(__VA_ARGS__); return retval; } } while (false)
-#define CHECKERR_NORET(rv, val, ...) 	do { rv = val; if (rv<0) { if (debug) printf(__VA_ARGS__); } } while (false)
-
-
-static bool debug = false;
 static const char *appname = "msigd";
 static const char *appversion = "0.1";
 
@@ -171,11 +165,14 @@ std::vector<setting_t> settings =
 {
 	// FIXME: missing: RGB LED On/Off, alarm clock
 
-	setting_t("00150", "unknown01"),  // returns V18
-	setting_t("00170", "frequency"), // returns 060
+	setting_t("00100", "unknown00"),  // returns 001
 	setting_t("00110", "unknown02"),  // returns 000 called frequently by OSD app
-	setting_t("00140", "unknown03"),  // returns 00; called frequently by OSD app
 	setting_t(READ, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
+	setting_t("00130", "unknown04"),  // returns 13 blanks
+	setting_t("00140", "unknown03"),  // returns 00; called frequently by OSD app
+	setting_t("00150", "unknown01"),  // returns V18
+	//setting_t("00160", "unknown05"),  // returns incomplete packet - kills communication
+	setting_t("00170", "frequency"), // returns 060
 	setting_t("00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),  // returns 000
 	setting_t("00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	setting_t("00240", "hdcr", {"off", "on"}),  // returns 000
@@ -269,99 +266,86 @@ alarm clock:
 
 #endif
 
-/* https://stackoverflow.com/questions/31119014/open-a-device-by-name-using-libftdi-or-libusb */
-static int usbGetDescriptorString(usb_dev_handle *dev, int index, int langid, char *buf, int buflen) {
-	char buffer[256];
-	int rval, i;
-
-	// make standard request GET_DESCRIPTOR, type string and given index
-	// (e.g. dev->iProduct)
-	rval = usb_control_msg(dev,
-		USB_TYPE_STANDARD | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-		USB_REQ_GET_DESCRIPTOR, (USB_DT_STRING << 8) + index, langid,
-	buffer, sizeof(buffer), 1000);
-
-	if (rval < 0) // error
-		return rval;
-
-	// rval should be bytes read, but buffer[0] contains the actual response size
-	if ((unsigned char)buffer[0] < rval)
-		rval = (unsigned char)buffer[0]; // string is shorter than bytes read
-
-	if (buffer[1] != USB_DT_STRING) // second byte is the data type
-		return 0; // invalid return type
-
-	// we're dealing with UTF-16LE here so actual chars is half of rval,
-	// and index 0 doesn't count
-	rval /= 2;
-
-	/* lossy conversion to ISO Latin1 */
-	for (i = 1; i < rval && i < buflen; i++)
-	{
-		if (buffer[2 * i + 1] == 0)
-			buf[i - 1] = buffer[2 * i];
-		else
-			buf[i - 1] = '?'; /* outside of ISO Latin1 range */
-	}
-	buf[i - 1] = 0;
-
-	return i - 1;
-}
-
-struct usb_device *find_device(unsigned idVendor, unsigned idProduct, const char *sProduct)
+enum log_level
 {
-	struct usb_bus *bus = NULL;
-	struct usb_device *device = NULL;
+	DEBUG,
+	VERBOSE,
+	WARNING,
+	ERROR
+};
 
-	DEBUGL("Scanning USB devices...\n");
-
-	// Iterate through attached busses and devices
-	for (bus = usb_get_busses(); bus != NULL; bus = bus->next)
+class logger_t
+{
+public:
+	logger_t()
+	: m_enabled{false,false,true,true}
 	{
-		for (device = bus->devices; device != NULL; device = device->next)
+	}
+
+	virtual ~logger_t() = default;
+
+	template<typename... Args>
+	void log(log_level level, std::string fmt, Args&&... args)
+	{
+		if (m_enabled[level])
 		{
-		// Check to see if each USB device matches the DigiSpark Vendor and Product IDs
-			if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
-			{
-				usb_dev_handle * handle = NULL;
-				/* we need to open the device in order to query strings */
-				if (!(handle = usb_open(device)))
-				{
-					fprintf(stderr, "Warning: cannot open USB device: %sn", usb_strerror());
-					continue;
-				}
-				/* get product name */
-				char devProduct[256] = "";
-				if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, devProduct, sizeof(devProduct)) < 0)
-				{
-					fprintf(stderr, "Warning: cannot query product for device: %s\n", usb_strerror());
-					continue;
-				}
-				usb_close(handle);
-				DEBUGL("Found DigiSpark device %s \n", devProduct);
-				if (strcmp(devProduct, sProduct)==0)
-					return device;
-			}
+			char buf[1024];
+			std::snprintf(buf, 1024, fmt.c_str(), std::forward<Args>(args)...);
+			vlog(level_str(level) + ": " + buf);
 		}
 	}
-	return NULL;
-}
+
+	void set_level(log_level level, bool val) { m_enabled[level] = val; }
+
+protected:
+	virtual void vlog(std::string msg) = 0;
+
+	std::string level_str(log_level level)
+	{
+		switch (level)
+		{
+			case DEBUG:
+				return "DEBUG";
+			case VERBOSE:
+				return "VERBOSE";
+			case WARNING:
+				return "WARNING";
+			case ERROR:
+				return "ERROR";
+		}
+		return ""; // please compiler
+	}
+
+	bool m_enabled[4];
+};
+
+class std_logger_t : public logger_t
+{
+public:
+	std_logger_t()
+	{
+	}
+
+protected:
+	void vlog(std::string msg) override
+	{
+		printf("%s\n", msg.c_str());
+	}
+};
 
 class usbdev_t
 {
 public:
-	usbdev_t(unsigned idVendor, unsigned idProduct, const std::string &sProduct)
-	: m_device(nullptr), m_devHandle(nullptr), m_interface(nullptr)
+	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
+	: m_log(logger), m_device(nullptr), m_devHandle(nullptr), m_interface(nullptr)
 	{
 		if (init(idVendor, idProduct, sProduct) > 0)
 			cleanup();
-		read_return();
-
 	}
 	~usbdev_t()
 	{
 		cleanup();
-		if (--m_ref == 0)
+		if (--reference() == 0)
 		{
 
 		}
@@ -380,11 +364,16 @@ public:
 			CHECKERR_RET(1, usb_interrupt_write(m_devHandle, (0x01 << 5), 0x09, 0, s[i], 0, 0, 1000), "Error %i writing to USB device\n", result);
 		}
 #else
-		CHECKERR_RET(1, usb_interrupt_write(m_devHandle, 2, s1.c_str(), len+1, 1000), "Error %i writing to USB device\n", result);
+		if (int result = usb_interrupt_write(m_devHandle, 2, s1.c_str(), len+1, 1000) < 0)
+		{
+			m_log.log(DEBUG, "Error %i writing to USB device", result);
+			return 1;
+		}
+		return 0;
 #endif
-		return len;
 	}
 
+#if 0
 	std::string read_string(int num_char, char eol, bool ign13=true)
 	{
 		char x;
@@ -407,6 +396,7 @@ public:
 			}
 		}
 	}
+#endif
 
 	int set_setting(const setting_t &setting, std::string &s)
 	{
@@ -446,13 +436,23 @@ public:
 
 
 	operator bool() { return (m_device != nullptr) && (m_devHandle != nullptr); }
+
+	std::string product() { return m_product; }
+	std::string serial() { return m_serial; }
+	int vendor_id() { return m_vendor_id; }
+	int product_id() { return m_product_id; }
+
 private:
 
 	int write_command(std::string prefix, unsigned val, std::string trail = "")
 	{
 		char buf[256] = "\001";
 		std::snprintf(buf + 1, 255, "%s\%03d%s\r", prefix.c_str(), val, trail.c_str());
-		CHECKERR_RET(1, usb_interrupt_write(m_devHandle, 2, buf, strlen(buf)+1, 1000), "Error %i writing to USB device\n", result);
+		if (int result = usb_interrupt_write(m_devHandle, 2, buf, strlen(buf)+1, 1000) < 0)
+		{
+			m_log.log(DEBUG, "Error %i writing to USB device\n", result);
+			return 1;
+		}
 		return 0;
 	}
 
@@ -461,15 +461,22 @@ private:
 		char buf[256] = "\001";
 		std::snprintf(buf + 1, 255, "%s\r", prefix.c_str());
 		//printf("command %s\n", buf+1);
-		CHECKERR_RET(1, usb_interrupt_write(m_devHandle, 2, buf, strlen(buf)+1, 1000), "Error %i writing to USB device\n", result);
+		if (int result = usb_interrupt_write(m_devHandle, 2, buf, strlen(buf)+1, 1000) < 0)
+		{
+			m_log.log(DEBUG, "Error %i writing to USB device\n", result);
+			return 1;
+		}
 		return 0;
 	}
 
 	std::string read_return()
 	{
 		char buf[256] = "";
-		CHECKERR_RET("", usb_interrupt_read(m_devHandle, 1, buf, 64, 1000), "Error %i reading from USB device\n", result);
-		//printf("return %s\n", buf+1);
+		if (int result = usb_interrupt_read(m_devHandle, 1, buf, 64, 1000) < 0)
+		{
+			m_log.log(DEBUG, "Error %i reading from USB device\n", result);
+			return "";
+		}
 		//skip 0x01 at beginning and cut off "\r"
 		std::string ret(buf+1);
 		if (ret[ret.size()-1] == '\r')
@@ -482,8 +489,8 @@ private:
 	{
 		if (m_devHandle != nullptr)
 		{
-			int err = 0;
-			CHECKERR_NORET(err, usb_release_interface(m_devHandle, m_interface->bInterfaceNumber), "Error %i releasing Interface 0\n", err);
+			if (int err = usb_release_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
+				m_log.log(DEBUG, "Error %i releasing Interface 0\n", err);
 			usb_close(m_devHandle);
 			m_devHandle = nullptr;
 		}
@@ -492,8 +499,9 @@ private:
 
 	int init(unsigned idVendor, unsigned idProduct, const std::string &sProduct)
 	{
-		if (m_ref++ == 0)
+		if (reference()++ == 0)
 		{
+			m_log.log(DEBUG, "Initializing usb_lib");
 			// Initialize the USB library
 			usb_init();
 			// Enumerate the USB device tree
@@ -509,15 +517,26 @@ private:
 			{
 				int numInterfaces = m_device->config->bNumInterfaces;
 				m_interface = &(m_device->config->interface[0].altsetting[0]);
-				DEBUGL("Found %i interfaces, using interface %i\n", numInterfaces, m_interface->bInterfaceNumber);
-				DEBUGL("Setting Configuration\n");
+				m_log.log(DEBUG, "Found %i interfaces, using interface %d", numInterfaces, m_interface->bInterfaceNumber);
+				m_log.log(DEBUG, "Setting Configuration");
 				if (usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
 				{
-					CHECKERR_RET(1, usb_detach_kernel_driver_np( m_devHandle, m_interface->bInterfaceNumber), "failed to detach kernel driver from USB device\n");
-					CHECKERR_RET(1, usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue), "Error %i setting configuration to %i\n", result, m_device->config->bConfigurationValue);
+					if (int err=usb_detach_kernel_driver_np( m_devHandle, m_interface->bInterfaceNumber) < 0)
+					{
+						m_log.log(DEBUG, "failed to detach kernel driver from USB device: %d", err);
+						return 1;
+					}
+					if (int err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
+					{
+						m_log.log(DEBUG, "Error %i setting configuration to %i\n", err, m_device->config->bConfigurationValue);
+						return 1;
+					}
 				}
 
-				CHECKERR_RET(1, usb_claim_interface(m_devHandle, m_interface->bInterfaceNumber), "Error %i claiming Interface %i\n", result, m_interface->bInterfaceNumber);
+				if (int err = usb_claim_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
+				{
+					m_log.log(DEBUG, "Error %i claiming Interface %i\n", err, m_interface->bInterfaceNumber);
+				}
 			}
 			else
 				return 1;
@@ -525,24 +544,125 @@ private:
 		return 0;
 	}
 
-	static int m_ref;
+	/* https://stackoverflow.com/questions/31119014/open-a-device-by-name-using-libftdi-or-libusb */
+	int usbGetDescriptorString(usb_dev_handle *dev, int index, int langid, char *buf, int buflen) {
+		char buffer[256];
+		int rval, i;
+
+		// make standard request GET_DESCRIPTOR, type string and given index
+		// (e.g. dev->iProduct)
+		rval = usb_control_msg(dev,
+			USB_TYPE_STANDARD | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			USB_REQ_GET_DESCRIPTOR, (USB_DT_STRING << 8) + index, langid,
+		buffer, sizeof(buffer), 1000);
+
+		if (rval < 0) // error
+			return rval;
+
+		// rval should be bytes read, but buffer[0] contains the actual response size
+		if ((unsigned char)buffer[0] < rval)
+			rval = (unsigned char)buffer[0]; // string is shorter than bytes read
+
+		if (buffer[1] != USB_DT_STRING) // second byte is the data type
+			return 0; // invalid return type
+
+		// we're dealing with UTF-16LE here so actual chars is half of rval,
+		// and index 0 doesn't count
+		rval /= 2;
+
+		/* lossy conversion to ISO Latin1 */
+		for (i = 1; i < rval && i < buflen; i++)
+		{
+			if (buffer[2 * i + 1] == 0)
+				buf[i - 1] = buffer[2 * i];
+			else
+				buf[i - 1] = '?'; /* outside of ISO Latin1 range */
+		}
+		buf[i - 1] = 0;
+
+		return i - 1;
+	}
+
+	struct usb_device *find_device(unsigned idVendor, unsigned idProduct, const char *sProduct)
+	{
+		struct usb_bus *bus = NULL;
+		struct usb_device *device = NULL;
+
+		m_log.log(DEBUG, "Scanning USB devices...");
+
+		// Iterate through attached busses and devices
+		for (bus = usb_get_busses(); bus != NULL; bus = bus->next)
+		{
+			for (device = bus->devices; device != NULL; device = device->next)
+			{
+			// Check to see if each USB device matches the DigiSpark Vendor and Product IDs
+				if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
+				{
+					usb_dev_handle * handle = NULL;
+					/* we need to open the device in order to query strings */
+					if (!(handle = usb_open(device)))
+					{
+						m_log.log(DEBUG, "cannot open USB device: %s", usb_strerror());
+						continue;
+					}
+					/* get product name */
+					char buf[256] = "";
+					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, buf, sizeof(buf)) < 0)
+					{
+						m_log.log(DEBUG, "cannot query product for device: %s\n", usb_strerror());
+						continue;
+					}
+					m_product = buf;
+					m_log.log(DEBUG, "Found device %s \n", m_product.c_str());
+
+					buf[0] = 0;
+					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, buf, sizeof(buf)) < 0)
+					{
+						m_log.log(DEBUG, "cannot query serial for device: %s\n", usb_strerror());
+					}
+					m_serial = buf;
+
+					usb_close(handle);
+					m_vendor_id = idVendor;
+					m_product_id = idProduct;
+
+					if (m_product == sProduct)
+						return device;
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	static int &reference()
+	{
+		static int m_ref = 0;
+		return m_ref;
+	}
+
+	logger_t &m_log;
+	std::string m_product;
+	std::string m_serial;
+	int m_vendor_id;
+	int m_product_id;
 	struct usb_device *m_device;
 	struct usb_dev_handle *m_devHandle;
 	struct usb_interface_descriptor *m_interface;
 };
 
-int usbdev_t::m_ref = 0;
-
 int help()
 {
 	printf(
-"Usage: %s [OPTION]... \n"
-"Query or set monitor settings by usb directly on the device.\n"
-"For supported devices please refer to the documentation.\n"
-"\n"
-"  -q, --query                display all monitor settings. This will also\n"
-"                               list readonly settings and settings whose\n"
-"                               function is currently unknown\n", appname);
+		"Usage: %s [OPTION]... \n"
+		"Query or set monitor settings by usb directly on the device.\n"
+		"For supported devices please refer to the documentation.\n"
+		"\n"
+		"  -q, --query                display all monitor settings. This will also\n"
+		"                               list readonly settings and settings whose\n"
+		"                               function is currently unknown.\n"
+		"      --info                 display device information. This can be used\n"
+		"                               with --query\n"
+		, appname);
 	for (auto &s : settings)
 		if (s.m_access == WRITE || s.m_access == READWRITE)
 		{
@@ -557,20 +677,19 @@ int help()
 			printf("\n");
 		}
 	printf("%s",
-"  -d, --debug                enable debug output\n"
-"  -h, --help                 display this help and exit\n"
-"      --version              output version information and exit\n"
-"\n"
-"Options are processed in the order they are given. You may specify an option\n"
-"more than once with identical or different values.\n"
-"\n"
-"Exit status:\n"
-" 0  if OK,\n"
-" 1  if error during option parsing,\n"
-" 2  if error during device access,\n"
-"\n"
-);
-
+		"  -d, --debug                enable debug output\n"
+		"  -h, --help                 display this help and exit\n"
+		"      --version              output version information and exit\n"
+		"\n"
+		"Options are processed in the order they are given. You may specify an option\n"
+		"more than once with identical or different values.\n"
+		"\n"
+		"Exit status:\n"
+		" 0  if OK,\n"
+		" 1  if error during option parsing,\n"
+		" 2  if error during device access,\n"
+		"\n"
+	);
 
 	return 0;
 }
@@ -578,12 +697,12 @@ int help()
 int version()
 {
 	printf("%s %s\n"
-		"Copyright (C) 2019 André Hufschmidt\n"
+		"Copyright (C) 2019 Andre Hufschmidt\n"
 		"License GPLv2: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n"
 		"This is free software: you are free to change and redistribute it.\n"
 		"There is NO WARRANTY, to the extent permitted by law.\n"
 		"\n"
-		"Written by André Hufschmidt\n", appname, appversion);
+		"Written by Andre Hufschmidt\n", appname, appversion);
 	return 0;
 }
 
@@ -602,6 +721,8 @@ int main (int argc, char **argv)
 	bool sendLine = true;
 	int arg_pointer = 1;
 	bool query = false;
+	bool debug = false;
+	bool info = false;
 
 	std::vector<std::pair<setting_t *, std::string>> set;
 
@@ -613,9 +734,11 @@ int main (int argc, char **argv)
 			return help();
 		else if (cur_opt == "--version")
 			return version();
-		else if(cur_opt == "--debug")
+		else if (cur_opt == "--info")
+			info = true;
+		else if (cur_opt == "--debug" || cur_opt == "-d")
 			debug = true;
-		else if(cur_opt == "--query")
+		else if (cur_opt == "--query" || cur_opt == "-q")
 			query = true;
 		else
 		{
@@ -644,9 +767,20 @@ int main (int argc, char **argv)
 		arg_pointer++;
 	}
 
-	usbdev_t usb(0x1462, 0x3fa4, "MSI Gaming Controller");
+	std_logger_t logger;
+	logger.set_level(DEBUG, debug);
+
+	usbdev_t usb(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
+
 	if (usb)
 	{
+		if (info)
+		{
+			printf("Vendor Id:  0x%04x\n", usb.vendor_id());
+			printf("Product Id: 0x%04x\n", usb.product_id());
+			printf("Product:    %s\n",     usb.product().c_str());
+			printf("Serial:     %s\n",     usb.serial().c_str());
+		}
 		// query first
 		if (query)
 		{

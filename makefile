@@ -9,7 +9,7 @@ TARGETS = msigd
 
 CC = g++
 LD = $(CC)
-CFLAGS = -O2
+CFLAGS = -O2 -g
 
 all:    depend $(TARGETS)
 

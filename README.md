@@ -44,7 +44,9 @@ For supported devices please refer to the documentation.
 
   -q, --query                display all monitor settings. This will also
                                list readonly settings and settings whose
-                               function is currently unknown
+                               function is currently unknown.
+      --info                 display device information. This can be used
+                               with --query
       --game_mode            user fps racing rts rpg 
       --response_time        normal fast fastest 
       --hdcr                 off on 
