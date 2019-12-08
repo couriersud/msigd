@@ -9,6 +9,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y libkusb-dev
     #- name: configure
     #  run: ./configure
     - name: make
