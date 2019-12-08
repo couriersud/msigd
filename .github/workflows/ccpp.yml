@@ -12,7 +12,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y libkusb-dev
+        sudo apt install -y libusb-dev
     #- name: configure
     #  run: ./configure
     - name: make
