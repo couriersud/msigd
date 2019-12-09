@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: msigd_ubuntu_CI
 
 on: [push]
 
