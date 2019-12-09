@@ -8,8 +8,11 @@ SOURCES = $(SRC)/msigd.cpp
 TARGETS = msigd
 
 CC = g++
+CFLAGS = -O2 -g -Wall -Wextra -std=c++14 
+#CC = clang++
+#CFLAGS = -O2 -g -Wall -Wextra -std=c++14 -Weverything -Wno-c++98-compat -Wno-weak-vtables
+
 LD = $(CC)
-CFLAGS = -O2 -g
 
 all:    depend $(TARGETS)
 

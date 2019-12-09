@@ -6,10 +6,20 @@
 #include <stdio.h>
 #include <string.h>
 
+
 #if defined WIN
   #include <lusb0_usb.h>    // this is libusb, see http://libusb.sourceforge.net/
 #else
   #include <usb.h>        // this is libusb, see http://libusb.sourceforge.net/
+#endif
+
+#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/ioctl.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <linux/usbdevice_fs.h>
 #endif
 
 static const char *appname = "msigd";
@@ -28,32 +38,32 @@ enum encoding_t
 	STRING,
 	STRINGINT,
 	STRINGPOS,
-	INTPOS,
+	INTPOS
 };
 
 using string_list = std::vector<std::string>;
 
-static int msi_stoi(std::string s, int base)
+static unsigned msi_stou(std::string s, int base)
 {
-	int res = 0;
-	int b = (base < 0 ? -base : base);
+	unsigned res = 0;
+	unsigned b = static_cast<unsigned>(base < 0 ? -base : base);
 
 	for (auto &c : s)
 	{
-		res = res * b + (c - '0');
+		res = res * b + (static_cast<unsigned>(c) - '0');
 		if (base < 0)
 			b = 256 - '0';
 	}
 	return res;
 }
 
-static std::string msi_itos(int v, int base, int width)
+static std::string msi_utos(unsigned v, int base, int width)
 {
 	std::string res = "";
-	int b = (base < 0 ? -base : base);
+	unsigned b = static_cast<unsigned>(base < 0 ? -base : base);
 	for (int i = 0; i<width; i++)
 	{
-		res = std::string("") + (char)((v % b) + '0') + res;
+		res = std::string("") + static_cast<char>((v % b) + '0') + res;
 		v = v / b;
 		if (base < 0)
 			b = 256 - '0';
@@ -67,22 +77,22 @@ struct setting_t
 	: m_access(READ), m_enc(STRING), m_cmd(cmd), m_opt(opt)
 	{ }
 
-	setting_t(std::string cmd, std::string opt, int min, int max)
+	setting_t(std::string cmd, std::string opt, unsigned min, unsigned max)
 	: m_access(READWRITE), m_enc(INT), m_cmd(cmd), m_opt(opt), m_min(min), m_max(max)
 	{ }
 
-	setting_t(std::string cmd, std::string opt, int min, int max, int base)
+	setting_t(std::string cmd, std::string opt, unsigned min, unsigned max, int base)
 	: m_access(READWRITE), m_enc(INT), m_cmd(cmd), m_opt(opt), m_min(min), m_max(max), m_base(base)
 	{ }
 
 	setting_t(std::string cmd, std::string opt, string_list values)
 	: m_access(READWRITE), m_enc(STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
-	  m_max(values.size()), m_values(values)
+	  m_max(static_cast<unsigned>(values.size())), m_values(values)
 	{ }
 
 	setting_t(access_t access, std::string cmd, std::string opt, string_list values)
 	: m_access(access), m_enc(STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
-	  m_max(values.size()), m_values(values)
+	  m_max(static_cast<unsigned>(values.size())), m_values(values)
 	{ }
 
 	std::string encode(std::string val)
@@ -90,14 +100,14 @@ struct setting_t
 		if (m_enc == INT)
 		{
 			char *eptr;
-			int v = std::strtol(val.c_str(), &eptr, 10);
+			unsigned long v = std::strtoul(val.c_str(), &eptr, 10);
 			if (*eptr != 0)
 				return ""; // FIXME - must be checked by caller!
 			else if (v<m_min || v > m_max)
 				return ""; // FIXME - must be checked by caller!
 			else
 			{
-				return msi_itos(v, m_base, 3);
+				return msi_utos(static_cast<unsigned>(v), m_base, 3);
 				//char buf[100];
 				//snprintf(buf, 100, "%03d", v);
 				//return buf;
@@ -105,11 +115,11 @@ struct setting_t
 		}
 		else if (m_enc == STRINGINT)
 		{
-			for (int i=0; i < m_values.size(); i++)
+			for (std::size_t i=0; i < m_values.size(); i++)
 				if (m_values[i] == val)
 				{
 					char buf[100];
-					snprintf(buf, 100, "%03d", i);
+					snprintf(buf, 100, "%03d", static_cast<unsigned>(i));
 					return buf;
 				}
 			return "";
@@ -126,8 +136,8 @@ struct setting_t
 		{
 			// char *eptr;
 			//int v = strtol(val.c_str(), &eptr, 10);
-			int v = msi_stoi(val, m_base);
-			if (v<m_min || v > m_max)
+			unsigned v = msi_stou(val, m_base);
+			if (v < m_min || v > m_max)
 				return ""; // FIXME - must be checked by caller!
 			else
 			{
@@ -139,7 +149,7 @@ struct setting_t
 		else if (m_enc == STRINGINT)
 		{
 			char *eptr;
-			int v = strtol(val.c_str(), &eptr, 10);
+			auto v = strtoul(val.c_str(), &eptr, 10);
 			if (*eptr != 0)
 				return ""; // FIXME - must be checked by caller!
 			else if (v<m_min || v > m_max)
@@ -154,14 +164,14 @@ struct setting_t
 	encoding_t m_enc;
 	std::string m_cmd;
 	std::string m_opt;
-	int m_min = 0;
-	int m_max = 100;
+	unsigned m_min = 0;
+	unsigned m_max = 100;
 	int m_base = 10;
 	unsigned m_ret_start = 7;
 	string_list m_values;
 };
 
-std::vector<setting_t> settings =
+static std::vector<setting_t> settings =
 {
 	// FIXME: missing: RGB LED On/Off, alarm clock
 
@@ -264,7 +274,74 @@ alarm clock:
 0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
 
 
+// RGBs at back - these are control messages to endpoint 0
+// all blue
+// data
+0040   71 01 00 00 00 01 64 00 00 00 00 00 01 00 00 00   q.....d.........
+0050   01 64 00 00 00 00 00 ff 00 00 ff 00 00 ff 00 00   .d.....ÿ..ÿ..ÿ..
+0060   ff 00 00 ff 00 00 ff 00 00 ff 00 00 ff 00 00 ff   ÿ..ÿ..ÿ..ÿ..ÿ..ÿ
+0070   00 00 01 01 ff 01 01 ff 01 01 ff 01 01 ff 01 01   ....ÿ..ÿ..ÿ..ÿ..
+0080   ff 01 01 ff 01 01 ff 01 01 ff 01 01 ff 00         ÿ..ÿ..ÿ..ÿ..ÿ.
+
 #endif
+
+struct led_data
+{
+	led_data()
+	{
+		for (int i=0; i<9; i++)
+		{
+			f12[i*3 + 0] = 0xff;
+			f12[i*3 + 1] = 0x00;
+			f12[i*3 + 2] = 0x00;
+
+			rgb[i*3 + 0] = 0xff;  // red
+			rgb[i*3 + 1] = 0xff;  // green
+			rgb[i*3 + 2] = 0xff;  // blue
+		}
+	}
+
+	void set_rgb(uint8_t r, uint8_t g, uint8_t b)
+	{
+		for (int i=0; i<9; i++)
+		{
+			rgb[i*3 + 0] = r;
+			rgb[i*3 + 1] = g;
+			rgb[i*3 + 2] = b;
+		}
+	}
+	// total size should be 78
+	//0040   71 01 00 00 00 01 64 00 00 00 00 00 01 00 00 00   q.....d.........
+	uint16_t f00 = 0x0171;
+	uint16_t f01 = 0x0000;
+	uint16_t f02 = 0x0100;
+	uint16_t f03 = 0x0064;
+	uint16_t f04 = 0x0000;
+	uint16_t f05 = 0x0000;
+	uint16_t mode = 0x0001; // Mode
+	uint16_t f07 = 0x0000;
+	//0050   01 64 00 00 00 00 00 ff 00 00 ff 00 00 ff 00 00   .d.....ÿ..ÿ..ÿ..
+	uint16_t f08 = 0x6401;
+	uint16_t f09 = 0x0000;
+	uint16_t f10 = 0x0000;
+	uint8_t  f11 = 0x00;
+	uint8_t  f12[9*3];
+	uint8_t  rgb[9*3];
+	uint8_t  f13 = 0x00;
+};
+
+// Mode:
+// Off: 0
+// Static: 0x01
+// Game: 0x01
+// Blind : 0x06
+// Meteor : 0x08
+// Rainbow : 0x1a
+// Flash : 0x05
+// Breath : 0x02
+// Blink : 0x03
+// Random : 0x1f
+// Synched: 0x01
 
 enum log_level
 {
@@ -284,13 +361,25 @@ public:
 
 	virtual ~logger_t() = default;
 
+	void log(log_level level, const char *s)
+	{
+		if (m_enabled[level])
+			vlog(level_str(level) + ": " + s);
+	}
+
+	void log(log_level level, std::string s)
+	{
+		if (m_enabled[level])
+			vlog(level_str(level) + ": " + s);
+	}
+
 	template<typename... Args>
-	void log(log_level level, std::string fmt, Args&&... args)
+	void log(log_level level, const char *fmt, Args&&... args)
 	{
 		if (m_enabled[level])
 		{
 			char buf[1024];
-			std::snprintf(buf, 1024, fmt.c_str(), std::forward<Args>(args)...);
+			std::snprintf(buf, 1024, fmt, std::forward<Args>(args)...);
 			vlog(level_str(level) + ": " + buf);
 		}
 	}
@@ -337,7 +426,7 @@ class usbdev_t
 {
 public:
 	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
-	: m_log(logger), m_device(nullptr), m_devHandle(nullptr), m_interface(nullptr)
+	: m_log(logger), m_device(nullptr), m_devHandle(nullptr), m_interface(nullptr), m_detached(false)
 	{
 		if (init(idVendor, idProduct, sProduct) > 0)
 			cleanup();
@@ -351,10 +440,21 @@ public:
 		}
 	}
 
+	int write_led(led_data &data)
+	{
+		if (int result = usb_control_msg(m_devHandle, 0x21, 0x09, 0x371, 0,
+			reinterpret_cast<char *>(&data), static_cast<int>(sizeof(led_data)), 1000) < 0)
+		{
+			m_log.log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
+			return 1;
+		}
+		return 0;
+	}
+
 	int write_string(const std::string &s)
 	{
 		std::string s1 = "\001" + s;
-		const int len=s1.length();
+		const int len=static_cast<int>(s1.length());
 
 #if 0
 		for (int i=0; i<len; i++)
@@ -439,29 +539,17 @@ public:
 
 	std::string product() { return m_product; }
 	std::string serial() { return m_serial; }
-	int vendor_id() { return m_vendor_id; }
-	int product_id() { return m_product_id; }
+	unsigned vendor_id() { return m_vendor_id; }
+	unsigned product_id() { return m_product_id; }
 
 private:
-
-	int write_command(std::string prefix, unsigned val, std::string trail = "")
-	{
-		char buf[256] = "\001";
-		std::snprintf(buf + 1, 255, "%s\%03d%s\r", prefix.c_str(), val, trail.c_str());
-		if (int result = usb_interrupt_write(m_devHandle, 2, buf, strlen(buf)+1, 1000) < 0)
-		{
-			m_log.log(DEBUG, "Error %i writing to USB device\n", result);
-			return 1;
-		}
-		return 0;
-	}
 
 	int write_command(std::string prefix)
 	{
 		char buf[256] = "\001";
 		std::snprintf(buf + 1, 255, "%s\r", prefix.c_str());
 		//printf("command %s\n", buf+1);
-		if (int result = usb_interrupt_write(m_devHandle, 2, buf, strlen(buf)+1, 1000) < 0)
+		if (int result = usb_interrupt_write(m_devHandle, 2, buf, static_cast<int>(strlen(buf)+1), 1000) < 0)
 		{
 			m_log.log(DEBUG, "Error %i writing to USB device\n", result);
 			return 1;
@@ -489,11 +577,50 @@ private:
 	{
 		if (m_devHandle != nullptr)
 		{
+			m_log.log(DEBUG, "Releasing interface %d\n", m_interface->bInterfaceNumber);
+
 			if (int err = usb_release_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
-				m_log.log(DEBUG, "Error %i releasing Interface 0\n", err);
+				m_log.log(DEBUG, "Error %d releasing Interface \n", err);
+#if 1
+#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+			if (m_detached)
+			{
+				// FIXME: BIG HACK - this assumes the dev handle has the file descriptor as first member
+				int fd = *reinterpret_cast<int *>(m_devHandle);
+				struct usbdevfs_ioctl command;
+				command.ifno = m_interface->bInterfaceNumber;
+				command.ioctl_code = USBDEVFS_CONNECT;
+				command.data = nullptr;
+				if (ioctl(fd, USBDEVFS_IOCTL, &command) < 0)
+					m_log.log(DEBUG, "reattach kernel driver failed: %s", strerror(errno));
+			}
+#endif
+#endif
 			usb_close(m_devHandle);
 			m_devHandle = nullptr;
 		}
+#if 0
+#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+		// This code does not work on Ubuntu 16.04. USBDEVFS_CONNECT has to be issued before the descriptor is closed.
+		if (m_detached)
+		{
+			std::string filename = std::string("/dev/bus/usb/") + m_device->bus->dirname + "/" + m_device->filename;
+			m_log.log(DEBUG, "device usb path: %s", filename.c_str());
+			if (int fd = open(filename.c_str(), O_RDONLY) > 0)
+			{
+				struct usbdevfs_ioctl command;
+				command.ifno = m_interface->bInterfaceNumber;
+				command.ioctl_code = USBDEVFS_CONNECT;
+				command.data = nullptr;
+				if (ioctl(fd, USBDEVFS_IOCTL, &command) < 0)
+					m_log.log(DEBUG, "reattach kernel driver failed: %s", strerror(errno));
+				close(fd);
+			}
+			else
+				m_log.log(DEBUG, "Error reattaching device: %s not found", filename.c_str());
+		}
+#endif
+#endif
 		m_device = nullptr;
 	}
 
@@ -521,16 +648,26 @@ private:
 				m_log.log(DEBUG, "Setting Configuration");
 				if (usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
 				{
+#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+					char buf[1024];
+					if (usb_get_driver_np( m_devHandle, m_interface->bInterfaceNumber, buf, sizeof(buf))==0)
+						m_log.log(DEBUG, "Driver is %s", buf);
+
 					if (int err=usb_detach_kernel_driver_np( m_devHandle, m_interface->bInterfaceNumber) < 0)
 					{
 						m_log.log(DEBUG, "failed to detach kernel driver from USB device: %d", err);
 						return 1;
 					}
+					m_detached = true;
 					if (int err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
 					{
 						m_log.log(DEBUG, "Error %i setting configuration to %i\n", err, m_device->config->bConfigurationValue);
 						return 1;
 					}
+#else
+					m_log.log(DEBUG, "Error %i setting configuration to %i\n", err, m_device->config->bConfigurationValue);
+					return 1;
+#endif
 				}
 
 				if (int err = usb_claim_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
@@ -554,14 +691,15 @@ private:
 		rval = usb_control_msg(dev,
 			USB_TYPE_STANDARD | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
 			USB_REQ_GET_DESCRIPTOR, (USB_DT_STRING << 8) + index, langid,
-		buffer, sizeof(buffer), 1000);
+			buffer, sizeof(buffer), 1000);
 
 		if (rval < 0) // error
 			return rval;
 
 		// rval should be bytes read, but buffer[0] contains the actual response size
-		if ((unsigned char)buffer[0] < rval)
-			rval = (unsigned char)buffer[0]; // string is shorter than bytes read
+		const auto response_size(static_cast<uint8_t>(buffer[0]));
+		if (response_size < rval)
+			rval = response_size; // string is shorter than bytes read
 
 		if (buffer[1] != USB_DT_STRING) // second byte is the data type
 			return 0; // invalid return type
@@ -585,20 +723,20 @@ private:
 
 	struct usb_device *find_device(unsigned idVendor, unsigned idProduct, const char *sProduct)
 	{
-		struct usb_bus *bus = NULL;
-		struct usb_device *device = NULL;
+		struct usb_bus *bus = nullptr;
+		struct usb_device *device = nullptr;
 
 		m_log.log(DEBUG, "Scanning USB devices...");
 
 		// Iterate through attached busses and devices
-		for (bus = usb_get_busses(); bus != NULL; bus = bus->next)
+		for (bus = usb_get_busses(); bus != nullptr; bus = bus->next)
 		{
-			for (device = bus->devices; device != NULL; device = device->next)
+			for (device = bus->devices; device != nullptr; device = device->next)
 			{
 			// Check to see if each USB device matches the DigiSpark Vendor and Product IDs
 				if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
 				{
-					usb_dev_handle * handle = NULL;
+					usb_dev_handle * handle = nullptr;
 					/* we need to open the device in order to query strings */
 					if (!(handle = usb_open(device)))
 					{
@@ -643,14 +781,15 @@ private:
 	logger_t &m_log;
 	std::string m_product;
 	std::string m_serial;
-	int m_vendor_id;
-	int m_product_id;
+	unsigned m_vendor_id;
+	unsigned m_product_id;
 	struct usb_device *m_device;
 	struct usb_dev_handle *m_devHandle;
 	struct usb_interface_descriptor *m_interface;
+	bool m_detached;
 };
 
-int help()
+static int help()
 {
 	printf(
 		"Usage: %s [OPTION]... \n"
@@ -694,7 +833,7 @@ int help()
 	return 0;
 }
 
-int version()
+static int version()
 {
 	printf("%s %s\n"
 		"Copyright (C) 2019 Andre Hufschmidt\n"
@@ -718,7 +857,6 @@ int error(int err, std::string fmt, Args&&... args)
 
 int main (int argc, char **argv)
 {
-	bool sendLine = true;
 	int arg_pointer = 1;
 	bool query = false;
 	bool debug = false;
@@ -793,6 +931,14 @@ int main (int argc, char **argv)
 					return error(2, "Error querying device on %s", setting.m_opt.c_str());
 			}
 		}
+
+#if 0
+		led_data test;
+
+		//test.set_rgb(0xFF, 0xFF, 0x00);
+		test.set_rgb(0x00, 0x00, 0xff);
+		usb.write_led(test);
+#endif
 
 		// if we want to set a value, do it now
 		for (auto &s : set)
