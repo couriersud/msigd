@@ -1,5 +1,5 @@
 
-![](https://github.com/couriersud/msigd/.github/workflows/ccpp.yml/badge.svg)
+![](https://github.com/couriersud/msigd/workflows/.github/workflows/ccpp.yml/badge.svg)
 
 # msigd
 MSI Gaming Device control application
