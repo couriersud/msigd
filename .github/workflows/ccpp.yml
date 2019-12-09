@@ -1,4 +1,4 @@
-name: msigd_ubuntu_CI
+name: Ubuntu latest
 
 on: [push]
 

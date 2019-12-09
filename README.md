@@ -1,5 +1,5 @@
 
-![](https://github.com/couriersud/msigd/workflows/msigd_ubuntu_CI/badge.svg)
+![](https://github.com/couriersud/msigd/workflows/Ubuntu%20latest/badge.svg?branch=master)
 
 # msigd
 MSI Gaming Device control application
