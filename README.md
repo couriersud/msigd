@@ -1,3 +1,6 @@
+
+![](https://github.com/couriersud/msigd/.github/workflows/ccpp.yml/badge.svg)
+
 # msigd
 MSI Gaming Device control application
 
