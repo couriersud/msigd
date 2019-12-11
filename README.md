@@ -117,3 +117,32 @@ You may also use the following to display man style help
 ```
 help2man --include=msigd.help2man --no-info ./msigd | nroff -man |less
 ```
+
+## Examples
+
+I have a usb swiched port. Upon pressing a button on the switch, keyboard and 
+mouse (or up to four devices) are switched between two computers: my desktop and
+my laptop. There is a USB-C docking station connected to the switch. The laptop
+is connected via USB-C. The docking station is connected to the USB-C hub and via
+HDMI to input ```hdmi1``` to the monitor.
+
+The following script runs on the desktop. If the keyboard gets disconnect - switched
+to laptop, it will switch monitor input to ```hdmi1```. Once the keyboard 
+reconnects, it will switch back monitor input to ```dp```.
+
+```bash
+#!/bin/sh
+
+WATCH_DIR=/dev/input/by-id
+WATCH_INPUT=usb-046a_010d-event-kbd
+DISP_INPUT=dp
+DISP_ALTERNATIVE=hdmi1
+
+while true; do
+	while [ -e ${WATCH_DIR}/${WATCH_INPUT} ]; do sleep 1; done
+	./msigd --input $DISP_ALTERNATIVE
+	while [ ! -e ${WATCH_DIR}/$WATCH_INPUT ]; do sleep 1; done
+	./msigd --input $DISP_INPUT
+done
+```
+
