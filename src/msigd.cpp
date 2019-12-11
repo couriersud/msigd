@@ -46,13 +46,10 @@ using string_list = std::vector<std::string>;
 static unsigned msi_stou(std::string s, int base)
 {
 	unsigned res = 0;
-	unsigned b = static_cast<unsigned>(base < 0 ? -base : base);
-
-	for (auto &c : s)
+	for (std::size_t i=0; i < s.size(); i++)
 	{
-		res = res * b + (static_cast<unsigned>(c) - '0');
-		if (base < 0)
-			b = 256 - '0';
+		unsigned b = static_cast<unsigned>(base < 0 ? (i < s.size() - 1 ? 256u - '0' : -base) : base);
+		res = res * b + (static_cast<unsigned>(s[i]) - '0');
 	}
 	return res;
 }
@@ -137,14 +134,9 @@ struct setting_t
 			// char *eptr;
 			//int v = strtol(val.c_str(), &eptr, 10);
 			unsigned v = msi_stou(val, m_base);
-			if (v < m_min || v > m_max)
-				return ""; // FIXME - must be checked by caller!
-			else
-			{
-				char buf[100];
-				std::snprintf(buf, 100, "%d", v);
-				return buf;
-			}
+			char buf[100];
+			std::snprintf(buf, 100, "%d", v);
+			return buf;
 		}
 		else if (m_enc == STRINGINT)
 		{
@@ -167,24 +159,22 @@ struct setting_t
 	unsigned m_min = 0;
 	unsigned m_max = 100;
 	int m_base = 10;
-	unsigned m_ret_start = 7;
 	string_list m_values;
 };
 
 static std::vector<setting_t> settings =
 {
-	// FIXME: missing: RGB LED On/Off, alarm clock
-
-	setting_t("00100", "unknown00"),  // returns 001
-	setting_t("00110", "unknown02"),  // returns 000 called frequently by OSD app
+	setting_t("00100", "power", {"off", "on"}),  // returns 001
+	setting_t("00110", "unknown02"),  // returns 000 called frequently by OSD app, readonly
 	setting_t(READ, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
 	setting_t("00130", "unknown04"),  // returns 13 blanks
-	setting_t("00140", "unknown03"),  // returns 00; called frequently by OSD app
-	setting_t("00150", "unknown01"),  // returns V18
-	//setting_t("00160", "unknown05"),  // returns incomplete packet - kills communication
+	setting_t("00140", "unknown03"),  // returns 00; called frequently by OSD app, readonly
+	setting_t("00150", "unknown01"),  // returns V18, readonly
 	setting_t("00170", "frequency"), // returns 060
 	setting_t("00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),  // returns 000
+	setting_t("00210", "unknown06", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	setting_t("00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
+	setting_t("00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	setting_t("00240", "hdcr", {"off", "on"}),  // returns 000
 	setting_t("00250", "refresh_rate_display", {"off", "on"}),  // returns 000
 	setting_t("00251", "refresh_rate_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),  // returns 003 0: LT, 1: RT, 2:LB, 3:RB
@@ -193,7 +183,7 @@ static std::vector<setting_t> settings =
 	setting_t("00262", "alarm_clock_time", 0, 99*60+59, -60),  // returns 000
 	setting_t("00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),  // returns 000
 	setting_t("00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
-	setting_t("00280", "unknown08"),  // returns 000
+	setting_t("00280", "unknown08"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	setting_t("00290", "zero_latency", {"off", "on"}),  // returns 001
 	setting_t("002:0", "screen_size", {"19", "24", "4:3", "16:9"}),  // returns 003 -> 19",24",4:3,16:9
 	setting_t("002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),  // returns 002 0:OFF, 1:Normal,2:Strong,3:Strongest,4:A.I.
@@ -207,83 +197,28 @@ static std::vector<setting_t> settings =
 	setting_t("00431", "red", 0, 100),
 	setting_t("00432", "green", 0, 100),
 	setting_t("00433", "blue", 0, 100),
-	//setting_t("00434", "rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
+	setting_t("00434", "rgb", 0, 100*100*100, 100),  // returns bbb  -> value = 'b' - '0' = 98-48=50
+	setting_t("00435", "unknown09"),  // returns 000, read only
+	setting_t(WRITE, "00440", "unknown10", {"off", "on"}),
 	setting_t("00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	setting_t("00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	setting_t("00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 000 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc    FIXME:Verify this
 	setting_t("00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 000 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc    FIXME:Verify this
 	setting_t("00630", "pip_size", {"small", "medium", "large"}),
 	setting_t("00640", "pip_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	setting_t(WRITE, "00650", "toggle_display", {"off", "on"}),  // returns 56006
+	setting_t(WRITE, "00660", "toggle_sound", {"off", "on"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
 	setting_t("00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	setting_t("00810", "osd_transparency", 0, 5),  // returns 000
 	setting_t("00820", "osd_timeout",0, 30),  // returns 020
-	setting_t("00850", "unknown26"),  // returns 001
+	setting_t(WRITE, "00840", "reset", {"off", "on"}),  // returns 56006 - reset monitors
+	setting_t("00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
+	setting_t("00860", "back_rgb", {"off", "on"}),  // returns 001
 	setting_t("00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 006
 	setting_t("00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 003
 	setting_t("00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 004
 	setting_t("00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 005
 };
-
-#if 0
-large:
-0040   01 35 62 30 30 31 67 31 31 30 32 33 30 30 30 30   .5b001g110230000
-0050   30 30 30 30 30 30 30 30 30 30 0d 00 00 00 00 00   0000000000......
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-middle:
-0040   01 35 62 30 30 31 67 31 31 30 31 33 30 30 30 30   .5b001g110130000
-0050   30 30 30 30 30 30 30 30 30 30 0d 00 00 00 00 00   0000000000......
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-
-
-pbp:
-0040   01 35 62 30 30 31 67 32 30 30 31 33 30 30 30 30   .5b001g200130000
-0050   30 30 30 30 30 30 30 30 30 30 0d 00 00 00 00 00   0000000000......
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-
-alarm clock:
-0040   01 35 62 30 30 31 66 3f 32 4e 30 5d 30 6c 30 31   .5b001f?2N0]0l01
-0050   30 30 30 30 30 30 30 30 30 30 0d 00 00 00 00 00   0000000000......
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-
-0040   01 35 62 30 30 31 66 3f 32 4e 30 5d 30 6c 30 31   .5b001f?2N0]0l01
-0050   30 30 30 30 30 30 30 30 30 30 0d 00 00 00 00 00   0000000000......
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-
-//sent on mode switch - no response packet is sent
-0040   01 35 62 30 30 31 68 ff 30 30 30 30 30 30 30 30   .5b001hÿ00000000
-0050   30 30 30 30 30 30 30 30 30 0d 00 00 00 00 00 00   000000000.......
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-
-
-//sent on mode switch - response packet "5600+"
-0040   01 35 62 30 30 31 65 ff 31 ff 30 30 30 30 30 30   .5b001eÿ1ÿ000000
-0050   ff 30 31 80 6c 32 31 62 62 62 0d 00 00 00 00 00   ÿ01.l21bbb......
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-
-// sent on PIP start - response packet "56006"
-0040   01 35 38 30 30 31 39 30 0d 00 00 00 00 00 00 00   .5800190........
-0050   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0060   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-0070   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
-
-
-// RGBs at back - these are control messages to endpoint 0
-// all blue
-// data
-0040   71 01 00 00 00 01 64 00 00 00 00 00 01 00 00 00   q.....d.........
-0050   01 64 00 00 00 00 00 ff 00 00 ff 00 00 ff 00 00   .d.....ÿ..ÿ..ÿ..
-0060   ff 00 00 ff 00 00 ff 00 00 ff 00 00 ff 00 00 ff   ÿ..ÿ..ÿ..ÿ..ÿ..ÿ
-0070   00 00 01 01 ff 01 01 ff 01 01 ff 01 01 ff 01 01   ....ÿ..ÿ..ÿ..ÿ..
-0080   ff 01 01 ff 01 01 ff 01 01 ff 01 01 ff 00         ÿ..ÿ..ÿ..ÿ..ÿ.
-
-#endif
 
 struct led_data
 {
@@ -501,11 +436,17 @@ public:
 	int set_setting(const setting_t &setting, std::string &s)
 	{
 		//read_return();
+		m_log.log(DEBUG, "Setting %s to %s", setting.m_opt.c_str(), s.c_str());
 		auto err = write_command(std::string("5b") + setting.m_cmd + s);
 		if (!err)
 		{
 			auto ret = read_return();
-			return ret == "";
+			if (ret != "5600+")
+			{
+				m_log.log(DEBUG, "Got unexpected return <%s>", ret.c_str());
+				return 1;
+			}
+			return 0;
 		}
 		else
 			return err;
@@ -513,22 +454,25 @@ public:
 
 	int get_setting(const setting_t &setting, std::string &s)
 	{
-		auto err = write_command(std::string("58") + setting.m_cmd);
+		std::string cmd(std::string("58") + setting.m_cmd);
+		auto err = write_command(cmd);
 		if (!err)
 		{
 			auto ret = read_return();
-			if (ret != "")
+			// 260 (alarm clock) does not properly set the return buffer
+			if (ret.size() > cmd.size()
+				&& (ret.substr(0, cmd.size()) == std::string("5b") + setting.m_cmd
+				    || cmd == "5800260"))
 			{
-				if (ret.size() <= setting.m_ret_start)
-				{
-					s = ret;
-					return 0;
-				}
-				s = ret.substr(setting.m_ret_start);
+				//printf("%s\n", ret.c_str());
+				s = ret.substr(cmd.size());
 				return 0;
 			}
 			else
+			{
+				s = ret;
 				return 1;
+			}
 		}
 		else
 			return err;
@@ -559,7 +503,7 @@ private:
 
 	std::string read_return()
 	{
-		char buf[256] = "";
+		char buf[64] = {0, 0};
 		if (int result = usb_interrupt_read(m_devHandle, 1, buf, 64, 1000) < 0)
 		{
 			m_log.log(DEBUG, "Error %i reading from USB device\n", result);
@@ -567,7 +511,7 @@ private:
 		}
 		//skip 0x01 at beginning and cut off "\r"
 		std::string ret(buf+1);
-		if (ret[ret.size()-1] == '\r')
+		if (ret.size() > 0 && ret[ret.size()-1] == '\r')
 			return ret.substr(0,ret.size()-1);
 		else
 			return ret;
@@ -805,7 +749,7 @@ static int help()
 	for (auto &s : settings)
 		if (s.m_access == WRITE || s.m_access == READWRITE)
 		{
-			printf("      --%-20s ", s.m_opt.c_str());
+			printf("      --%-20s values: ", s.m_opt.c_str());
 			if (s.m_enc == STRINGINT)
 			{
 				for (auto &v : s.m_values)
@@ -828,6 +772,8 @@ static int help()
 		" 1  if error during option parsing,\n"
 		" 2  if error during device access,\n"
 		"\n"
+		"Report bugs on <https://github.com/couriersud/msigd/issues>\n\n"
+		"msigd home page: <https://github.com/couriersud/msigd>\n\n"
 	);
 
 	return 0;
@@ -836,12 +782,12 @@ static int help()
 static int version()
 {
 	printf("%s %s\n"
-		"Copyright (C) 2019 Andre Hufschmidt\n"
+		"Copyright (C) 2019 Couriersud\n"
 		"License GPLv2: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n"
 		"This is free software: you are free to change and redistribute it.\n"
 		"There is NO WARRANTY, to the extent permitted by law.\n"
 		"\n"
-		"Written by Andre Hufschmidt\n", appname, appversion);
+		"Written by Couriersud\n", appname, appversion);
 	return 0;
 }
 
@@ -923,13 +869,18 @@ int main (int argc, char **argv)
 		if (query)
 		{
 			for (auto &setting : settings)
-			{
-				std::string res;
-				if (!usb.get_setting(setting, res))
-					printf("%s : %s\n", setting.m_opt.c_str(), setting.decode(res).c_str());
-				else
-					return error(2, "Error querying device on %s", setting.m_opt.c_str());
-			}
+				if (setting.m_access==READWRITE || setting.m_access==READ)
+				{
+					std::string res;
+					if (!usb.get_setting(setting, res))
+						printf("%s : %s\n", setting.m_opt.c_str(), setting.decode(res).c_str());
+					else
+					{
+						error(0, "Error querying device on %s - got <%s>", setting.m_opt.c_str(), res.c_str());
+						if (!debug)
+							return 2;
+					}
+				}
 		}
 
 #if 0
@@ -977,7 +928,7 @@ int main (int argc, char **argv)
 #endif
 	}
 	else
-		return error(1, "No usbdevice found", 0);
+		return error(1, "No usb device found", 0);
 
 	return 0;
 }
