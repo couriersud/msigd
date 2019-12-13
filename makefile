@@ -14,6 +14,9 @@ CFLAGS = -O2 -g -Wall -Wextra -std=c++14
 
 LD = $(CC)
 
+MAKEFILE_TARGETS_WITHOUT_INCLUDE := clean doc clang mingw nvcc
+
+
 all:    depend $(TARGETS)
 
 #-------------------------------------------------
@@ -24,7 +27,7 @@ clean:
 	$(RM) -rf $(OBJS) $(TARGETS) $(OBJ)/msigd.o .depend doxy/*
 
 #-------------------------------------------------
-# nltool
+# msigd
 #-------------------------------------------------
 
 msigd: $(OBJ)/msigd.o $(OBJS)
@@ -43,6 +46,11 @@ msigd: $(OBJ)/msigd.o $(OBJS)
 	done
 
 depend: .depend
+
+# Include only if the goal needs it
+ifeq ($(filter $(MAKECMDGOALS),$(MAKEFILE_TARGETS_WITHOUT_INCLUDE)),)
+-include .depend
+endif
 
 
 #-------------------------------------------------
