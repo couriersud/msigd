@@ -13,10 +13,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    #- name: Install dependencies
-    #  run: |
-    #    sudo apt update
-    #    sudo apt install -y libusb-dev
+    - name: Install dependencies
+      run: |
+        pacman -S mingw-w64-i686-libusb-compat-git
+        pacman -S mingw-w64-x86_64-libusb-compat-git
     #- name: configure
     #  run: ./configure
     - name: make
