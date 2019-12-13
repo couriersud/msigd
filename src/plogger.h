@@ -13,7 +13,7 @@ enum log_level
 	DEBUG,
 	VERBOSE,
 	WARNING,
-	ERROR
+	L_ERROR
 };
 
 class logger_t
@@ -64,7 +64,7 @@ protected:
 				return "VERBOSE";
 			case WARNING:
 				return "WARNING";
-			case ERROR:
+			case L_ERROR:
 				return "ERROR";
 		}
 		return ""; // please compiler

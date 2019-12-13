@@ -8,7 +8,7 @@ SOURCES = $(SRC)/msigd.cpp
 TARGETS = msigd
 
 CC = g++
-CFLAGS = -O2 -g -Wall -Wextra -std=c++14 
+CFLAGS = -O2 -g -Wall -Wextra -std=c++14 $(CEXTRAFLAGS)
 #CC = clang++
 #CFLAGS = -O2 -g -Wall -Wextra -std=c++14 -Weverything -Wno-c++98-compat -Wno-weak-vtables
 
@@ -19,6 +19,11 @@ MAKEFILE_TARGETS_WITHOUT_INCLUDE := clean doc clang mingw nvcc
 
 all:    depend $(TARGETS)
 
+mingw:
+	$(MAKE) CEXTRAFLAGS="-DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0501 \
+		-DWIN32_LEAN_AND_MEAN" LDEXTRAFLAGS="-Wl,--subsystem,console \
+		-municode" LIBS=-lusb MD=@mkdir.exe SHELL=sh.exe DOXYGEN=doxygen.exe
+		
 #-------------------------------------------------
 # clean
 #-------------------------------------------------

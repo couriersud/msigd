@@ -9,20 +9,22 @@
 #include <string>
 #include <array>
 
-#if defined WIN
-  #include <lusb0_usb.h>    // this is libusb, see http://libusb.sourceforge.net/
+#if defined(_WIN32)
+  //#include <usb0_usb.h>    // this is libusb, see http://libusb.sourceforge.net/
+	#include <windows.h>
+	#include <libusb-compat/usb.h>    // this is libusb, see http://libusb.sourceforge.net/
 #else
-  #include <usb.h>        // this is libusb, see http://libusb.sourceforge.net/
+	#include <usb.h>        // this is libusb, see http://libusb.sourceforge.net/
+	#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <sys/ioctl.h>
+	#include <errno.h>
+	#include <fcntl.h>
+	#include <linux/usbdevice_fs.h>
+	#endif
 #endif
 
-#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <linux/usbdevice_fs.h>
-#endif
 
 #include "plogger.h"
 
@@ -35,6 +37,7 @@ public:
 	, m_devHandle(nullptr)
 	, m_interface(nullptr)
 	, m_ep{nullptr}
+	, m_buf{nullptr}
 	, m_detached(false)
 	{
 		if (init(idVendor, idProduct, sProduct) > 0)
@@ -47,6 +50,9 @@ public:
 		{
 
 		}
+		for (int i=0; i<=USB_ENDPOINT_ADDRESS_MASK;i++)
+			if (m_buf[i])
+				delete[] m_buf[i];
 	}
 
 public:
@@ -90,10 +96,30 @@ protected:
 		int result(-1);
 
 		if (ep_is_type(ep, USB_ENDPOINT_TYPE_INTERRUPT))
-			result = usb_interrupt_write(m_devHandle, (int)(USB_TYPE_STANDARD | ep),
-				(const char *)data, (int) len, (int)timeout);
+		{
+			auto bs = ep_buf_size(ep);
+			if (bs<len)
+			{
+				m_log.log(DEBUG, "Endpoint %i: transfer size %d too big", ep, len);
+				return 1;
+			}
+			unsigned i=0;
+			while (i < len)
+			{
+				m_buf[ep][i] = ((char *)data)[i];
+				i++;
+			}
+			if (is_class(USB_CLASS_HID))
+			{
+				while (i < bs)
+					m_buf[ep][i++] = 0;
+				len = bs;
+			}
+			result = usb_interrupt_write(m_devHandle, (int)(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
+				m_buf[ep], (int) len, (int)timeout);
+		}
 		else if (ep_is_type(ep, USB_ENDPOINT_TYPE_BULK))
-			result = usb_bulk_write(m_devHandle, (int)(USB_TYPE_STANDARD | ep),
+			result = usb_bulk_write(m_devHandle, (int)(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
 				(const char *)data, (int)len, (int)timeout);
 		else
 		{
@@ -102,7 +128,7 @@ protected:
 		}
 		if (result  < 0)
 		{
-			m_log.log(DEBUG, "Error %i writing to USB device", result);
+			m_log.log(DEBUG, "Error %i writing to USB device: %s", result, usb_strerror());
 			return 1;
 		}
 		return 0;
@@ -118,17 +144,34 @@ protected:
 		int result(-1);
 
 		if (ep_is_type(ep, USB_ENDPOINT_TYPE_INTERRUPT))
-			result = usb_interrupt_read(m_devHandle, (int)(USB_TYPE_STANDARD | ep),
-				(char *)data, (int)len, (int)timeout);
+		{
+			auto bs = ep_buf_size(ep);
+			if (bs<len)
+			{
+				m_log.log(DEBUG, "Endpoint %i: transfer size %d too big", ep, len);
+				return 1;
+			}
+			int rlen = is_class(USB_CLASS_HID) ? bs : len;
+			for (int i=0; i < rlen; i++)
+				m_buf[ep][i] = 0;
+			result = usb_interrupt_read(m_devHandle, (int)(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
+				m_buf[ep], rlen, (int)timeout);
+			unsigned i=0;
+			while (i < len)
+			{
+				((char *)data)[i] = m_buf[ep][i];
+				i++;
+			}
+		}
 		else if (ep_is_type(ep, USB_ENDPOINT_TYPE_BULK))
-			result = usb_bulk_read(m_devHandle, (int)(USB_TYPE_STANDARD | ep),
+			result = usb_bulk_read(m_devHandle, (int)(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
 				(char *)data, (int)len, (int)timeout);
 		else
 		{
 			m_log.log(DEBUG, "Endpoint %i: unsupported type %02x", ep, m_ep[ep]->bmAttributes);
 			return 1;
 		}
-		if (result  < 0)
+		if (result  < (int)len)
 		{
 			m_log.log(DEBUG, "Error %i reading from USB device", result);
 			return 1;
@@ -165,7 +208,7 @@ protected:
 			if (int err = usb_release_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
 				m_log.log(DEBUG, "Error %d releasing Interface \n", err);
 
-#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+#if !defined(_WIN32) && defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
 			if (m_detached)
 			{
 				// FIXME: BIG HACK - this assumes the dev handle has the file descriptor as first member
@@ -242,9 +285,10 @@ private:
 							for (int k = 0; k< m_interface->bNumEndpoints; k++)
 							{
 								int ep(m_interface->endpoint[k].bEndpointAddress);
-								m_log.log(DEBUG,"Endpoint %02x", ep);
+								int mps(m_interface->endpoint[k].wMaxPacketSize);
+								m_log.log(DEBUG,"Endpoint %02x %04x", ep, mps);
 								m_ep[ep & USB_ENDPOINT_ADDRESS_MASK] = &m_interface->endpoint[k];
-
+								m_buf[ep & USB_ENDPOINT_ADDRESS_MASK] = new char[mps];
 							}
 							break;
 						}
@@ -256,7 +300,7 @@ private:
 				{
 					m_log.log(DEBUG, "Found %i interfaces, using interface %d", numInterfaces, m_interface->bInterfaceNumber);
 					m_log.log(DEBUG, "Setting Configuration");
-					if (usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
+					if (int err1 = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
 					{
 	#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
 						char buf[1024];
@@ -275,7 +319,7 @@ private:
 							return 1;
 						}
 	#else
-						m_log.log(DEBUG, "Error %i setting configuration to %i\n", err, m_device->config->bConfigurationValue);
+						m_log.log(DEBUG, "Error %i setting configuration to %i\n", err1, m_device->config->bConfigurationValue);
 						return 1;
 	#endif
 					}
@@ -283,6 +327,7 @@ private:
 					if (int err = usb_claim_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
 					{
 						m_log.log(DEBUG, "Error %i claiming Interface %i\n", err, m_interface->bInterfaceNumber);
+						return 1;
 					}
 					return 0;
 				}
@@ -295,6 +340,16 @@ private:
 		return 0;
 	}
 
+	bool is_class(int iclass)
+	{
+		return m_interface->bInterfaceClass == iclass;
+	}
+
+	unsigned ep_buf_size(unsigned ep)
+	{
+		return m_ep[ep]->wMaxPacketSize;
+	}
+
 	int ep_is_type(unsigned ep, unsigned type)
 	{
 		// we assume ep existence has been checked!
@@ -303,16 +358,16 @@ private:
 
 	/* https://stackoverflow.com/questions/31119014/open-a-device-by-name-using-libftdi-or-libusb */
 	int usbGetDescriptorString(usb_dev_handle *dev, int index, int langid, char *buf, int buflen) {
-		char buffer[256];
-		int rval, i;
-
 		// make standard request GET_DESCRIPTOR, type string and given index
 		// (e.g. dev->iProduct)
+#if 1
+		char buffer[64];
+		int rval, i;
+
 		rval = usb_control_msg(dev,
 			USB_TYPE_STANDARD | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
 			USB_REQ_GET_DESCRIPTOR, (USB_DT_STRING << 8) + index, langid,
 			buffer, sizeof(buffer), 1000);
-
 		if (rval < 0) // error
 			return rval;
 
@@ -339,6 +394,9 @@ private:
 		buf[i - 1] = 0;
 
 		return i - 1;
+#else
+		return usb_get_string_simple(dev, index, buf, buflen);
+#endif
 	}
 
 	struct usb_device *find_device(unsigned idVendor, unsigned idProduct, const char *sProduct)
@@ -364,7 +422,11 @@ private:
 						continue;
 					}
 					/* get product name */
+#ifdef _WIN32
+					char buf[64] = "";
+#else
 					char buf[256] = "";
+#endif
 					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, buf, sizeof(buf)) < 0)
 					{
 						m_log.log(DEBUG, "cannot query product for device: %s\n", usb_strerror());
@@ -377,7 +439,7 @@ private:
 					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, buf, sizeof(buf)) < 0)
 					{
 						m_log.log(DEBUG, "cannot query serial for device: %s\n", usb_strerror());
-					}
+				 	}
 					m_serial = buf;
 
 					usb_close(handle);
@@ -407,6 +469,7 @@ private:
 	struct usb_dev_handle *m_devHandle;
 	struct usb_interface_descriptor *m_interface;
 	std::array <struct usb_endpoint_descriptor *, USB_ENDPOINT_ADDRESS_MASK+1> m_ep;
+	std::array <char *, USB_ENDPOINT_ADDRESS_MASK+1> m_buf;
 	bool m_detached;
 };
 

@@ -16,28 +16,53 @@ ID 1462:3fa4 Micro Star International
 
 ## Compile
 
+### Linux
+
 Make sure you have libusb installed. On debian based systems
 
-```
+```sh
 sudo apt install libusb-dev
 ```
 
 compile 
 
-```
+```sh
 make
+```
+
+### Windows
+
+To compile on windows you need a working mingw environment.
+
+Make sure you have libusb installed:
+
+```sh
+pacman -S mingw-w64-i686-libusb-compat-git
+pacman -S mingw-w64-x86_64-libusb-compat-git
+```
+
+compile 
+
+```sh
+make mingw
 ```
 
 ## Security
 
+### Linux
 This program needs root privilidges. Use with care.
 
 Alternatively you may use udev to grant user access rights. I have not tested 
 this yet: [Documentation on askubuntu](https://askubuntu.com/questions/978552/how-do-i-make-libusb-work-as-non-root)
- 
+
+### Windows
+
+On Windows 7 `msigd` does need no additional user rights. It however conflicts
+with OSD Gaming device software. I had to completely remove the software to run 
+the application.
 
 ## Usage
-```
+```sh
 ./msigd --help
 ```
 ```
@@ -114,7 +139,7 @@ msigd home page: <https://github.com/couriersud/msigd>
 ```
 You may also use the following to display man style help
 
-```
+```sh
 help2man --include=msigd.help2man --no-info ./msigd | nroff -man |less
 ```
 
@@ -130,7 +155,7 @@ The following script runs on the desktop. If the keyboard gets disconnect - swit
 to laptop, it will switch monitor input to ```hdmi1```. Once the keyboard 
 reconnects, it will switch back monitor input to ```dp```.
 
-```bash
+```sh
 #!/bin/sh
 
 WATCH_DIR=/dev/input/by-id

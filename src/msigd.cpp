@@ -20,11 +20,11 @@ enum access_t
 
 enum encoding_t
 {
-	INT,
-	STRING,
-	STRINGINT,
-	STRINGPOS,
-	INTPOS
+	ENC_INT,
+	ENC_STRING,
+	ENC_STRINGINT,
+	ENC_STRINGPOS,
+	ENC_INTPOS
 };
 
 using string_list = std::vector<std::string>;
@@ -57,30 +57,30 @@ static std::string msi_utos(unsigned v, int base, int width)
 struct setting_t
 {
 	setting_t(std::string cmd, std::string opt)
-	: m_access(READ), m_enc(STRING), m_cmd(cmd), m_opt(opt)
+	: m_access(READ), m_enc(ENC_STRING), m_cmd(cmd), m_opt(opt)
 	{ }
 
 	setting_t(std::string cmd, std::string opt, unsigned min, unsigned max)
-	: m_access(READWRITE), m_enc(INT), m_cmd(cmd), m_opt(opt), m_min(min), m_max(max)
+	: m_access(READWRITE), m_enc(ENC_INT), m_cmd(cmd), m_opt(opt), m_min(min), m_max(max)
 	{ }
 
 	setting_t(std::string cmd, std::string opt, unsigned min, unsigned max, int base)
-	: m_access(READWRITE), m_enc(INT), m_cmd(cmd), m_opt(opt), m_min(min), m_max(max), m_base(base)
+	: m_access(READWRITE), m_enc(ENC_INT), m_cmd(cmd), m_opt(opt), m_min(min), m_max(max), m_base(base)
 	{ }
 
 	setting_t(std::string cmd, std::string opt, string_list values)
-	: m_access(READWRITE), m_enc(STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
+	: m_access(READWRITE), m_enc(ENC_STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
 	  m_max(static_cast<unsigned>(values.size())), m_values(values)
 	{ }
 
 	setting_t(access_t access, std::string cmd, std::string opt, string_list values)
-	: m_access(access), m_enc(STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
+	: m_access(access), m_enc(ENC_STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
 	  m_max(static_cast<unsigned>(values.size())), m_values(values)
 	{ }
 
 	std::string encode(std::string val)
 	{
-		if (m_enc == INT)
+		if (m_enc == ENC_INT)
 		{
 			char *eptr;
 			unsigned long v = std::strtoul(val.c_str(), &eptr, 10);
@@ -96,7 +96,7 @@ struct setting_t
 				//return buf;
 			}
 		}
-		else if (m_enc == STRINGINT)
+		else if (m_enc == ENC_STRINGINT)
 		{
 			for (std::size_t i=0; i < m_values.size(); i++)
 				if (m_values[i] == val)
@@ -113,9 +113,9 @@ struct setting_t
 
 	std::string decode(std::string val)
 	{
-		if (m_enc == STRING)
+		if (m_enc == ENC_STRING)
 			return val;
-		if (m_enc == INT)
+		if (m_enc == ENC_INT)
 		{
 			// char *eptr;
 			//int v = strtol(val.c_str(), &eptr, 10);
@@ -124,7 +124,7 @@ struct setting_t
 			std::snprintf(buf, 100, "%d", v);
 			return buf;
 		}
-		else if (m_enc == STRINGINT)
+		else if (m_enc == ENC_STRINGINT)
 		{
 			char *eptr;
 			auto v = strtoul(val.c_str(), &eptr, 10);
@@ -389,7 +389,7 @@ static int help()
 		if (s.m_access == WRITE || s.m_access == READWRITE)
 		{
 			printf("      --%-20s values: ", s.m_opt.c_str());
-			if (s.m_enc == STRINGINT)
+			if (s.m_enc == ENC_STRINGINT)
 			{
 				for (auto &v : s.m_values)
 					printf("%s ", v.c_str());
