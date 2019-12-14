@@ -22,7 +22,7 @@ all:    depend $(TARGETS)
 mingw:
 	$(MAKE) CEXTRAFLAGS="-DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0501 \
 		-DWIN32_LEAN_AND_MEAN" LDEXTRAFLAGS="-Wl,--subsystem,console \
-		-municode" LIBS=-lusb MD=@mkdir.exe SHELL=sh.exe DOXYGEN=doxygen.exe
+		-municode" LIBS=-lusb MD=@mkdir.exe SHELL=bash.exe DOXYGEN=doxygen.exe
 		
 #-------------------------------------------------
 # clean
