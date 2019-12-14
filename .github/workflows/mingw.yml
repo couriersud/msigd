@@ -12,18 +12,18 @@ jobs:
         os: [windows-latest, windows-2016]
     
     steps:
-    - uses: numworks/setup-msys2@v1
-      with:
-        update: true
+#    - uses: numworks/setup-msys2@v1
+#      with:
+#        update: true
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: |
-        pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
-        pacman -S --noconfirm mingw-w64-i686-libusb-compat-git
+        msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
+        msys2do pacman -S --noconfirm mingw-w64-i686-libusb-compat-git
     #- name: configure
     #  run: ./configure
     - name: make
-      run: make TARGET=mingw
+      run: msys2do make TARGET=mingw
     #- name: make check
     #  run: make check
     #- name: make distcheck
