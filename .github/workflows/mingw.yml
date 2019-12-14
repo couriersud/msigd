@@ -20,9 +20,9 @@ jobs:
     #  run: mklink /D c:\msys64 d:\a\_temp\msys\msys64
     - uses: actions/checkout@v1
     - name: Install dependencies
-      run: msys2do pacman -S --noconfirm make || echo no
-    - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git || echo no
-    - run: msys2do pacman -S --noconfirm mingw-w64-i686-libusb-compat-git || echo no
+      run: msys2do pacman -S --noconfirm make
+    - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
+    - run: msys2do pacman -S --noconfirm mingw-w64-i686-libusb-compat-git
     #- name: configure
     #  run: ./configure
     - name: make
