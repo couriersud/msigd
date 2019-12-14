@@ -17,6 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
+        msys2do pacman -S --noconfirm mingw-w64-i686-libusb-compat-git
     #- name: configure
     #  run: ./configure
     - name: make
