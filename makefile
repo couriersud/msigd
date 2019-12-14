@@ -64,7 +64,8 @@ endif
 
 $(OBJ)/%.o: $(SRC)/%.cpp
 	@echo Compiling $<...
-	@$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
+	ls /usr/include
 
 $(OBJ)/%.pp: $(SRC)/%.cpp
 	@echo Compiling $<...
