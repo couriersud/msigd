@@ -13,8 +13,8 @@ jobs:
     
     steps:  
     - uses: numworks/setup-msys2@v1
-      with:
-        update: true
+    #  with:
+    #    update: true
     #- name: Create symbolic link for MSYS2
     #  shell: cmd
     #  run: mklink /D c:\msys64 d:\a\_temp\msys\msys64
