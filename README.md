@@ -1,5 +1,6 @@
 
 ![](https://github.com/couriersud/msigd/workflows/Ubuntu%20latest/badge.svg?branch=master)
+![](https://github.com/couriersud/msigd/workflows/Windows%20latest/badge.svg?branch=master)
 
 # msigd
 MSI Gaming Device control application
