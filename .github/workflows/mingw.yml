@@ -21,9 +21,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: |
-        msys2do pacman -S --noconfirm make 
-        msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git 
-        msys2do pacman -S --noconfirm mingw-w64-i686-libusb-compat-git
+        msys2do pacman -S --noconfirm make || echo no
+        msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git || echo no
+        msys2do pacman -S --noconfirm mingw-w64-i686-libusb-compat-git || echo no
     #- name: configure
     #  run: ./configure
     - name: make
