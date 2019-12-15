@@ -100,25 +100,71 @@ pacman -S mingw-w64-i686-libusb-compat-git
 pacman -S mingw-w64-x86_64-libusb-compat-git
 ```
 
-compile 
+Compile 
 
 ```sh
 make mingw
 ```
+
+### OSX
+
+#### Important note
+
+The usb interface will be claimed by the OSX HID driver. Basically this prevents
+`msigd` to claim the usb interface. There is no easy way around this. More information
+can be found here: [libusb FAQ](https://github.com/libusb/libusb/wiki/FAQ).
+A solution is described on [stackoverflow](https://stackoverflow.com/a/29610161).
+However this includes turning of security settings and thus I am not going to
+pursue this further here. 
+
+#### Still want to compile on OSX?
+
+Make sure you have [homebrew](https://brew.sh/) installed. 
+
+```
+brew install libusb-compat
+```
+
+Compile 
+
+```sh
+make
+```
+
 
 ## Security
 
 ### Linux
 This program needs root privilidges. Use with care.
 
-Alternatively you may use udev to grant user access rights. I have not tested 
-this yet: [Documentation on askubuntu](https://askubuntu.com/questions/978552/how-do-i-make-libusb-work-as-non-root)
+Alternatively you may use udev to grant user access rights. More information is
+available on here: [Documentation on askubuntu](https://askubuntu.com/questions/978552/how-do-i-make-libusb-work-as-non-root)
+
+In a nutshell: 
+
+* Create `/etc/udev/rules.d/51-msi-gaming-device.rules`:
+
+```
+# Allow access to members of plugdev
+SUBSYSTEM=="usb", ATTR{idVendor}=="1462", ATTR{idProduct}=="3fa4", GROUP="plugdev", TAG+="uaccess"
+```
+* Execute
+
+```sh
+sudo udevadm control --reload-rules
+```
+* Turn your monitor off and on.
 
 ### Windows
 
 On Windows 7 `msigd` does need no additional user rights. It however conflicts
-with OSD Gaming device software. I had to completely remove the software to run 
-the application.
+with OSD Gaming device software. 
+
+You have two alternatives:
+
+1.	Completely remove the MSI Gaming Device software to run the application.
+
+2.	Use Task Manager and stop `MonitorMicroKeyDetector.exe`
 
 ## Usage
 ```sh

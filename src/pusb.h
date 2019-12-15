@@ -21,7 +21,9 @@
 	#include <sys/ioctl.h>
 	#include <errno.h>
 	#include <fcntl.h>
+#ifndef __APPLE__
 	#include <linux/usbdevice_fs.h>
+#endif
 	#endif
 #endif
 
@@ -218,7 +220,7 @@ protected:
 			if (int err = usb_release_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
 				m_log(DEBUG, "Error %d releasing Interface \n", err);
 
-#if !defined(_WIN32) && defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+#if !defined(__APPLE__) && !defined(_WIN32) && defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
 			if (m_detached)
 			{
 				// FIXME: BIG HACK - this assumes the dev handle has the file descriptor as first member
@@ -325,18 +327,17 @@ private:
 						m_detached = true;
 						if ((err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue)) < 0)
 						{
-							m_log(DEBUG, "Error %i setting configuration to %i\n", err, m_device->config->bConfigurationValue);
+							m_log(DEBUG, "Error %i setting configuration to %i", err, m_device->config->bConfigurationValue);
 							return 1;
 						}
 	#else
-						m_log(DEBUG, "Error %i setting configuration to %i\n", err1, m_device->config->bConfigurationValue);
+						m_log(DEBUG, "Error %i setting configuration to %i", err, m_device->config->bConfigurationValue);
 						return 1;
 	#endif
 					}
-
 					if (int err = usb_claim_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
 					{
-						m_log(DEBUG, "Error %i claiming Interface %i\n", err, m_interface->bInterfaceNumber);
+						m_log(DEBUG, "Error %i claiming Interface %i: %s", err, m_interface->bInterfaceNumber, usb_strerror());
 						return 1;
 					}
 					return 0;
@@ -439,7 +440,7 @@ private:
 #endif
 					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, buf, sizeof(buf)) < 0)
 					{
-						m_log(DEBUG, "cannot query product for device: %s\n", usb_strerror());
+						m_log(DEBUG, "cannot query product for device: %s", usb_strerror());
 						continue;
 					}
 					m_product = buf;
@@ -448,7 +449,7 @@ private:
 					buf[0] = 0;
 					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, buf, sizeof(buf)) < 0)
 					{
-						m_log(DEBUG, "cannot query serial for device: %s\n", usb_strerror());
+						m_log(DEBUG, "cannot query serial for device: %s", usb_strerror());
 				 	}
 					m_serial = buf;
 
