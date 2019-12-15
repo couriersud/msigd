@@ -7,12 +7,12 @@ LIBS = -lusb
 SOURCES = $(SRC)/msigd.cpp
 TARGETS = msigd
 
-CC = g++
-CFLAGS = -O2 -g -Wall -Wextra -std=c++14 $(CEXTRAFLAGS)
+CXX = g++
+CXXFLAGS = -O2 -g -Wall -Wextra -std=c++14 $(CXXEXTRAFLAGS)
 #CC = clang++
 #CFLAGS = -O2 -g -Wall -Wextra -std=c++14 -Weverything -Wno-c++98-compat -Wno-weak-vtables
 
-LD = $(CC)
+LD = $(CXX)
 
 MAKEFILE_TARGETS_WITHOUT_INCLUDE := clean doc clang mingw nvcc
 
@@ -20,7 +20,7 @@ MAKEFILE_TARGETS_WITHOUT_INCLUDE := clean doc clang mingw nvcc
 all:    depend $(TARGETS)
 
 mingw:
-	$(MAKE) CEXTRAFLAGS="-DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0501 \
+	$(MAKE) CXXEXTRAFLAGS="-DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0501 \
 		-DWIN32_LEAN_AND_MEAN" LDEXTRAFLAGS="-Wl,--subsystem,console \
 		-municode" LIBS=-lusb MD=@mkdir.exe DOXYGEN=doxygen.exe
 		
@@ -47,7 +47,7 @@ msigd: $(OBJ)/msigd.o $(OBJS)
 	@echo creating .depend
 	@rm -f ./.depend
 	@for i in $(SOURCES); do \
-		$(CC) $(CFLAGS) -MM $$i -MT `echo $$i | sed -e 's+$(SRC)+$(OBJ)+' -e 's+.cpp+.o+' ` >> ./.depend; \
+		$(CXX) $(CXXFLAGS) -MM $$i -MT `echo $$i | sed -e 's+$(SRC)+$(OBJ)+' -e 's+.cpp+.o+' ` >> ./.depend; \
 	done
 
 depend: .depend
@@ -64,15 +64,15 @@ endif
 
 $(OBJ)/%.o: $(SRC)/%.cpp
 	@echo Compiling $<...
-	@$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
+	@$(CXX) $(CXXDEFS) $(CXXFLAGS) -c $< -o $@
 
 $(OBJ)/%.pp: $(SRC)/%.cpp
 	@echo Compiling $<...
-	@$(CC) $(CDEFS) $(CFLAGS) -E $< -o $@
+	@$(CXX) $(CXXDEFS) $(CXXFLAGS) -E $< -o $@
 
 $(OBJ)/%.s: $(SRC)/%.cpp
 	@echo Compiling $<...
-	@$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
+	@$(CXX) $(CXXDEFS) $(CXXFLAGS) -S $< -o $@
 
 $(OBJ)/%.a:
 	@echo Archiving $@...
@@ -82,7 +82,7 @@ $(OBJ)/%.a:
 $(OBJ)/%.json: $(SRC)/%.cpp
 	@echo Building compile database entry for $< ...
 	@echo { \"directory\": \".\", >> $(TIDY_DB)
-	@echo   \"command\": \"$(CC) $(CDEFS) $(CFLAGS) -c $< -o dummy.o\", >> $(TIDY_DB)
+	@echo   \"command\": \"$(CC) $(CXXDEFS) $(CXXFLAGS) -c $< -o dummy.o\", >> $(TIDY_DB)
 	@echo   \"file\": \"$(CURDIR)/$<\" } >> $(TIDY_DB)
 	@echo "," >> $(TIDY_DB)
 

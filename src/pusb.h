@@ -50,7 +50,7 @@ public:
 		{
 
 		}
-		for (int i=0; i<=USB_ENDPOINT_ADDRESS_MASK;i++)
+		for (std::size_t i=0; i <= USB_ENDPOINT_ADDRESS_MASK; i++)
 			if (m_buf[i])
 				delete[] m_buf[i];
 	}
@@ -63,16 +63,20 @@ public:
 	unsigned vendor_id() { return m_vendor_id; }
 	unsigned product_id() { return m_product_id; }
 
-	logger_t &log() { return m_log; }
+	template<typename... Args>
+	void log(log_level level, const char *fmt, Args&&... args)
+	{
+		m_log(level, fmt, std::forward<Args>(args)...);
+	}
 
 protected:
 	int control_msg_write(int requesttype, int request, int value, int index,
 		void *bytes, int size, int timeout)
 	{
 		if (int result = usb_control_msg(m_devHandle, requesttype | USB_ENDPOINT_OUT,
-			request, value, index, (char *)bytes, size, timeout) < 0)
+			request, value, index, static_cast<char *>(bytes), size, timeout) < 0)
 		{
-			m_log.log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
+			m_log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
 			return 1;
 		}
 		return 0;
@@ -82,9 +86,9 @@ protected:
 		void *bytes, int size, int timeout)
 	{
 		if (int result = usb_control_msg(m_devHandle, requesttype | USB_ENDPOINT_IN,
-			request, value, index, (char *)bytes, size, timeout) < 0)
+			request, value, index, static_cast<char *>(bytes), size, timeout) < 0)
 		{
-			m_log.log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
+			m_log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
 			return 1;
 		}
 		return 0;
@@ -100,13 +104,13 @@ protected:
 			auto bs = ep_buf_size(ep);
 			if (bs<len)
 			{
-				m_log.log(DEBUG, "Endpoint %i: transfer size %d too big", ep, len);
+				m_log(DEBUG, "Endpoint %i: transfer size %d too big", ep, len);
 				return 1;
 			}
 			unsigned i=0;
 			while (i < len)
 			{
-				m_buf[ep][i] = ((char *)data)[i];
+				m_buf[ep][i] = static_cast<const char *>(data)[i];
 				i++;
 			}
 			if (is_class(USB_CLASS_HID))
@@ -115,20 +119,23 @@ protected:
 					m_buf[ep][i++] = 0;
 				len = bs;
 			}
-			result = usb_interrupt_write(m_devHandle, (int)(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
-				m_buf[ep], (int) len, (int)timeout);
+			result = usb_interrupt_write(m_devHandle,
+				static_cast<int>(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
+				m_buf[ep], static_cast<int>(len), static_cast<int>(timeout));
 		}
 		else if (ep_is_type(ep, USB_ENDPOINT_TYPE_BULK))
-			result = usb_bulk_write(m_devHandle, (int)(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
-				(const char *)data, (int)len, (int)timeout);
+			result = usb_bulk_write(m_devHandle,
+				static_cast<int>(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
+				static_cast<const char *>(data), static_cast<int>(len),
+				static_cast<int>(timeout));
 		else
 		{
-			m_log.log(DEBUG, "Endpoint %i: unsupported type %02x", ep, m_ep[ep]->bmAttributes);
+			m_log(DEBUG, "Endpoint %i: unsupported type %02x", ep, m_ep[ep]->bmAttributes);
 			return 1;
 		}
 		if (result  < 0)
 		{
-			m_log.log(DEBUG, "Error %i writing to USB device: %s", result, usb_strerror());
+			m_log(DEBUG, "Error %i writing to USB device: %s", result, usb_strerror());
 			return 1;
 		}
 		return 0;
@@ -148,32 +155,35 @@ protected:
 			auto bs = ep_buf_size(ep);
 			if (bs<len)
 			{
-				m_log.log(DEBUG, "Endpoint %i: transfer size %d too big", ep, len);
+				m_log(DEBUG, "Endpoint %i: transfer size %d too big", ep, len);
 				return 1;
 			}
-			int rlen = is_class(USB_CLASS_HID) ? bs : len;
-			for (int i=0; i < rlen; i++)
+			auto rlen(is_class(USB_CLASS_HID) ? bs : len);
+			for (std::size_t i = 0; i < rlen; i++)
 				m_buf[ep][i] = 0;
-			result = usb_interrupt_read(m_devHandle, (int)(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
-				m_buf[ep], rlen, (int)timeout);
+			result = usb_interrupt_read(m_devHandle,
+				static_cast<int>(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
+				m_buf[ep], static_cast<int>(rlen), static_cast<int>(timeout));
 			unsigned i=0;
 			while (i < len)
 			{
-				((char *)data)[i] = m_buf[ep][i];
+				static_cast<char *>(data)[i] = m_buf[ep][i];
 				i++;
 			}
 		}
 		else if (ep_is_type(ep, USB_ENDPOINT_TYPE_BULK))
-			result = usb_bulk_read(m_devHandle, (int)(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
-				(char *)data, (int)len, (int)timeout);
+			result = usb_bulk_read(m_devHandle,
+				static_cast<int>(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
+				static_cast<char *>(data), static_cast<int>(len),
+				static_cast<int>(timeout));
 		else
 		{
-			m_log.log(DEBUG, "Endpoint %i: unsupported type %02x", ep, m_ep[ep]->bmAttributes);
+			m_log(DEBUG, "Endpoint %i: unsupported type %02x", ep, m_ep[ep]->bmAttributes);
 			return 1;
 		}
-		if (result  < (int)len)
+		if (result  < static_cast<int>(len))
 		{
-			m_log.log(DEBUG, "Error %i reading from USB device", result);
+			m_log(DEBUG, "Error %i reading from USB device", result);
 			return 1;
 		}
 		return 0;
@@ -184,7 +194,7 @@ protected:
 		auto *p = m_ep[ep];
 		if (!p)
 		{
-			m_log.log(DEBUG, "Endpoint %i does not exist", ep);
+			m_log(DEBUG, "Endpoint %i does not exist", ep);
 			return 1;
 		}
 		if (write && ((p->bEndpointAddress & USB_ENDPOINT_DIR_MASK)== USB_ENDPOINT_OUT))
@@ -195,7 +205,7 @@ protected:
 		{
 			return 0;
 		}
-		m_log.log(DEBUG, "Endpoint %i does is not of type %s", ep, write ? "output" : "input");
+		m_log(DEBUG, "Endpoint %i does is not of type %s", ep, write ? "output" : "input");
 		return 1;
 	}
 
@@ -203,10 +213,10 @@ protected:
 	{
 		if (m_devHandle != nullptr)
 		{
-			m_log.log(DEBUG, "Releasing interface %d\n", m_interface->bInterfaceNumber);
+			m_log(DEBUG, "Releasing interface %d\n", m_interface->bInterfaceNumber);
 
 			if (int err = usb_release_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
-				m_log.log(DEBUG, "Error %d releasing Interface \n", err);
+				m_log(DEBUG, "Error %d releasing Interface \n", err);
 
 #if !defined(_WIN32) && defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
 			if (m_detached)
@@ -218,7 +228,7 @@ protected:
 				command.ioctl_code = USBDEVFS_CONNECT;
 				command.data = nullptr;
 				if (ioctl(fd, USBDEVFS_IOCTL, &command) < 0)
-					m_log.log(DEBUG, "reattach kernel driver failed: %s", strerror(errno));
+					m_log(DEBUG, "reattach kernel driver failed: %s", strerror(errno));
 			}
 #endif
 			usb_close(m_devHandle);
@@ -230,7 +240,7 @@ protected:
 		if (m_detached)
 		{
 			std::string filename = std::string("/dev/bus/usb/") + m_device->bus->dirname + "/" + m_device->filename;
-			m_log.log(DEBUG, "device usb path: %s", filename.c_str());
+			m_log(DEBUG, "device usb path: %s", filename.c_str());
 			if (int fd = open(filename.c_str(), O_RDONLY) > 0)
 			{
 				struct usbdevfs_ioctl command;
@@ -238,11 +248,11 @@ protected:
 				command.ioctl_code = USBDEVFS_CONNECT;
 				command.data = nullptr;
 				if (ioctl(fd, USBDEVFS_IOCTL, &command) < 0)
-					m_log.log(DEBUG, "reattach kernel driver failed: %s", strerror(errno));
+					m_log(DEBUG, "reattach kernel driver failed: %s", strerror(errno));
 				close(fd);
 			}
 			else
-				m_log.log(DEBUG, "Error reattaching device: %s not found", filename.c_str());
+				m_log(DEBUG, "Error reattaching device: %s not found", filename.c_str());
 		}
 #endif
 #endif
@@ -256,14 +266,14 @@ private:
 	{
 		if (reference()++ == 0)
 		{
-			m_log.log(DEBUG, "Initializing usb_lib");
+			m_log(DEBUG, "Initializing usb_lib");
 			// Initialize the USB library
 			usb_init();
 			// Enumerate the USB device tree
 			usb_find_busses();
 			usb_find_devices();
 		}
-		m_device = find_device(idVendor, idProduct, sProduct.c_str());
+		m_device = find_device(idVendor, idProduct, sProduct);
 		if (m_device != nullptr)
 		{
 			m_devHandle = usb_open(m_device);
@@ -277,16 +287,16 @@ private:
 				{
 					for (int j=0; j < m_device->config->interface[i].num_altsetting; j++)
 					{
-						m_log.log(DEBUG,"Interface %d alt %d class %d", i, j,
+						m_log(DEBUG,"Interface %d alt %d class %d", i, j,
 							m_device->config->interface[i].altsetting[j].bInterfaceClass);
 						if (m_device->config->interface[i].altsetting[j].bInterfaceClass == interface_class)
 						{
 							m_interface = &(m_device->config->interface[i].altsetting[j]);
 							for (int k = 0; k< m_interface->bNumEndpoints; k++)
 							{
-								int ep(m_interface->endpoint[k].bEndpointAddress);
-								int mps(m_interface->endpoint[k].wMaxPacketSize);
-								m_log.log(DEBUG,"Endpoint %02x %04x", ep, mps);
+								auto ep(m_interface->endpoint[k].bEndpointAddress);
+								auto mps(m_interface->endpoint[k].wMaxPacketSize);
+								m_log(DEBUG,"Endpoint %02x %04x", ep, mps);
 								m_ep[ep & USB_ENDPOINT_ADDRESS_MASK] = &m_interface->endpoint[k];
 								m_buf[ep & USB_ENDPOINT_ADDRESS_MASK] = new char[mps];
 							}
@@ -298,35 +308,35 @@ private:
 				}
 				if (m_interface)
 				{
-					m_log.log(DEBUG, "Found %i interfaces, using interface %d", numInterfaces, m_interface->bInterfaceNumber);
-					m_log.log(DEBUG, "Setting Configuration");
-					if (int err1 = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
+					m_log(DEBUG, "Found %i interfaces, using interface %d", numInterfaces, m_interface->bInterfaceNumber);
+					m_log(DEBUG, "Setting Configuration");
+					if (int err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
 					{
 	#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
 						char buf[1024];
 						if (usb_get_driver_np( m_devHandle, m_interface->bInterfaceNumber, buf, sizeof(buf))==0)
-							m_log.log(DEBUG, "Driver is %s", buf);
+							m_log(DEBUG, "Driver is %s", buf);
 
-						if (int err=usb_detach_kernel_driver_np( m_devHandle, m_interface->bInterfaceNumber) < 0)
+						if ((err=usb_detach_kernel_driver_np( m_devHandle, m_interface->bInterfaceNumber)) < 0)
 						{
-							m_log.log(DEBUG, "failed to detach kernel driver from USB device: %d", err);
+							m_log(DEBUG, "failed to detach kernel driver from USB device: %d", err);
 							return 1;
 						}
 						m_detached = true;
-						if (int err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
+						if ((err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue)) < 0)
 						{
-							m_log.log(DEBUG, "Error %i setting configuration to %i\n", err, m_device->config->bConfigurationValue);
+							m_log(DEBUG, "Error %i setting configuration to %i\n", err, m_device->config->bConfigurationValue);
 							return 1;
 						}
 	#else
-						m_log.log(DEBUG, "Error %i setting configuration to %i\n", err1, m_device->config->bConfigurationValue);
+						m_log(DEBUG, "Error %i setting configuration to %i\n", err1, m_device->config->bConfigurationValue);
 						return 1;
 	#endif
 					}
 
 					if (int err = usb_claim_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
 					{
-						m_log.log(DEBUG, "Error %i claiming Interface %i\n", err, m_interface->bInterfaceNumber);
+						m_log(DEBUG, "Error %i claiming Interface %i\n", err, m_interface->bInterfaceNumber);
 						return 1;
 					}
 					return 0;
@@ -399,12 +409,12 @@ private:
 #endif
 	}
 
-	struct usb_device *find_device(unsigned idVendor, unsigned idProduct, const char *sProduct)
+	struct usb_device *find_device(unsigned idVendor, unsigned idProduct, const std::string &sProduct)
 	{
 		struct usb_bus *bus = nullptr;
 		struct usb_device *device = nullptr;
 
-		m_log.log(DEBUG, "Scanning USB devices...");
+		m_log(DEBUG, "Scanning USB devices...");
 
 		// Iterate through attached busses and devices
 		for (bus = usb_get_busses(); bus != nullptr; bus = bus->next)
@@ -418,7 +428,7 @@ private:
 					/* we need to open the device in order to query strings */
 					if (!(handle = usb_open(device)))
 					{
-						m_log.log(DEBUG, "cannot open USB device: %s", usb_strerror());
+						m_log(DEBUG, "cannot open USB device: %s", usb_strerror());
 						continue;
 					}
 					/* get product name */
@@ -429,16 +439,16 @@ private:
 #endif
 					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, buf, sizeof(buf)) < 0)
 					{
-						m_log.log(DEBUG, "cannot query product for device: %s\n", usb_strerror());
+						m_log(DEBUG, "cannot query product for device: %s\n", usb_strerror());
 						continue;
 					}
 					m_product = buf;
-					m_log.log(DEBUG, "Found device %s \n", m_product.c_str());
+					m_log(DEBUG, "Found device %s \n", m_product);
 
 					buf[0] = 0;
 					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, buf, sizeof(buf)) < 0)
 					{
-						m_log.log(DEBUG, "cannot query serial for device: %s\n", usb_strerror());
+						m_log(DEBUG, "cannot query serial for device: %s\n", usb_strerror());
 				 	}
 					m_serial = buf;
 

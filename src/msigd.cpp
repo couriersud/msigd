@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #include <stdio.h>
 #include <string.h>
@@ -34,7 +35,9 @@ static unsigned msi_stou(std::string s, int base)
 	unsigned res = 0;
 	for (std::size_t i=0; i < s.size(); i++)
 	{
-		unsigned b = static_cast<unsigned>(base < 0 ? (i < s.size() - 1 ? 256u - '0' : -base) : base);
+		unsigned b = static_cast<unsigned>(base < 0 ?
+			(i < s.size() - 1 ? static_cast<unsigned>(256u - '0') :
+				static_cast<unsigned>(-base)) : static_cast<unsigned>(base));
 		res = res * b + (static_cast<unsigned>(s[i]) - '0');
 	}
 	return res;
@@ -54,6 +57,31 @@ static std::string msi_utos(unsigned v, int base, int width)
 	return res;
 }
 
+template<typename T>
+static std::string to_hex(const T *buf, std::size_t len)
+{
+	auto *p = reinterpret_cast<const unsigned char *>(&buf[0]);
+	std::string out("");
+	for (std::size_t i = 0; i < len * sizeof(T); i++)
+	{
+		char b[32];
+		snprintf(b, 32, "%02x ", p[i]);
+		out += b;
+	}
+	return out;
+}
+
+static std::string to_hex(const std::string &s)
+{
+	return to_hex(s.c_str(), s.size());
+}
+
+template<typename... Args>
+static void pprintf(const char *fmt, Args&&... args)
+{
+	printf(fmt, log_helper(args)...);
+}
+
 struct setting_t
 {
 	setting_t(std::string cmd, std::string opt)
@@ -69,13 +97,23 @@ struct setting_t
 	{ }
 
 	setting_t(std::string cmd, std::string opt, string_list values)
-	: m_access(READWRITE), m_enc(ENC_STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
-	  m_max(static_cast<unsigned>(values.size())), m_values(values)
+	: m_access(READWRITE)
+	, m_enc(ENC_STRINGINT)
+	, m_cmd(cmd)
+	, m_opt(opt)
+	, m_values(values)
+	, m_min(0)
+	, m_max(static_cast<unsigned>(values.size()))
 	{ }
 
 	setting_t(access_t access, std::string cmd, std::string opt, string_list values)
-	: m_access(access), m_enc(ENC_STRINGINT), m_cmd(cmd), m_opt(opt), m_min(0),
-	  m_max(static_cast<unsigned>(values.size())), m_values(values)
+	: m_access(access)
+	, m_enc(ENC_STRINGINT)
+	, m_cmd(cmd)
+	, m_opt(opt)
+	, m_values(values)
+	, m_min(0)
+	, m_max(static_cast<unsigned>(values.size()))
 	{ }
 
 	std::string encode(std::string val)
@@ -126,9 +164,9 @@ struct setting_t
 		}
 		else if (m_enc == ENC_STRINGINT)
 		{
-			char *eptr;
-			auto v = strtoul(val.c_str(), &eptr, 10);
-			if (*eptr != 0)
+			std::size_t eidx(0);
+			auto v = std::stoul(val, &eidx, 10);
+			if (eidx != val.size())
 				return ""; // FIXME - must be checked by caller!
 			else if (v<m_min || v > m_max)
 				return ""; // FIXME - must be checked by caller!
@@ -142,10 +180,10 @@ struct setting_t
 	encoding_t m_enc;
 	std::string m_cmd;
 	std::string m_opt;
+	string_list m_values;
 	unsigned m_min = 0;
 	unsigned m_max = 100;
 	int m_base = 10;
-	string_list m_values;
 };
 
 static std::vector<setting_t> settings =
@@ -264,6 +302,47 @@ struct led_data
 // Random : 0x1f
 // Synched: 0x01
 
+static int mystic_opt(std::string opt, led_data &leds)
+{
+	if (opt == "off")
+		leds.mode = 0;
+	else if (opt == "static")
+		leds.mode = 1;
+	else if (opt == "breathing")
+		leds.mode = 2;
+	else if (opt == "blinking")
+		leds.mode = 3;
+	else if (opt == "flashing")
+		leds.mode = 5;
+	else if (opt == "blinds")
+		leds.mode = 6;
+	else if (opt == "meteor")
+		leds.mode = 8;
+	else if (opt == "rainbow")
+		leds.mode = 0x1a;
+	else if (opt == "random")
+		leds.mode = 0x1f;
+	else if (opt.size() == 8 && opt.substr(0, 2) == "0x")
+	{
+		leds.mode = 1;
+		std::size_t idx(0);
+		auto v = std::stoul(opt.substr(2), &idx, 16);
+		if (idx != opt.size() - 2)
+			return 1;
+		leds.set_rgb(v >> 4, (v >> 2) & 0xff, v & 0xff);
+	}
+	else
+	{
+		leds.mode = 1;
+		unsigned r,g,b;
+		if (3 != sscanf(opt.c_str(),"%d,%d,%d", &r, &g, &b))
+			return 1;
+		if (r>255 || g>255 || b>255)
+			return 1;
+		leds.set_rgb(r, g, b);
+	}
+	return 0;
+}
 
 class mondev_t : public usbdev_t
 {
@@ -290,31 +369,20 @@ public:
 	int write_string(const std::string &s)
 	{
 		std::string s1 = "\001" + s;
-
-#if 0
-		const int len=static_cast<int>(s1.length());
-		for (int i=0; i<len; i++)
-		{
-			DEBUGL("Writing character \"%c\" to DigiSpark.\n", s[i]);
-			//CHECKERR_RET(1, usb_control_msg(m_devHandle, (0x01 << 5), 0x09, 0, s[i], 0, 0, 1000), "Error %i writing to USB device\n", result);
-			CHECKERR_RET(1, usb_interrupt_write(m_devHandle, (0x01 << 5), 0x09, 0, s[i], 0, 0, 1000), "Error %i writing to USB device\n", result);
-		}
-#else
 		return write(2, s1, 1000);
-#endif
 	}
 
 	int set_setting(const setting_t &setting, std::string &s)
 	{
 		//read_return();
-		log().log(DEBUG, "Setting %s to %s", setting.m_opt.c_str(), s.c_str());
+		log(DEBUG, "Setting %s to %s", setting.m_opt, s);
 		auto err = write_command(std::string("5b") + setting.m_cmd + s);
 		if (!err)
 		{
 			auto ret = read_return();
 			if (ret != "5600+")
 			{
-				log().log(DEBUG, "Got unexpected return <%s>", ret.c_str());
+				log(DEBUG, "Got unexpected return <%s>", ret);
 				return 1;
 			}
 			return 0;
@@ -335,7 +403,6 @@ public:
 				&& (ret.substr(0, cmd.size()) == std::string("5b") + setting.m_cmd
 				    || cmd == "5800260"))
 			{
-				//printf("%s\n", ret.c_str());
 				s = ret.substr(cmd.size());
 				return 0;
 			}
@@ -347,6 +414,30 @@ public:
 		}
 		else
 			return err;
+	}
+
+	void debug_cmd(const std::string &cmd)
+	{
+		auto err = write(2, cmd, 1000);
+		if (!err)
+		{
+			unsigned char buf[64] = {0, 0};
+			if (read(1, buf, 64, 1000))
+				log(DEBUG,"Error receiving %s: %d", to_hex(cmd), err);
+			else
+			{
+				std::string out("");
+				for (int i = 0; i < 16; i++)
+				{
+					char b[32];
+					snprintf(b, 32, "%02x ", buf[i]);
+					out += b;
+				}
+				log(DEBUG,"Special %s: %s", to_hex(cmd), to_hex(buf, 16));
+			}
+		}
+		else
+			log(DEBUG,"Error sending %s: %d", to_hex(cmd), err);
 	}
 
 private:
@@ -374,7 +465,7 @@ private:
 
 static int help()
 {
-	printf(
+	pprintf(
 		"Usage: %s [OPTION]... \n"
 		"Query or set monitor settings by usb directly on the device.\n"
 		"For supported devices please refer to the documentation.\n"
@@ -385,20 +476,24 @@ static int help()
 		"      --info                 display device information. This can be used\n"
 		"                               with --query\n"
 		, appname);
+	pprintf("%s",
+		"      --mystic               off, static, breathing, blinking, flashing, \n"
+		"                               blinds, meteor, rainbow, random, \n"
+		"                               0xRRGGBB, RRR,GGG,BBB\n");
 	for (auto &s : settings)
 		if (s.m_access == WRITE || s.m_access == READWRITE)
 		{
-			printf("      --%-20s values: ", s.m_opt.c_str());
+			pprintf("      --%-20s values: ", s.m_opt);
 			if (s.m_enc == ENC_STRINGINT)
 			{
 				for (auto &v : s.m_values)
-					printf("%s ", v.c_str());
+					pprintf("%s ", v);
 			}
 			else
-				printf("%d to %d", s.m_min, s.m_max);
-			printf("\n");
+				pprintf("%d to %d", s.m_min, s.m_max);
+			pprintf("\n");
 		}
-	printf("%s",
+	pprintf("%s",
 		"  -d, --debug                enable debug output\n"
 		"  -h, --help                 display this help and exit\n"
 		"      --version              output version information and exit\n"
@@ -406,13 +501,17 @@ static int help()
 		"Options are processed in the order they are given. You may specify an option\n"
 		"more than once with identical or different values.\n"
 		"\n"
+		"In addition to preset modes the --mystic option also accepts numeric\n"
+		"values. 0xff0000 will set all leds to red. '0,255,0' will set all leds\n"
+		"to green.\n"
+		"\n"
 		"Exit status:\n"
 		" 0  if OK,\n"
 		" 1  if error during option parsing,\n"
 		" 2  if error during device access,\n"
 		"\n"
-		"Report bugs on <https://github.com/couriersud/msigd/issues>\n\n"
-		"msigd home page: <https://github.com/couriersud/msigd>\n\n"
+		"Report bugs on <https://github.com/couriersud/msigd/issues>\n"
+		"msigd home page: <https://github.com/couriersud/msigd>\n"
 	);
 
 	return 0;
@@ -420,7 +519,7 @@ static int help()
 
 static int version()
 {
-	printf("%s %s\n"
+	pprintf("%s %s\n"
 		"Copyright (C) 2019 Couriersud\n"
 		"License GPLv2: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n"
 		"This is free software: you are free to change and redistribute it.\n"
@@ -434,7 +533,7 @@ template<typename... Args>
 static int error(int err, const char *fmt, Args&&... args)
 {
 	fprintf(stderr, "%s: ", appname);
-	fprintf(stderr, fmt, std::forward<Args>(args)...);
+	fprintf(stderr, fmt, log_helper(args)...);
 	fprintf(stderr, "\n");
 	fprintf(stderr, "Try '%s --help' for more information.\n", appname);
 	return err;
@@ -446,6 +545,8 @@ int main (int argc, char **argv)
 	bool query = false;
 	bool debug = false;
 	bool info = false;
+	led_data leds;
+	bool mystic = false;
 
 	std::vector<std::pair<setting_t *, std::string>> set;
 
@@ -463,6 +564,12 @@ int main (int argc, char **argv)
 			debug = true;
 		else if (cur_opt == "--query" || cur_opt == "-q")
 			query = true;
+		else if (cur_opt == "--mystic" && arg_pointer + 1 < argc)
+		{
+			if (mystic_opt(argv[++arg_pointer], leds) != 0)
+				return error(1, "Mystic light parameter error: %s", argv[arg_pointer]);
+			mystic = true;
+		}
 		else
 		{
 			if (cur_opt.size() >= 3 && arg_pointer + 1 < argc && cur_opt.substr(0,2) == "--")
@@ -475,17 +582,17 @@ int main (int argc, char **argv)
 					{
 						std::string val = s.encode(argv[++arg_pointer]);
 						if (val == "")
-							return error(1, "Unknown value <%s> for option %s", argv[arg_pointer], cur_opt.c_str());
+							return error(1, "Unknown value <%s> for option %s", argv[arg_pointer], cur_opt);
 						set.emplace_back(&s, val);
 						found = true;
 						break;
 					}
 				}
 				if (!found)
-					return error(1, "Unknown option: %s", cur_opt.c_str());
+					return error(1, "Unknown option: %s", cur_opt);
 			}
 			else
-				return error(1, "Unknown option: %s", cur_opt.c_str());
+				return error(1, "Unknown option: %s", cur_opt);
 		}
 		arg_pointer++;
 	}
@@ -499,10 +606,21 @@ int main (int argc, char **argv)
 	{
 		if (info)
 		{
-			printf("Vendor Id:  0x%04x\n", usb.vendor_id());
-			printf("Product Id: 0x%04x\n", usb.product_id());
-			printf("Product:    %s\n",     usb.product().c_str());
-			printf("Serial:     %s\n",     usb.serial().c_str());
+			pprintf("Vendor Id:  0x%04x\n", usb.vendor_id());
+			pprintf("Product Id: 0x%04x\n", usb.product_id());
+			pprintf("Product:    %s\n",     usb.product());
+			pprintf("Serial:     %s\n",     usb.serial());
+			if (debug)
+			{
+				// queried before MSI App 20191206 0.0.2.23
+				usb.debug_cmd("\x01\xb0");
+				usb.debug_cmd("\x01\xb4");
+				// set after MSI app 20191206 0.0.2.23
+				//usb.debug_cmd("\x01\xd0""b00100000\r");
+				// queried but not supported on MAG321CURV (returns 56006)
+				usb.debug_cmd("\x01""5800190\r");
+				//usb.debug_cmd("\x01""5800130\r");
+			}
 		}
 		// query first
 		if (query)
@@ -512,15 +630,17 @@ int main (int argc, char **argv)
 				{
 					std::string res;
 					if (!usb.get_setting(setting, res))
-						printf("%s : %s\n", setting.m_opt.c_str(), setting.decode(res).c_str());
+						pprintf("%s : %s\n", setting.m_opt, setting.decode(res));
 					else
 					{
-						error(0, "Error querying device on %s - got <%s>", setting.m_opt.c_str(), res.c_str());
+						error(0, "Error querying device on %s - got <%s>", setting.m_opt, res);
 						if (!debug)
 							return 2;
 					}
 				}
 		}
+		if (mystic)
+			usb.write_led(leds);
 
 #if 0
 		led_data test;
@@ -530,41 +650,11 @@ int main (int argc, char **argv)
 		usb.write_led(test);
 #endif
 
-		// if we want to set a value, do it now
+		// if we want to set values, do it now
 		for (auto &s : set)
 			if (usb.set_setting(*s.first, s.second))
-				return error(2, "Error setting --%s", s.first->m_opt.c_str());
+				return error(2, "Error setting --%s", s.first->m_opt);
 
-#if 0
-		usb.get_brightness();
-		usb.get_pip();
-		usb.set_brightness(80);
-		usb.set_pip(3);
-		usb.set_pip_off();
-
-		usb.write_string(output);
-		if (sendLine)
-			usb.write_string("\n");
-		//usleep(10000);
-		while (1)
-		{
-			std::string s = usb.read_string(255, '\n');
-			if (s == "")
-			{
-				//printf("TimeOut\n");
-				//break;
-			}
-			else if (exit_on != "" && s.substr(0,exit_on.size()) == exit_on)
-				break;
-			else
-			{
-				printf("%s\n", s.c_str(), s.size());
-//				printf("Got <%s> %d\n", s.c_str(), s.size());
-				fflush(stdout);
-			}
-			usleep(10000);
-		}
-#endif
 	}
 	else
 		return error(1, "No usb device found", 0);

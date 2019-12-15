@@ -16,6 +16,13 @@ enum log_level
 	L_ERROR
 };
 
+template <typename T>
+static typename std::enable_if<std::is_integral<typename std::decay<T>::type>::value, T>::type
+log_helper(T&& v) { return v; }
+
+static const char * log_helper(const std::string & v) { return v.c_str(); }
+static const char * log_helper(const char * v) { return v; }
+
 class logger_t
 {
 public:
@@ -26,25 +33,25 @@ public:
 
 	virtual ~logger_t() = default;
 
-	void log(log_level level, const char *s)
+	void operator()(log_level level, const char *s)
 	{
 		if (m_enabled[level])
 			vlog(level_str(level) + ": " + s);
 	}
 
-	void log(log_level level, std::string s)
+	void operator()(log_level level, std::string s)
 	{
 		if (m_enabled[level])
 			vlog(level_str(level) + ": " + s);
 	}
 
 	template<typename... Args>
-	void log(log_level level, const char *fmt, Args&&... args)
+	void operator()(log_level level, const char *fmt, Args&&... args)
 	{
 		if (m_enabled[level])
 		{
 			char buf[1024];
-			std::snprintf(buf, 1024, fmt, std::forward<Args>(args)...);
+			std::snprintf(buf, 1024, fmt, log_helper(args)...);
 			vlog(level_str(level) + ": " + buf);
 		}
 	}
