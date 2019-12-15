@@ -52,9 +52,6 @@ public:
 		{
 
 		}
-		for (std::size_t i=0; i <= USB_ENDPOINT_ADDRESS_MASK; i++)
-			if (m_buf[i])
-				delete[] m_buf[i];
 	}
 
 public:
@@ -215,6 +212,10 @@ protected:
 	{
 		if (m_devHandle != nullptr)
 		{
+			for (std::size_t i=0; i <= USB_ENDPOINT_ADDRESS_MASK; i++)
+				if (m_buf[i])
+					delete[] m_buf[i];
+
 			m_log(DEBUG, "Releasing interface %d\n", m_interface->bInterfaceNumber);
 
 			if (int err = usb_release_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
@@ -368,19 +369,18 @@ private:
 	}
 
 	/* https://stackoverflow.com/questions/31119014/open-a-device-by-name-using-libftdi-or-libusb */
-	int usbGetDescriptorString(usb_dev_handle *dev, int index, int langid, char *buf, int buflen) {
+	int usbGetDescriptorString(usb_dev_handle *dev, int index, int langid, std::string &ret) {
 		// make standard request GET_DESCRIPTOR, type string and given index
 		// (e.g. dev->iProduct)
-#if 1
+		int rval;
 		char buffer[64];
-		int rval, i;
-
+#if 1
 		rval = usb_control_msg(dev,
 			USB_TYPE_STANDARD | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
 			USB_REQ_GET_DESCRIPTOR, (USB_DT_STRING << 8) + index, langid,
 			buffer, sizeof(buffer), 1000);
 		if (rval < 0) // error
-			return rval;
+			return 1;
 
 		// rval should be bytes read, but buffer[0] contains the actual response size
 		const auto response_size(static_cast<uint8_t>(buffer[0]));
@@ -388,25 +388,31 @@ private:
 			rval = response_size; // string is shorter than bytes read
 
 		if (buffer[1] != USB_DT_STRING) // second byte is the data type
-			return 0; // invalid return type
+			return 1; // invalid return type
 
 		// we're dealing with UTF-16LE here so actual chars is half of rval,
 		// and index 0 doesn't count
 		rval /= 2;
-
+		ret = "";
 		/* lossy conversion to ISO Latin1 */
-		for (i = 1; i < rval && i < buflen; i++)
+		for (std::size_t i = 1; i < static_cast<std::size_t>(rval) && i < sizeof(buffer); i++)
 		{
 			if (buffer[2 * i + 1] == 0)
-				buf[i - 1] = buffer[2 * i];
+				ret += buffer[2 * i];
 			else
-				buf[i - 1] = '?'; /* outside of ISO Latin1 range */
+				ret += '?'; /* outside of ISO Latin1 range */
 		}
-		buf[i - 1] = 0;
 
-		return i - 1;
+		return 0;
 #else
-		return usb_get_string_simple(dev, index, buf, buflen);
+		rval = usb_get_string_simple(dev, index, buffer, sizeof(buffer));
+		if (rval >= 0)
+		{
+			ret = buffer;
+			return 0;
+		}
+		else
+			return 1;
 #endif
 	}
 
@@ -422,7 +428,7 @@ private:
 		{
 			for (device = bus->devices; device != nullptr; device = device->next)
 			{
-			// Check to see if each USB device matches the DigiSpark Vendor and Product IDs
+				// Check to see if each USB device matches the Vendor and Product ID
 				if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
 				{
 					usb_dev_handle * handle = nullptr;
@@ -433,25 +439,18 @@ private:
 						continue;
 					}
 					/* get product name */
-#ifdef _WIN32
-					char buf[64] = "";
-#else
-					char buf[256] = "";
-#endif
-					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, buf, sizeof(buf)) < 0)
+
+					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, m_product))
 					{
 						m_log(DEBUG, "cannot query product for device: %s", usb_strerror());
 						continue;
 					}
-					m_product = buf;
 					m_log(DEBUG, "Found device %s \n", m_product);
 
-					buf[0] = 0;
-					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, buf, sizeof(buf)) < 0)
+					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, m_serial))
 					{
 						m_log(DEBUG, "cannot query serial for device: %s", usb_strerror());
 				 	}
-					m_serial = buf;
 
 					usb_close(handle);
 					m_vendor_id = idVendor;
@@ -483,8 +482,5 @@ private:
 	std::array <char *, USB_ENDPOINT_ADDRESS_MASK+1> m_buf;
 	bool m_detached;
 };
-
-
-
 
 #endif /* PUSB_H_ */

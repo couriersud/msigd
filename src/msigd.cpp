@@ -10,7 +10,7 @@
 #include "pusb.h"
 
 static const char *appname = "msigd";
-static const char *appversion = "0.1";
+static const char *appversion = "0.2";
 
 enum access_t
 {
@@ -129,9 +129,6 @@ struct setting_t
 			else
 			{
 				return msi_utos(static_cast<unsigned>(v), m_base, 3);
-				//char buf[100];
-				//snprintf(buf, 100, "%03d", v);
-				//return buf;
 			}
 		}
 		else if (m_enc == ENC_STRINGINT)
@@ -155,8 +152,6 @@ struct setting_t
 			return val;
 		if (m_enc == ENC_INT)
 		{
-			// char *eptr;
-			//int v = strtol(val.c_str(), &eptr, 10);
 			unsigned v = msi_stou(val, m_base);
 			char buf[100];
 			std::snprintf(buf, 100, "%d", v);
@@ -374,7 +369,6 @@ public:
 
 	int set_setting(const setting_t &setting, std::string &s)
 	{
-		//read_return();
 		log(DEBUG, "Setting %s to %s", setting.m_opt, s);
 		auto err = write_command(std::string("5b") + setting.m_cmd + s);
 		if (!err)
@@ -639,18 +633,11 @@ int main (int argc, char **argv)
 					}
 				}
 		}
+
 		if (mystic)
 			usb.write_led(leds);
 
-#if 0
-		led_data test;
-
-		//test.set_rgb(0xFF, 0xFF, 0x00);
-		test.set_rgb(0x00, 0x00, 0xff);
-		usb.write_led(test);
-#endif
-
-		// if we want to set values, do it now
+		// set values
 		for (auto &s : set)
 			if (usb.set_setting(*s.first, s.second))
 				return error(2, "Error setting --%s", s.first->m_opt);
