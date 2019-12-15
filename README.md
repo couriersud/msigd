@@ -282,3 +282,9 @@ while true; do
 done
 ```
 
+## TODO
+
+*	Migrating to [hidapi](https://github.com/libusb/hidapi) may be a solution to fix OSX issues and better general system integration.  
+Linux: libhidapi, MINGW: mingw-w64-x86_64-hidapi, OSX: hidapi
+
+
