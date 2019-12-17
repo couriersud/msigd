@@ -1,11 +1,17 @@
-
-![](https://github.com/couriersud/msigd/workflows/Ubuntu%20latest/badge.svg?branch=master)
-![](https://github.com/couriersud/msigd/workflows/Windows%20latest/badge.svg?branch=master)
-
 # msigd
 MSI Gaming Device control application
 
-Controls MSI Monitor OSD settings.
+Build status:
+
+| OS      | Compiler   | Status        | 
+|:------- |:---------- |:------------- | 
+| Linux   | g++        | ![](https://github.com/couriersud/msigd/workflows/Ubuntu%20latest/badge.svg?branch=master)  |
+| Windows | MinGW++    | ![](https://github.com/couriersud/msigd/workflows/Windows%20latest/badge.svg?branch=master) |
+| OSX     | clang++    | ![](https://github.com/couriersud/msigd/workflows/OSX%20latest/badge.svg?branch=master)     |
+
+## What is msigd?
+
+The `msigd` command line tools allows you to change MSI Monitor OSD settings.
 
 ## Supported monitors
 
@@ -108,17 +114,6 @@ make  TARGETOS=windows
 
 ### OSX
 
-#### Important note
-
-The usb interface will be claimed by the OSX HID driver. Basically this prevents
-`msigd` to claim the usb interface. There is no easy way around this. More information
-can be found here: [libusb FAQ](https://github.com/libusb/libusb/wiki/FAQ).
-A solution is described on [stackoverflow](https://stackoverflow.com/a/29610161).
-However this includes turning of security settings and thus I am not going to
-pursue this further here. 
-
-#### Still want to compile on OSX?
-
 Make sure you have [homebrew](https://brew.sh/) installed. 
 
 ```
@@ -132,6 +127,16 @@ Compile
 make TARGETOS=osx
 ```
 
+#### Important note when compiling with USE_HIDAPI=0 (make USE_HIDAPI=0)
+
+This will compile with libusb instead of libhidapi support. You normally don't want to do this.
+In this case the usb interface will be claimed by the OSX HID driver. Basically this prevents
+`msigd` to claim the usb interface. There is no easy way around this. More information
+can be found here: [libusb FAQ](https://github.com/libusb/libusb/wiki/FAQ).
+
+A solution is described on [stackoverflow](https://stackoverflow.com/a/29610161).
+However this includes turning of security settings and thus I am not going to
+pursue this further here. 
 
 ## Security
 
