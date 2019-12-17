@@ -21,15 +21,14 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: msys2do pacman -S --noconfirm make
+    - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-gcc
     - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
-    - run: msys2do pacman -S --noconfirm mingw-w64-i686-libusb-compat-git
-    - run: msys2do pacman -S --noconfirm  mingw-w64-x86_64-gcc
+    - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-hidapi
       
     #- name: configure
     #  run: ./configure
     - name: make
-      run: |
-        msys2do make mingw
+      run: msys2do make TARGETOS=windows
     #- name: make check
     #  run: make check
     #- name: make distcheck

@@ -33,6 +33,9 @@
 class usbdev_t
 {
 public:
+
+	static constexpr const unsigned DEFAULT_TIMEOUT = 1000;
+
 	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
 	: m_log(logger)
 	, m_device(nullptr)
@@ -40,6 +43,8 @@ public:
 	, m_interface(nullptr)
 	, m_ep{nullptr}
 	, m_buf{nullptr}
+	, m_ep_out(0)
+	, m_ep_in(0)
 	, m_detached(false)
 	{
 		if (init(idVendor, idProduct, sProduct) > 0)
@@ -54,7 +59,6 @@ public:
 		}
 	}
 
-public:
 	operator bool() { return (m_device != nullptr) && (m_devHandle != nullptr); }
 
 	std::string product() { return m_product; }
@@ -93,7 +97,7 @@ protected:
 		return 0;
 	}
 
-	int write(unsigned ep, const void *data, std::size_t len, unsigned timeout)
+	int write(unsigned ep, const void *data, std::size_t len, unsigned timeout = DEFAULT_TIMEOUT)
 	{
 		// FIXME: allow different USB_TYPE
 		int result(-1);
@@ -140,12 +144,23 @@ protected:
 		return 0;
 	}
 
-	int write(unsigned ep, const std::string &s, unsigned timeout)
+	int write(unsigned ep, const std::string &s, unsigned timeout = DEFAULT_TIMEOUT)
 	{
 		return write(ep, s.c_str(), s.size() + 1, timeout);
 	}
 
-	int read(unsigned ep, void *data, unsigned len, unsigned timeout)
+	// use auto detected endpoint or ep 0
+	int write(const void *data, std::size_t len, unsigned timeout = DEFAULT_TIMEOUT)
+	{
+		return write(m_ep_out, data, len, timeout);
+	}
+
+	int write(const std::string &s, unsigned timeout = DEFAULT_TIMEOUT)
+	{
+		return write(m_ep_out, s.c_str(), s.size() + 1, timeout);
+	}
+
+	int read(unsigned ep, void *data, unsigned len, unsigned timeout = DEFAULT_TIMEOUT)
 	{
 		int result(-1);
 
@@ -186,6 +201,12 @@ protected:
 			return 1;
 		}
 		return 0;
+	}
+
+	// use auto detected endpoint or ep 0
+	int read(void *data, unsigned len, unsigned timeout = DEFAULT_TIMEOUT)
+	{
+		return read(m_ep_in, data, len, timeout);
 	}
 
 	int checkep(unsigned ep, bool write)
@@ -297,11 +318,16 @@ private:
 							m_interface = &(m_device->config->interface[i].altsetting[j]);
 							for (int k = 0; k< m_interface->bNumEndpoints; k++)
 							{
-								auto ep(m_interface->endpoint[k].bEndpointAddress);
+								auto ep(m_interface->endpoint[k].bEndpointAddress  & USB_ENDPOINT_ADDRESS_MASK);
 								auto mps(m_interface->endpoint[k].wMaxPacketSize);
 								m_log(DEBUG,"Endpoint %02x %04x", ep, mps);
-								m_ep[ep & USB_ENDPOINT_ADDRESS_MASK] = &m_interface->endpoint[k];
-								m_buf[ep & USB_ENDPOINT_ADDRESS_MASK] = new char[mps];
+								m_ep[ep] = &m_interface->endpoint[k];
+								m_buf[ep] = new char[mps];
+								if (!checkep(ep, true) && !m_ep_out)
+									m_ep_out = ep;
+								if (!checkep(ep, false) && !m_ep_in)
+									m_ep_in = ep;
+
 							}
 							break;
 						}
@@ -480,6 +506,8 @@ private:
 	struct usb_interface_descriptor *m_interface;
 	std::array <struct usb_endpoint_descriptor *, USB_ENDPOINT_ADDRESS_MASK+1> m_ep;
 	std::array <char *, USB_ENDPOINT_ADDRESS_MASK+1> m_buf;
+	unsigned m_ep_out;
+	unsigned m_ep_in;
 	bool m_detached;
 };
 

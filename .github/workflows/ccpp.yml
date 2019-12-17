@@ -12,7 +12,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y libusb-dev
+        sudo apt install -y libusb-dev libhidapi-dev
     #- name: configure
     #  run: ./configure
     - name: make

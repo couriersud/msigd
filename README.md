@@ -80,7 +80,7 @@ ID 1462:3fa4 Micro Star International
 Make sure you have libusb installed. On debian based systems
 
 ```sh
-sudo apt install libusb-dev
+sudo apt install libusb-dev libhidapi-dev
 ```
 
 compile 
@@ -96,14 +96,14 @@ To compile on windows you need a working mingw environment.
 Make sure you have libusb installed:
 
 ```sh
-pacman -S mingw-w64-i686-libusb-compat-git
 pacman -S mingw-w64-x86_64-libusb-compat-git
+pacman -S mingw-w64-x86_64-hidapi
 ```
 
 Compile 
 
 ```sh
-make mingw
+make  TARGETOS=windows
 ```
 
 ### OSX
@@ -123,12 +123,13 @@ Make sure you have [homebrew](https://brew.sh/) installed.
 
 ```
 brew install libusb-compat
+brew install hidapi
 ```
 
 Compile 
 
 ```sh
-make
+make TARGETOS=osx
 ```
 
 
@@ -145,8 +146,9 @@ In a nutshell:
 * Create `/etc/udev/rules.d/51-msi-gaming-device.rules`:
 
 ```
-# Allow access to members of plugdev
+# Allow access to members of plugdev - both for usb and hidraw access
 SUBSYSTEM=="usb", ATTR{idVendor}=="1462", ATTR{idProduct}=="3fa4", GROUP="plugdev", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="1462", ATTRS{idProduct}=="3fa4", GROUP="plugdev", TAG+="uaccess"
 ```
 * Execute
 
@@ -284,6 +286,7 @@ done
 
 ## TODO
 
+### Done
 *	Migrating to [hidapi](https://github.com/libusb/hidapi) may be a solution to fix OSX issues and better general system integration.  
 Linux: libhidapi, MINGW: mingw-w64-x86_64-hidapi, OSX: hidapi
 

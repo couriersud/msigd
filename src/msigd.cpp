@@ -7,10 +7,19 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef USE_HID
+#define USE_HID 	(1)
+#endif
+
+
+#if USE_HID
+#include "phid.h"
+#else
 #include "pusb.h"
+#endif
 
 static const char *appname = "msigd";
-static const char *appversion = "0.2";
+static const char *appversion = "0.3";
 
 enum access_t
 {
@@ -345,10 +354,12 @@ public:
 	mondev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
 	: usbdev_t(logger, idVendor, idProduct, sProduct)
 	{
+#if !(USE_HID)
 		if (!checkep(1, false) && !checkep(2, true))
 			return;
 		else
 			cleanup();
+#endif
 	}
 
 	~mondev_t()
@@ -364,7 +375,7 @@ public:
 	int write_string(const std::string &s)
 	{
 		std::string s1 = "\001" + s;
-		return write(2, s1, 1000);
+		return write(s1);
 	}
 
 	int set_setting(const setting_t &setting, std::string &s)
@@ -412,11 +423,11 @@ public:
 
 	void debug_cmd(const std::string &cmd)
 	{
-		auto err = write(2, cmd, 1000);
+		auto err = write(cmd);
 		if (!err)
 		{
 			unsigned char buf[64] = {0, 0};
-			if (read(1, buf, 64, 1000))
+			if (read(buf, 64))
 				log(DEBUG,"Error receiving %s: %d", to_hex(cmd), err);
 			else
 			{
@@ -439,13 +450,13 @@ private:
 	int write_command(std::string prefix)
 	{
 		std::string cmd("\001" + prefix + "\r");
-		return write(2, cmd, 1000);
+		return write(cmd);
 	}
 
 	std::string read_return()
 	{
 		char buf[64] = {0, 0};
-		if (read(1, buf, 64, 1000))
+		if (read(buf, 64))
 			return "";
 		//skip 0x01 at beginning and cut off "\r"
 		std::string ret(buf+1);
@@ -606,7 +617,6 @@ int main (int argc, char **argv)
 			pprintf("Serial:     %s\n",     usb.serial());
 			if (debug)
 			{
-				// queried before MSI App 20191206 0.0.2.23
 				usb.debug_cmd("\x01\xb0");
 				usb.debug_cmd("\x01\xb4");
 				// set after MSI app 20191206 0.0.2.23
