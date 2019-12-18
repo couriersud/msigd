@@ -1,7 +1,33 @@
 # msigd
-MSI Gaming Device control application
 
-Build status:
+The `msigd` command line tools allows you to change all settings for MSI monitors which can be set in the monitor's OSD menu. 
+
+<!-- TOC depthFrom:2 orderedList:false -->
+
+- [1. Build status:](#1-build-status)
+- [2. Supported monitors](#2-supported-monitors)
+    - [2.1. MSI Monitors](#21-msi-monitors)
+    - [2.2. Service menu](#22-service-menu)
+    - [2.3. USB manufacturer and product id](#23-usb-manufacturer-and-product-id)
+- [3. Compile](#3-compile)
+    - [3.1. Linux](#31-linux)
+    - [3.2. Windows](#32-windows)
+    - [3.3. OSX](#33-osx)
+- [4. Security](#4-security)
+    - [4.1. Linux](#41-linux)
+    - [4.2. Windows](#42-windows)
+    - [4.3. OSX](#43-osx)
+    - [4.4. Building with libusb](#44-building-with-libusb)
+- [5. Usage](#5-usage)
+- [6. Examples](#6-examples)
+    - [6.1. Automatically switch input source](#61-automatically-switch-input-source)
+    - [6.2. Change settings depending on foreground window](#62-change-settings-depending-on-foreground-window)
+- [7. TODO](#7-todo)
+
+<!-- /TOC -->
+
+## 1. Build status:
+
 
 | OS      | Compiler   | Status        | 
 |:------- |:---------- |:------------- | 
@@ -9,11 +35,7 @@ Build status:
 | Windows | MinGW++    | ![](https://github.com/couriersud/msigd/workflows/Windows%20latest/badge.svg?branch=master) |
 | OSX     | clang++    | ![](https://github.com/couriersud/msigd/workflows/OSX%20latest/badge.svg?branch=master)     |
 
-## What is msigd?
-
-The `msigd` command line tools allows you to change MSI Monitor OSD settings.
-
-## Supported monitors
+## 2. Supported monitors
 
 All monitors for which the OSD Gaming Device App is available most likely
 should be supported. There are differences between those monitors which `msigd` 
@@ -27,9 +49,10 @@ information by opening an issue.
 - For linux the output of `lsusb`
 - any other information which might be helpful, e.g. OSD setting xyz is not
   supported.
+</div>
 
 
-### MSI Monitors
+### 2.1. MSI Monitors
 
 | ID            | Firmware | Supported     | Version output | Panel |
 |:------------- |:-------- |:-------------:|:----- |:-------------- |
@@ -58,7 +81,7 @@ information by opening an issue.
 | MAG272CRX     | ?        | ?             | ?     | ?              |
 
 
-### Service menu
+### 2.2. Service menu
 
 The panel information and more is displayed by the service menu. 
 
@@ -73,15 +96,15 @@ The panel information and more is displayed by the service menu.
 The service menu also has more information about the preset color temperature
 modes. 
 
-### USB manufacturer and product id
+### 2.3. USB manufacturer and product id
 
 ```
 ID 1462:3fa4 Micro Star International
 ```
 
-## Compile
+## 3. Compile
 
-### Linux
+### 3.1. Linux
 
 Make sure you have libusb installed. On debian based systems
 
@@ -95,7 +118,7 @@ compile
 make
 ```
 
-### Windows
+### 3.2. Windows
 
 To compile on windows you need a working mingw environment.
 
@@ -112,7 +135,7 @@ Compile
 make  TARGETOS=windows
 ```
 
-### OSX
+### 3.3. OSX
 
 Make sure you have [homebrew](https://brew.sh/) installed. 
 
@@ -127,20 +150,9 @@ Compile
 make TARGETOS=osx
 ```
 
-#### Important note when compiling with USE_HIDAPI=0 (make USE_HIDAPI=0)
+## 4. Security
 
-This will compile with libusb instead of libhidapi support. You normally don't want to do this.
-In this case the usb interface will be claimed by the OSX HID driver. Basically this prevents
-`msigd` to claim the usb interface. There is no easy way around this. More information
-can be found here: [libusb FAQ](https://github.com/libusb/libusb/wiki/FAQ).
-
-A solution is described on [stackoverflow](https://stackoverflow.com/a/29610161).
-However this includes turning of security settings and thus I am not going to
-pursue this further here. 
-
-## Security
-
-### Linux
+### 4.1. Linux
 This program needs root privilidges. Use with care.
 
 Alternatively you may use udev to grant user access rights. More information is
@@ -162,7 +174,7 @@ sudo udevadm control --reload-rules
 ```
 * Turn your monitor off and on.
 
-### Windows
+### 4.2. Windows
 
 On Windows 7 `msigd` does need no additional user rights. It however conflicts
 with OSD Gaming device software. 
@@ -173,7 +185,25 @@ You have two alternatives:
 
 2.	Use Task Manager and stop `MonitorMicroKeyDetector.exe`
 
-## Usage
+### 4.3. OSX
+
+On OSX no elevated user rights are needed.
+
+### 4.4. Building with libusb
+
+You can also use `make USE_HIDAPI=0` to build with `libusb` instead of the default `libhidapi`. 
+This introduces issues on Windows and OSX builds and therefore is not recommended.
+
+- For Windows administrator rights are needed.
+
+- On OSX the usb interface will be claimed by the OSX HID driver. Basically this prevents
+`msigd` to claim the usb interface. There is no easy way around this. More information
+can be found here: [libusb FAQ](https://github.com/libusb/libusb/wiki/FAQ). 
+A solution is described on [stackoverflow](https://stackoverflow.com/a/29610161).
+This includes turning of security settings and thus I am not going to
+pursue this further here. 
+
+## 5. Usage
 ```sh
 ./msigd --help
 ```
@@ -261,7 +291,9 @@ You may also use the following to display man style help
 help2man --include=msigd.help2man --no-info ./msigd | nroff -man |less
 ```
 
-## Examples
+## 6. Examples
+
+### 6.1. Automatically switch input source
 
 I have a usb swiched port. Upon pressing a button on the switch, keyboard and 
 mouse (or up to four devices) are switched between two computers: my desktop and
@@ -289,10 +321,59 @@ while true; do
 done
 ```
 
-## TODO
+### 6.2. Change settings depending on foreground window
 
-### Done
-*	Migrating to [hidapi](https://github.com/libusb/hidapi) may be a solution to fix OSX issues and better general system integration.  
-Linux: libhidapi, MINGW: mingw-w64-x86_64-hidapi, OSX: hidapi
+The script below is an example on how to change display settings automatically
+depending on the active application. When watching movies, you may want to use
+image enhancement while when using the terminal you may prefer a reduced 
+brightness.
 
+This script is an example what you can do using `msigd`:
 
+```sh
+#!/bin/sh
+
+DISP_DEFAULT='--brightness 80 --eye_saver off --image_enhancement off'
+MSIGD=./msigd
+
+if [ ! -x "$(command -v xdotool)" ]; then
+	echo Error: xdotool required >&2
+	exit 1
+fi
+
+setting=""
+while true; do
+	# Get foreground window commandline
+	vwin=`xdotool getwindowfocus`
+	vpid=`xdotool getwindowpid $vwin 2>/dev/null`
+	if [ "$vpid" != "" ]; then
+		cl=`cat /proc/${vpid}/cmdline | sed -e "s/\\x0/ /g"`
+	else
+		cl=`xdotool getwindowname $vwin`
+	fi
+	case "$cl" in
+		*gnome-terminal-server*)
+			nsetting='--brightness 30'
+			;;
+		*eclipse*)
+			nsetting='--eye_saver on'
+			;;
+		*xine*)
+			nsetting='--image_enhancement strong'
+			;;
+		*)
+			nsetting=''
+			;;
+	esac 
+	if [ "$nsetting" != "$setting" ]; then
+		$MSIGD $DISP_DEFAULT $nsetting
+		setting="$nsetting"
+	fi
+	sleep 1
+done
+```
+
+## 7. TODO
+
+- Code cleanup
+- Support more monitors - depends on user contributions

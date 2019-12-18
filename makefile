@@ -7,12 +7,6 @@ ifndef TARGETOS
 TARGETOS=linux
 endif
 
-ifndef USE_HIDAPI
-USE_HIDAPI=1
-endif
-
-CXXDEFS=-DUSE_HID=$(USE_HIDAPI)
-
 SOURCES = $(SRC)/msigd.cpp
 TARGETS = msigd
 
@@ -22,6 +16,16 @@ CXXFLAGS = -O2 -g -Wall -Wextra -std=c++14 $(CXXEXTRAFLAGS)
 #CFLAGS = -O2 -g -Wall -Wextra -std=c++14 -Weverything -Wno-c++98-compat -Wno-weak-vtables
 
 LD = $(CXX)
+
+#-------------------------------------------------
+# No more configuration 
+#-------------------------------------------------
+
+ifndef USE_HIDAPI
+USE_HIDAPI=1
+endif
+
+CXXDEFS=-DUSE_HID=$(USE_HIDAPI)
 
 ifeq ($(TARGETOS),windows)
 	LIBS = -lusb
@@ -49,13 +53,11 @@ endif
 
 MAKEFILE_TARGETS_WITHOUT_INCLUDE := clean doc clang mingw nvcc
 
+#-------------------------------------------------
+# all
+#-------------------------------------------------
 
 all:    depend $(TARGETS)
-
-mingw:
-	$(MAKE) CXXEXTRAFLAGS="-DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0501 \
-		-DWIN32_LEAN_AND_MEAN" LDEXTRAFLAGS="-Wl,--subsystem,console \
-		-municode" LIBS=-lusb MD=@mkdir.exe DOXYGEN=doxygen.exe
 		
 #-------------------------------------------------
 # clean
