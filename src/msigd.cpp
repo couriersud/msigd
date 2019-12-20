@@ -91,6 +91,13 @@ static void pprintf(const char *fmt, Args&&... args)
 	printf(fmt, log_helper(args)...);
 }
 
+template<typename... Args>
+static void eprintf(const char *fmt, Args&&... args)
+{
+	fprintf(stderr, fmt, log_helper(args)...);
+}
+
+
 struct setting_t
 {
 	setting_t(std::string cmd, std::string opt)
@@ -195,10 +202,10 @@ static std::vector<setting_t> settings =
 	setting_t("00100", "power", {"off", "on"}),  // returns 001
 	setting_t("00110", "unknown02"),  // returns 000 called frequently by OSD app, readonly
 	setting_t(READ, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
-	setting_t("00130", "unknown04"),  // returns 13 blanks
 	setting_t("00140", "unknown03"),  // returns 00; called frequently by OSD app, readonly
-	setting_t("00150", "unknown01"),  // returns V18, readonly
+	//setting_t("00160", "unknown0x"),  // query kills monitor side
 	setting_t("00170", "frequency"), // returns 060
+	//setting_t("00180", "unknown0x"),  // returns 56006
 	setting_t("00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),  // returns 000
 	setting_t("00210", "unknown06", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	setting_t("00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
@@ -246,6 +253,13 @@ static std::vector<setting_t> settings =
 	setting_t("00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 003
 	setting_t("00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 004
 	setting_t("00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 005
+};
+
+static std::vector<std::pair<setting_t,std::string>> special =
+{
+	{ setting_t("00150", "unknown01"), "V18" }, // returns V18, readonly
+	{ setting_t("00130", "unknown04"), std::string(13, ' ') }, // returns 13 blanks
+	{ setting_t("00190", "unknown05"), "56006" } // returns 56006
 };
 
 struct led_data
@@ -609,6 +623,24 @@ int main (int argc, char **argv)
 
 	if (usb)
 	{
+		bool notify(false);
+		for (auto &setting : special)
+		{
+			std::string res;
+			/* ignore return */ usb.get_setting(setting.first, res);
+			if (res != setting.second)
+			{
+				eprintf("Unexpected %s : %s\n", setting.first.m_opt, setting.first.decode(res));
+				notify = true;
+			}
+		}
+		if (notify)
+		{
+			eprintf("Detected an unknown monitor. Please report the output of\n"
+				    "'msigd --info --debug --query' as an issue and also provide\n"
+					"the ID (MAG...) of your monitor. Thank you!\n");
+		}
+
 		if (info)
 		{
 			pprintf("Vendor Id:  0x%04x\n", usb.vendor_id());
