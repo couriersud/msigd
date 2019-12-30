@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DISP_DEFAULT='--brightness 80 --eye_saver off --image_enhancement off'
+DISP_DEFAULT='--brightness 60 --eye_saver off --image_enhancement off'
 MSIGD=./msigd
 
 if [ ! -x "$(command -v xdotool)" ]; then

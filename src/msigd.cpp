@@ -197,6 +197,10 @@ struct setting_t
 	int m_base = 10;
 };
 
+// MPG341CQR:  3DA0
+// MAG321CURV  3DA2
+// MAG322CQRV  3DA4
+
 static std::vector<setting_t> settings =
 {
 	setting_t("00100", "power", {"off", "on"}),  // returns 001
@@ -209,6 +213,7 @@ static std::vector<setting_t> settings =
 	setting_t("00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),  // returns 000
 	setting_t("00210", "unknown06", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	setting_t("00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
+	// FIXME: anti-motion blur?
 	setting_t("00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	setting_t("00240", "hdcr", {"off", "on"}),  // returns 000
 	setting_t("00250", "refresh_rate_display", {"off", "on"}),  // returns 000
@@ -218,8 +223,10 @@ static std::vector<setting_t> settings =
 	setting_t("00262", "alarm_clock_time", 0, 99*60+59, -60),  // returns 000
 	setting_t("00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),  // returns 000
 	setting_t("00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
+	// FIXME: adaptive sync ? game-mode only
 	setting_t("00280", "unknown08"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	setting_t("00290", "zero_latency", {"off", "on"}),  // returns 001
+	// FIXME: MPG341CQR: Auto, 4:3, 16:9, 21:9, 1:1
 	setting_t("002:0", "screen_size", {"19", "24", "4:3", "16:9"}),  // returns 003 -> 19",24",4:3,16:9
 	setting_t("002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),  // returns 002 0:OFF, 1:Normal,2:Strong,3:Strongest,4:A.I.
 	setting_t("00300", "pro_mode", {"user", "reader", "cinema", "designer"}),  // returns 000
@@ -235,6 +242,7 @@ static std::vector<setting_t> settings =
 	setting_t("00434", "rgb", 0, 100*100*100, 100),  // returns bbb  -> value = 'b' - '0' = 98-48=50
 	setting_t("00435", "unknown09"),  // returns 000, read only
 	setting_t(WRITE, "00440", "unknown10", {"off", "on"}),
+	//setting_t("00440", "unknown10", 0, 100),
 	setting_t("00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	setting_t("00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	setting_t("00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 000 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc    FIXME:Verify this
@@ -246,6 +254,7 @@ static std::vector<setting_t> settings =
 	setting_t("00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	setting_t("00810", "osd_transparency", 0, 5),  // returns 000
 	setting_t("00820", "osd_timeout",0, 30),  // returns 020
+	// FIXME: MPG341CQR has an USB quick charge switch 830?
 	setting_t(WRITE, "00840", "reset", {"off", "on"}),  // returns 56006 - reset monitors
 	setting_t("00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	setting_t("00860", "back_rgb", {"off", "on"}),  // returns 001

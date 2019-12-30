@@ -305,6 +305,9 @@ The following script runs on the desktop. If the keyboard gets disconnect - swit
 to laptop, it will switch monitor input to ```hdmi1```. Once the keyboard 
 reconnects, it will switch back monitor input to ```dp```.
 
+The `inotifywait` tool needed by this script is available on debian systems. 
+Use `sudo apt install inotify-tools` to install it.
+
 ```sh
 #!/bin/sh
 
@@ -313,12 +316,15 @@ WATCH_INPUT=usb-046a_010d-event-kbd
 DISP_INPUT=dp
 DISP_ALTERNATIVE=hdmi1
 
-while true; do
-	while [ -e ${WATCH_DIR}/${WATCH_INPUT} ]; do sleep 1; done
-	./msigd --input $DISP_ALTERNATIVE
-	while [ ! -e ${WATCH_DIR}/$WATCH_INPUT ]; do sleep 1; done
-	./msigd --input $DISP_INPUT
-done
+inotifywait -q -m ${WATCH_DIR} | while read event
+	do
+		f=`echo $event | cut -f 3 "-d "`
+		if [ _$f = _${WATCH_INPUT} ]; then
+			ev=`echo $event | cut -f 2 "-d "`
+			test _$ev = _DELETE && ./msigd --input $DISP_ALTERNATIVE
+			test _$ev = _CREATE && ./msigd --input $DISP_INPUT
+		fi
+	done
 ```
 
 ### 6.2. Change settings depending on foreground window
