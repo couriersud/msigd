@@ -427,9 +427,11 @@ public:
 		{
 			auto ret = read_return();
 			// 260 (alarm clock) does not properly set the return buffer
+			// Same applies for PS341 monitor, pos 5,6,7 are 0 bytes.
+			// FIXME: looks like the return starts at pos 8
 			if (ret.size() > cmd.size()
 				&& (ret.substr(0, cmd.size()) == std::string("5b") + setting.m_cmd
-				    || cmd == "5800260"))
+				    || cmd == "5800260" || ret.substr(0, cmd.size()) == "5b00___" ))
 			{
 				s = ret.substr(cmd.size());
 				return 0;
@@ -490,6 +492,8 @@ private:
 				break;
 			else if (buf[i] != 0)
 				ret += buf[i];
+			else
+				ret += '_';
 		}
 		return ret;
 #if 0
