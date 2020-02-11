@@ -79,7 +79,7 @@ information by opening an issue.
 | MAG321CURV    | V009     | Y             | V18   | SAM_LSM315FP01 |
 | MAG251RX      | ?        | ?             | ?     | ?              |
 | MAG272CRX     | ?        | ?             | ?     | ?              |
-
+| PS341WU       | ?        | ?             | ?     | ?              |
 
 ### 2.2. Service menu
 

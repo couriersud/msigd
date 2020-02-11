@@ -206,7 +206,6 @@ static std::vector<setting_t> settings =
 	setting_t("00100", "power", {"off", "on"}),  // returns 001
 	setting_t("00110", "unknown02"),  // returns 000 called frequently by OSD app, readonly
 	setting_t(READ, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
-	setting_t("00140", "unknown03"),  // returns 00; called frequently by OSD app, readonly
 	//setting_t("00160", "unknown0x"),  // query kills monitor side
 	setting_t("00170", "frequency"), // returns 060
 	//setting_t("00180", "unknown0x"),  // returns 56006
@@ -266,6 +265,7 @@ static std::vector<setting_t> settings =
 
 static std::vector<std::pair<setting_t,std::string>> special =
 {
+	{ setting_t("00140", "unknown03"), "00;" }, // returns 00; called frequently by OSD app, readonly
 	{ setting_t("00150", "unknown01"), "V18" }, // returns V18, readonly
 	{ setting_t("00130", "unknown04"), std::string(13, ' ') }, // returns 13 blanks
 	{ setting_t("00190", "unknown05"), "56006" } // returns 56006
@@ -482,11 +482,23 @@ private:
 		if (read(buf, 64))
 			return "";
 		//skip 0x01 at beginning and cut off "\r"
+		std::string ret("");
+		for (int i=1; i<64; i++)
+		{
+			// skip 0
+			if (buf[i] == '\r')
+				break;
+			else if (buf[i] != 0)
+				ret += buf[i];
+		}
+		return ret;
+#if 0
 		std::string ret(buf+1);
 		if (ret.size() > 0 && ret[ret.size()-1] == '\r')
 			return ret.substr(0,ret.size()-1);
 		else
 			return ret;
+#endif
 	}
 
 };
