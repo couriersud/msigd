@@ -47,9 +47,9 @@ information by opening an issue.
 - The id of your monitor, e.g. MAG321CURV
 - The output of `msigd --debug --info --query`
 - For linux the output of `lsusb`
+- Your operating system and version
 - any other information which might be helpful, e.g. OSD setting xyz is not
   supported.
-</div>
 
 
 ### 2.1. MSI Monitors
