@@ -54,32 +54,32 @@ information by opening an issue.
 
 ### 2.1. MSI Monitors
 
-| ID            | Firmware | Supported     | Version output | Panel |
-|:------------- |:-------- |:-------------:|:----- |:-------------- |
-| MAG272QP      | ?        | ?             | ?     | ?              |
-| MAG271CQP     | ?        | ?             | ?     | ?              | 
-| MPG27CQ       | ?        | ?             | ?     | ?              |
-| MAG271R       | ?        | ?             | ?     | ?              |
-| MAG272R       | ?        | ?             | ?     | ?              |
-| MAG270CR      | ?        | ?             | ?     | ?              |
-| MAG241CR      | ?        | ?             | ?     | ?              |
-| MAG271CR      | ?        | ?             | ?     | ?              |
-| MAG322CR      | ?        | ?             | ?     | ?              |
-| MAG272CR      | ?        | ?             | ?     | ?              |
-| MAG271QR      | ?        | ?             | ?     | ?              |
-| MAG272QR      | ?        | ?             | ?     | ?              |
-| MAG321CQR     | ?        | ?             | ?     | ?              |
-| MPG341CQR     | ?        | ?             | ?     | ?              |
-| MAG271CQR     | ?        | ?             | ?     | ?              |
-| MAG322CQR     | ?        | ?             | ?     | ?              |
-| MAG272CQR     | ?        | ?             | ?     | ?              |
-| MAG271V       | ?        | ?             | ?     | ?              |
-| MPG341CQRV    | ?        | ?             | ?     | ?              |
-| MAG322CQRV    | ?        | ?             | ?     | ?              |
-| MAG321CURV    | V009     | Y             | V18   | SAM_LSM315FP01 |
-| MAG251RX      | ?        | ?             | ?     | ?              |
-| MAG272CRX     | ?        | ?             | ?     | ?              |
-| PS341WU       | ?        | ?             | ?     | ?              |
+| ID            | Firmware | Supported     | Version output| Special | Panel |
+|:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
+| MAG272QP      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271CQP     | ?        | ?             | ?     |   ?  | ?              | 
+| MPG27CQ       | ?        | ?             | ?     |   ?  | ?              |
+| MAG271R       | ?        | ?             | ?     |   ?  | ?              |
+| MAG272R       | ?        | ?             | ?     |   ?  | ?              |
+| MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG241CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG272CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG272QR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG321CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MAG271CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MAG272CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MAG271V       | ?        | ?             | ?     |   ?  | ?              |
+| MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
+| MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
+| MAG321CURV    | V009     | Y             | "V18" | "00;"| SAM_LSM315FP01 |
+| MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
+| MAG272CRX     | ?        | ?             | ?     |   ?  | ?              |
+| PS341WU       | ?        | ?             | "V06" | "00?"  | ?              |
 
 ### 2.2. Service menu
 
