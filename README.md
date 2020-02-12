@@ -112,7 +112,13 @@ Make sure you have libusb installed. On debian based systems
 sudo apt install libusb-dev libhidapi-dev
 ```
 
-compile 
+On Fedora use
+
+```sh
+dnf install libusb-devel hidapi-devel
+```
+
+Compile with
 
 ```sh
 make
@@ -159,6 +165,8 @@ Alternatively you may use udev to grant user access rights. More information is
 available on here: [Documentation on askubuntu](https://askubuntu.com/questions/978552/how-do-i-make-libusb-work-as-non-root)
 
 In a nutshell: 
+
+* Ensure that your system has a group `plugdev` and that the current user is a member of the `plugdev` group.
 
 * Create `/etc/udev/rules.d/51-msi-gaming-device.rules`:
 
@@ -220,37 +228,23 @@ For supported devices please refer to the documentation.
       --mystic               off, static, breathing, blinking, flashing, 
                                blinds, meteor, rainbow, random, 
                                0xRRGGBB, RRR,GGG,BBB
+
+All monitors:
+
       --power                values: off on 
-      --game_mode            values: user fps racing rts rpg 
-      --unknown06            values: 0 to 100
       --response_time        values: normal fast fastest 
-      --enable_dynamic       values: on off 
-      --hdcr                 values: off on 
-      --refresh_rate_display values: off on 
-      --refresh_rate_position values: left_top right_top left_bottom right_bottom 
       --alarm_clock          values: off 1 2 3 4 
       --alarm_clock_index    values: 1 to 4
       --alarm_clock_time     values: 0 to 5999
-      --alarm_clock_position values: left_top right_top left_bottom right_bottom 
       --screen_assistance    values: 0 to 12
-      --zero_latency         values: off on 
-      --screen_size          values: 19 24 4:3 16:9 
-      --night_vision         values: off normal strong strongest ai 
-      --pro_mode             values: user reader cinema designer 
       --eye_saver            values: off on 
       --image_enhancement    values: off weak medium strong strongest 
       --brightness           values: 0 to 100
       --contrast             values: 0 to 100
       --sharpness            values: 0 to 5
-      --color_preset         values: cool normal warm custom 
-      --red                  values: 0 to 100
-      --green                values: 0 to 100
-      --blue                 values: 0 to 100
-      --rgb                  values: 0 to 1000000
+      --rgb                  values: 0 to 100000000
       --unknown10            values: off on 
       --input                values: hdmi1 hdmi2 dp usbc 
-      --pip                  values: off pip pbp 
-      --pip_input            values: hdmi1 hdmi2 dp usbc 
       --pbp_input            values: hdmi1 hdmi2 dp usbc 
       --pip_size             values: small medium large 
       --pip_position         values: left_top right_top left_bottom right_bottom 
@@ -260,12 +254,48 @@ For supported devices please refer to the documentation.
       --osd_transparency     values: 0 to 5
       --osd_timeout          values: 0 to 30
       --reset                values: off on 
+
+MAG Series:
+
+      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
+      --game_mode            values: user fps racing rts rpg 
+      --unknown06            values: 0 to 100
+      --enable_dynamic       values: on off 
+      --hdcr                 values: off on 
+      --refresh_rate_display values: off on 
+      --refresh_rate_position values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_position values: left_top right_top left_bottom right_bottom 
+      --zero_latency         values: off on 
+      --screen_size          values: 19 24 4:3 16:9 
+      --night_vision         values: off normal strong strongest ai 
+      --pro_mode             values: user reader cinema designer 
+      --color_preset         values: cool normal warm custom 
+      --red                  values: 0 to 100
+      --green                values: 0 to 100
+      --blue                 values: 0 to 100
+      --pip                  values: off pip pbp 
+      --pip_input            values: hdmi1 hdmi2 dp usbc 
       --sound_enable         values: off on 
       --back_rgb             values: off on 
       --navi_up              values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+
+PS Series:
+
+      --alarm_clock_position values: left_top right_top left_bottom right_bottom custom 
+      --screen_size          values: auto 4:3 16:9 21:9 1:1 
+      --pro_mode             values: user adobe_rgb dcpi_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --color_preset         values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
+      --pip                  values: off pip pbp_x2 pbp_x3 pbp_x4 
+      --quick_charge         values: off on 
+      --audio_source         values: analog digital 
+      --navi_up              values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_down            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_left            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_right           values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+
   -d, --debug                enable debug output
   -h, --help                 display this help and exit
       --version              output version information and exit
