@@ -159,7 +159,12 @@ struct setting_t
 	, m_max(static_cast<unsigned>(values.size()))
 	{ }
 
-	std::string encode(std::string val)
+	setting_t(setting_t &) = delete;
+	setting_t(setting_t &&) = delete;
+
+	virtual ~setting_t() { }
+
+	virtual std::string encode(std::string val)
 	{
 		if (m_enc == ENC_INT)
 		{
@@ -177,7 +182,7 @@ struct setting_t
 		else if (m_enc == ENC_STRINGINT)
 		{
 			for (std::size_t i=0; i < m_values.size(); i++)
-				if (m_values[i] == val)
+				if (m_values[i] == val && m_values[i].substr(0, 1) != "-")
 				{
 					char buf[100];
 					snprintf(buf, 100, "%03d", static_cast<unsigned>(i));
@@ -189,7 +194,7 @@ struct setting_t
 			return "";
 	}
 
-	std::string decode(std::string val)
+	virtual std::string decode(std::string val)
 	{
 		if (m_enc == ENC_STRING)
 			return val;
@@ -230,101 +235,107 @@ struct setting_t
 // MAG322CQRV  3DA4
 // PS341WU:    3DA1
 
-static std::vector<setting_t> settings =
+static std::vector<setting_t *> settings(
 {
-	setting_t(ALL, "00100", "power", {"off", "on"}),
-	setting_t(ALL, "00110", "unknown02"),  // returns 000 called frequently by OSD app, readonly
-	setting_t(MAG, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
+	new setting_t(ALL, "00100", "power", {"off", "-on"}),
+	new setting_t(ALL, "00110", "unknown110"),  // returns 000 called frequently by OSD app, readonly
+	new setting_t(MAG, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
 	// FIXME:
-	//setting_t(PS, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
-	setting_t(ALL, "00130", "serial"), // returns 13 blanks
-	//setting_t("00160", "unknown0x"),  // query kills monitor side
-	setting_t(ALL, "00170", "frequency"), // returns 060
-	//setting_t("00180", "unknown0x"),  // returns 56006
-	setting_t(PS,  "00190", "unknown05"),  // returns 56006 on MAG, 000 on PS
-	setting_t(MAG, "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
-	setting_t(MAG, "00210", "unknown06", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
-	setting_t(ALL, "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
+	//new setting_t(PS, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
+	new setting_t(ALL, "00130", "serial"), // returns 13 blanks
+	new setting_t(UNKNOWN, "00160", "unknown160"),  // query kills monitor side
+	new setting_t(ALL, "00170", "frequency"), // returns 060
+	//new setting_t("00180", "unknown0x"),  // returns 56006
+	new setting_t(PS,  "00190", "unknown190"),  // returns 56006 on MAG, 000 on PS
+	new setting_t(PS,  "001@0", "unknown1@0"),
+	new setting_t(MAG, "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
+	new setting_t(MAG, "00210", "unknown210", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	new setting_t(ALL, "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur?
-	setting_t(MAG, "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
-	setting_t(MAG, "00240", "hdcr", {"off", "on"}),
-	setting_t(MAG, "00250", "refresh_rate_display", {"off", "on"}),
-	setting_t(MAG, "00251", "refresh_rate_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	setting_t(ALL, "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
-	setting_t(ALL, "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
-	setting_t(ALL, "00262", "alarm_clock_time", 0, 99*60+59, -60),  // FIXME: returns timeout on PS
-	setting_t(MAG, "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	setting_t(PS,  "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
+	new setting_t(MAG, "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
+	new setting_t(MAG, "00240", "hdcr", {"off", "on"}),
+	new setting_t(MAG, "00250", "refresh_rate_display", {"off", "on"}),
+	new setting_t(MAG, "00251", "refresh_rate_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(ALL, "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
+	new setting_t(ALL, "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
+	new setting_t(ALL, "00262", "alarm_clock_time", 0, 99*60+59, -60),  // FIXME: returns timeout on PS
+	new setting_t(MAG, "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(PS,  "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
 	// FIXME:
-	setting_t(ALL, "00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
+	new setting_t(MAG, "00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
+	new setting_t(PS,  "00270", "screen_assistance", {"off", "center", "edge",
+		"scale", "line", "grid", "thirds", "3D", "assistance", "assistance_color"}),
+	new setting_t(PS,  "00271", "unknown271"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	// FIXME: adaptive sync ? game-mode only
-	setting_t(MAG, "00280", "unknown08"),  // returns 000, read only, write fails and monitor needs off/on cycle
-	setting_t(MAG, "00290", "zero_latency", {"off", "on"}),  // returns 001
-	setting_t(MAG, "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
-	setting_t(PS,  "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
-	setting_t(MAG, "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
-	setting_t(MAG, "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
-	setting_t(PS,  "00300", "pro_mode", {"user", "adobe_rgb", "dcpi_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
-	setting_t(ALL, "00310", "eye_saver", {"off", "on"}),  // returns 000
-	setting_t(ALL, "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
-	setting_t(ALL, "00400", "brightness", 0, 100),  // returns 048
-	setting_t(ALL, "00410", "contrast", 0, 100),  // returns 050
-	setting_t(ALL, "00420", "sharpness", 0, 5),  // returns 000
-	setting_t(MAG, "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
-	setting_t(PS,  "00430", "color_preset", {"5000K", "5500K", "6500K", "7500K", "9300K", "10000K", "custom"}),
-	setting_t(MAG, "00431", "red", 0, 100),
-	setting_t(MAG, "00432", "green", 0, 100),
-	setting_t(MAG, "00433", "blue", 0, 100),
-	setting_t(ALL, "00434", "rgb", 0, 100*1000*1000, 1000),  // returns bbb  -> value = 'b' - '0' = 98-48=50
-	setting_t(MAG, "00435", "unknown09"),  // returns 000, read only
-	setting_t(ALL, WRITE, "00440", "unknown10", {"off", "on"}),
+	new setting_t(MAG, "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
+	new setting_t(MAG, "00290", "zero_latency", {"off", "on"}),  // returns 001
+	new setting_t(MAG, "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
+	new setting_t(PS,  "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
+	new setting_t(MAG, "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
+	new setting_t(MAG, "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
+	new setting_t(PS,  "00300", "pro_mode", {"user", "adobe_rgb", "dcpi_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
+	new setting_t(MAG, "00310", "eye_saver", {"off", "on"}),  // returns 000
+	new setting_t(ALL, "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
+	new setting_t(ALL, "00400", "brightness", 0, 100),  // returns 048
+	new setting_t(ALL, "00410", "contrast", 0, 100),  // returns 050
+	new setting_t(ALL, "00420", "sharpness", 0, 5),  // returns 000
+	new setting_t(MAG, "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
+	new setting_t(PS,  "00430", "color_preset", {"5000K", "5500K", "6500K", "7500K", "9300K", "10000K", "custom"}),
+	new setting_t(MAG, "00431", "color_red", 0, 100),
+	new setting_t(MAG, "00432", "color_green", 0, 100),
+	new setting_t(MAG, "00433", "color_blue", 0, 100),
+	new setting_t(ALL, "00434", "color_rgb", 0, 100100100, 1000),  // returns bbb  -> value = 'b' - '0' = 98-48=50
+	new setting_t(MAG, "00435", "unknown435"),  // returns 000, read only
+	new setting_t(ALL, WRITE, "00440", "unknown440", {"off", "on"}),
 
-	setting_t(PS,  "00460", "unknown460"),
-	setting_t(PS,  "00470", "unknown470"),
-	setting_t(PS,  "00480", "unknown480"),
-	setting_t(PS,  "00490", "unknown490"),
-	setting_t(PS,  "004<0", "unknown4<0"),
-	setting_t(PS,  "004=0", "unknown4=0"),
-	setting_t(PS,  "004;0", "unknown4;0"),
-	setting_t(PS,  "004:0", "unknown4:0"),
-	setting_t(PS,  "004<1", "unknown4<1"),
-	setting_t(PS,  "004=1", "unknown4=1"),
-	setting_t(PS,  "004;1", "unknown4;1"),
+	new setting_t(PS,  "00460", "unknown460"),
+	new setting_t(UNKNOWN,  "00470", "unknown470"),
+	new setting_t(PS,  "00480", "unknown480"),
+	new setting_t(PS,  "00490", "unknown490"),
+	new setting_t(PS,  "004<0", "unknown4<0"),
+	new setting_t(PS,  "004=0", "unknown4=0"),
+	new setting_t(PS,  "004;0", "unknown4;0"),
+	new setting_t(PS,  "004:0", "unknown4:0"),
+	new setting_t(PS,  "004<1", "unknown4<1"),
+	new setting_t(PS,  "004=1", "unknown4=1"),
+	new setting_t(PS,  "004;1", "unknown4;1"),
 
-	setting_t(ALL, "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
-	setting_t(MAG, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
-	setting_t(PS,  "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
-	setting_t(MAG, "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 000 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc    FIXME:Verify this
-	setting_t(ALL, "00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 000 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc    FIXME:Verify this
-	setting_t(ALL, "00630", "pip_size", {"small", "medium", "large"}),
-	setting_t(ALL, "00640", "pip_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	setting_t(ALL, WRITE, "00650", "toggle_display", {"off", "on"}),  // returns 56006
-	setting_t(ALL, WRITE, "00660", "toggle_sound", {"off", "on"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
-	setting_t(PS,  "00670", "unknown670"),
-	setting_t(PS,  "00680", "unknown680"),
-	setting_t(PS,  "00690", "unknown690"),
-	setting_t(PS,  "0069:", "unknown69:"),
-	setting_t(ALL, "00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
-	setting_t(ALL, "00810", "osd_transparency", 0, 5),  // returns 000
-	setting_t(ALL, "00820", "osd_timeout",0, 30),  // returns 020
-	setting_t(PS,  "00830", "quick_charge", {"off", "on"}),
-	// FIXME: MPG341CQR has an USB quick charge switch 830?
-	setting_t(ALL, WRITE, "00840", "reset", {"off", "on"}),  // returns 56006 - reset monitors
-	setting_t(MAG, "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
-	setting_t(PS,  "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	setting_t(MAG, "00860", "back_rgb", {"off", "on"}),  // returns 001
-	setting_t(MAG, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 006
-	setting_t(MAG, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 003
-	setting_t(MAG, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 004
-	setting_t(MAG, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 005
-	setting_t(PS,  "00900", "navi_up", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 006
-	setting_t(PS,  "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 003
-	setting_t(PS,  "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 004
-	setting_t(PS,  "00930", "navi_right", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 005
-};
+	new setting_t(ALL, "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
+	new setting_t(MAG, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
+	new setting_t(PS,  "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
+	new setting_t(MAG, "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(MAG, "00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS,  "00620", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(ALL, "00630", "pip_size", {"small", "medium", "large"}),
+	new setting_t(ALL, "00640", "pip_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(ALL, WRITE, "00650", "toggle_display", {"-off", "on"}),  // returns 56006
+	new setting_t(MAG, WRITE, "00660", "toggle_sound", {"-off", "on"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
+	new setting_t(PS,  WRITE, "00660", "toggle_sound", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
+	new setting_t(PS,  "00670", "unknown670"),
+	new setting_t(PS,  "00680", "unknown680"),
+	new setting_t(PS,  "00690", "unknown690"),
+	new setting_t(UNKNOWN,  "0069:", "unknown69:"),
+	new setting_t(MAG, "00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
+	new setting_t(PS,  "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
+	new setting_t(ALL, "00810", "osd_transparency", 0, 5),  // returns 000
+	new setting_t(ALL, "00820", "osd_timeout",0, 30),  // returns 020
+	new setting_t(PS,  "00830", "quick_charge", {"off", "on"}),
+	new setting_t(ALL, WRITE, "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
+	new setting_t(MAG, "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
+	new setting_t(PS,  "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
+	new setting_t(MAG, "00860", "back_rgb", {"off", "on"}),  // returns 001
+	new setting_t(MAG, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 006
+	new setting_t(MAG, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 003
+	new setting_t(MAG, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 004
+	new setting_t(MAG, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 005
+	new setting_t(PS,  "00900", "navi_up", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 006
+	new setting_t(PS,  "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 003
+	new setting_t(PS,  "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 004
+	new setting_t(PS,  "00930", "navi_right", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 005
+});
 
-static auto sp140 = setting_t(ALL, "00140", "unknown03");
-static auto sp150 = setting_t(ALL, "00150", "unknown01");
+static setting_t sp140(ALL, "00140", "sp140");
+static setting_t sp150(ALL, "00150", "sp150");
 
 struct led_data
 {
@@ -565,17 +576,18 @@ private:
 static void help_set(series_t series, series_t exclude)
 {
 	for (auto &s : settings)
-		if ((s.m_access == WRITE || s.m_access == READWRITE)
-			&& ((s.m_series & series) == series) && (s.m_series != exclude))
+		if ((s->m_access == WRITE || s->m_access == READWRITE)
+			&& ((s->m_series & series) == series) && (s->m_series != exclude))
 		{
-			pprintf("      --%-20s values: ", s.m_opt);
-			if (s.m_enc == ENC_STRINGINT)
+			pprintf("      --%-20s values: ", s->m_opt);
+			if (s->m_enc == ENC_STRINGINT)
 			{
-				for (auto &v : s.m_values)
-					pprintf("%s ", v);
+				for (auto &v : s->m_values)
+					if (v.substr(0, 1) != "-")
+						pprintf("%s ", v);
 			}
 			else
-				pprintf("%d to %d", s.m_min, s.m_max);
+				pprintf("%d to %d", s->m_min, s->m_max);
 			pprintf("\n");
 		}
 }
@@ -758,13 +770,13 @@ int main (int argc, char **argv)
 			bool found(false);
 			for (auto &s : settings)
 			{
-				if (s.m_opt == opt.first && (s.m_access==READWRITE || s.m_access==WRITE)
-					&& (s.m_series & series.series))
+				if (s->m_opt == opt.first && (s->m_access==READWRITE || s->m_access==WRITE)
+					&& (s->m_series & series.series))
 				{
-					std::string val = s.encode(opt.second);
+					std::string val = s->encode(opt.second);
 					if (val == "")
 						return error(1, "Unknown value <%s> for option %s", opt.second, opt.first);
-					set_encoded.emplace_back(&s, val);
+					set_encoded.emplace_back(s, val);
 					found = true;
 					break;
 				}
@@ -777,15 +789,15 @@ int main (int argc, char **argv)
 		if (query)
 		{
 			for (auto &setting : settings)
-				if ((setting.m_access==READWRITE || setting.m_access==READ)
-					&& (setting.m_series & series.series))
+				if ((setting->m_access==READWRITE || setting->m_access==READ)
+					&& (setting->m_series & series.series))
 				{
 					std::string res;
-					if (!usb.get_setting(setting, res))
-						pprintf("%s : %s\n", setting.m_opt, setting.decode(res));
+					if (!usb.get_setting(*setting, res))
+						pprintf("%s : %s\n", setting->m_opt, setting->decode(res));
 					else
 					{
-						error(0, "Error querying device on %s - got <%s>", setting.m_opt, res);
+						error(0, "Error querying device on %s - got <%s>", setting->m_opt, res);
 						if (!debug)
 							return 2;
 					}
