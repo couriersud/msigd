@@ -264,8 +264,7 @@ static std::vector<setting_t *> settings(
 	// FIXME:
 	new setting_t(MAG, "00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
 	new setting_t(PS,  "00270", "screen_assistance", {"off", "center", "edge",
-		"scale", "line", "grid", "thirds", "3D", "assistance", "assistance_color"}),
-	new setting_t(PS,  "00271", "unknown271"),  // returns 000, read only, write fails and monitor needs off/on cycle
+		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
 	// FIXME: adaptive sync ? game-mode only
 	new setting_t(MAG, "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	new setting_t(MAG, "00290", "zero_latency", {"off", "on"}),  // returns 001
