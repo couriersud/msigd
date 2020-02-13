@@ -237,7 +237,7 @@ struct setting_t
 
 static std::vector<setting_t *> settings(
 {
-	new setting_t(ALL, "00100", "power", {"off", "-on"}),
+	new setting_t(ALL, WRITE, "00100", "power", {"off", "-on"}),
 	new setting_t(ALL, "00110", "unknown110"),  // returns 000 called frequently by OSD app, readonly
 	new setting_t(MAG, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
 	// FIXME:
@@ -247,7 +247,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, "00170", "frequency"), // returns 060
 	//new setting_t("00180", "unknown0x"),  // returns 56006
 	new setting_t(PS,  "00190", "unknown190"),  // returns 56006 on MAG, 000 on PS
-	new setting_t(PS,  "001@0", "unknown1@0"),
+	new setting_t(UNKNOWN,  "001@0", "unknown1@0"),
 	new setting_t(MAG, "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
 	new setting_t(MAG, "00210", "unknown210", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	new setting_t(ALL, "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
@@ -273,7 +273,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
 	new setting_t(MAG, "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
 	new setting_t(MAG, "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
-	new setting_t(PS,  "00300", "pro_mode", {"user", "adobe_rgb", "dcpi_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
+	new setting_t(PS,  "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(MAG, "00310", "eye_saver", {"off", "on"}),  // returns 000
 	new setting_t(ALL, "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
 	new setting_t(ALL, "00400", "brightness", 0, 100),  // returns 048
@@ -319,7 +319,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(ALL, "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL, "00820", "osd_timeout",0, 30),  // returns 020
-	new setting_t(PS,  "00830", "quick_charge", {"off", "on"}),
+	new setting_t(PS, "00830", "screen_info", {"off", "on"}),
 	new setting_t(ALL, WRITE, "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG, "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,  "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
