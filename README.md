@@ -417,3 +417,7 @@ done
 
 - Code cleanup
 - Support more monitors - depends on user contributions
+
+## Credits
+
+[John Wehin](https://github.com/Wehin) - PS341WU support and bug fixing
