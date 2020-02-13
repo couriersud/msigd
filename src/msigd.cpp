@@ -238,7 +238,7 @@ struct setting_t
 static std::vector<setting_t *> settings(
 {
 	new setting_t(ALL, WRITE, "00100", "power", {"off", "-on"}),
-	new setting_t(ALL, "00110", "unknown110"),  // returns 000 called frequently by OSD app, readonly
+	new setting_t(ALL, READ, "00110", "macro_key", {"off", "pressed"}),  // returns 000 called frequently by OSD app, readonly
 	new setting_t(MAG, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
 	// FIXME:
 	//new setting_t(PS, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
