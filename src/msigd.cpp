@@ -378,10 +378,10 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG, "00251", "refresh_rate_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(ALL, "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
 	new setting_t(ALL, "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
-	new setting_t(ALL, "00262", "alarm_clock_time", 0, 99*60+59, -60),  // FIXME: returns timeout on PS
+	new setting_t(ALL, "00262", "alarm_clock_time", 0, MAX_ALARM, -60),  // FIXME: returns timeout on PS
 	new setting_t(MAG, "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(PS,  "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
-	new alarm4x_t(MAG, "001f",  "alarm4x"),
+	new alarm4x_t(ALL, "001f",  "alarm4x"),
 	// FIXME:
 	new setting_t(MAG, "00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
 	new setting_t(PS,  "00270", "screen_assistance", {"off", "center", "edge",
