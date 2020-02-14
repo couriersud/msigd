@@ -236,11 +236,12 @@ All monitors:
       --alarm_clock          values: off 1 2 3 4 
       --alarm_clock_index    values: 1 to 4
       --alarm_clock_time     values: 0 to 5999
+      --alarm4x              a1,a2,a3,a4,n where a<5999 and n<=4
       --image_enhancement    values: off weak medium strong strongest 
       --brightness           values: 0 to 100
       --contrast             values: 0 to 100
       --sharpness            values: 0 to 5
-      --color_rgb            values: 0 to 100100100
+      --color_rgb            tripple: v1,v2,v3 where v<=100
       --unknown440           values: off on 
       --input                values: hdmi1 hdmi2 dp usbc 
       --pip_size             values: small medium large 
@@ -254,7 +255,6 @@ MAG Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
       --game_mode            values: user fps racing rts rpg 
-      --unknown210           values: 0 to 100
       --enable_dynamic       values: on off 
       --hdcr                 values: off on 
       --refresh_rate_display values: off on 
@@ -284,16 +284,32 @@ MAG Series:
 
 PS Series:
 
+      --mode                 values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
       --alarm_clock_position values: left_top right_top left_bottom right_bottom custom 
-      --screen_assistance    values: off center edge scale line grid thirds 3D assistance assistance_color 
+      --screen_assistance    values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
       --screen_size          values: auto 4:3 16:9 21:9 1:1 
-      --pro_mode             values: user adobe_rgb dcpi_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --pro_mode             values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
       --color_preset         values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
+      --gray_level           values: 0 to 20
+      --low_blue_light       values: off on 
+      --local_dimming        values: off on 
+      --hue_rgb              tripple: v1,v2,v3 where v<=100
+      --hue_cmy              tripple: v1,v2,v3 where v<=100
+      --zoom                 values: off on 
+      --zoom_location        values: center left_top right_top left_bottom right_bottom 
+      --saturation_rgb       tripple: v1,v2,v3 where v<=100
+      --saturation_cmy       tripple: v1,v2,v3 where v<=100
+      --gamma                values: 1.8 2 2.2 2.4 2.6 
       --pip                  values: off pip pbp_x2 pbp_x3 pbp_x4 
       --pip_input            values: hdmi1 hdmi2 dp usbc 
-      --toggle_sound         values: hdmi1 hdmi2 dp usbc 
+      --pip_sound_source     values: hdmi1 hdmi2 dp usbc 
+      --pbp_input1           values: hdmi1 hdmi2 dp usbc 
+      --pbp_input2           values: hdmi1 hdmi2 dp usbc 
+      --pbp_input3           values: hdmi1 hdmi2 dp usbc 
+      --pbp_input4           values: hdmi1 hdmi2 dp usbc 
+      --pbp_sound_source     values: hdmi1 hdmi2 dp usbc 
       --osd_language         values: 0 to 28
-      --quick_charge         values: off on 
+      --screen_info          values: off on 
       --audio_source         values: analog digital 
       --navi_up              values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_down            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
@@ -315,10 +331,11 @@ Exit status:
  0  if OK,
  1  if error during option parsing,
  2  if error during device access,
-
+ 
 Report bugs on <https://github.com/couriersud/msigd/issues>
 msigd home page: <https://github.com/couriersud/msigd>
 ```
+
 You may also use the following to display man style help
 
 ```sh

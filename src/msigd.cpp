@@ -1,6 +1,7 @@
 
 #include <cstddef>
 #include <string>
+#include <array>
 #include <vector>
 #include <map>
 #include <type_traits>
@@ -21,6 +22,8 @@
 
 static const char *appname = "msigd";
 static const char *appversion = "0.3";
+
+static const unsigned MAX_ALARM = 99 * 60 + 59;
 
 enum access_t
 {
@@ -63,6 +66,40 @@ enum encoding_t
 };
 
 using string_list = std::vector<std::string>;
+
+static string_list splitstr(const std::string &s, char sc)
+{
+	string_list ret;
+	std::string v;
+	for (auto &c : s)
+	{
+		if (c == sc)
+		{
+			ret.push_back(v);
+			v = "";
+		}
+		else
+			v += c;
+	}
+	ret.push_back(v);
+	return ret;
+}
+
+template <typename T>
+std::vector<T> number_list(const string_list &sl, int base = 10)
+{
+	std::vector<T> ret;
+
+	for (auto &s : sl)
+	{
+		std::size_t idx(0);
+		auto v = std::stoul(s, &idx, base);
+		if (idx != s.size())
+			return ret;
+		ret.push_back(static_cast<T>(v));
+	}
+	return ret;
+}
 
 static unsigned msi_stou(std::string s, int base)
 {
@@ -121,7 +158,6 @@ static void eprintf(const char *fmt, Args&&... args)
 {
 	fprintf(stderr, fmt, log_helper(args)...);
 }
-
 
 struct setting_t
 {
@@ -219,6 +255,20 @@ struct setting_t
 			return "";
 	}
 
+	virtual std::string help()
+	{
+		std::string ret = "values: ";
+		if (m_enc == ENC_STRINGINT)
+		{
+			for (auto &v : m_values)
+				if (v.substr(0, 1) != "-")
+					ret += (v + " ");
+		}
+		else
+			ret += std::to_string(m_min) + " to " + std::to_string(m_max);
+		return ret;
+	}
+
 	series_t m_series;
 	access_t m_access;
 	encoding_t m_enc;
@@ -228,6 +278,77 @@ struct setting_t
 	unsigned m_min = 0;
 	unsigned m_max = 100;
 	int m_base = 10;
+};
+
+struct tripple_t : public setting_t
+{
+	tripple_t(series_t series, std::string cmd, std::string opt)
+	: setting_t(series, READWRITE, cmd, opt, {""})
+	{ }
+
+	virtual std::string encode(std::string val)
+	{
+		auto vals = number_list<unsigned>(splitstr(val,','));
+		if (vals.size() != 3)
+			return "";
+
+		std::string r;
+		for (auto &n : vals)
+		{
+			if (n>100)
+				return "";
+			r = r + msi_utos(n, 1000, 1);
+		}
+		return r;
+	}
+
+	virtual std::string decode(std::string val)
+	{
+		unsigned v = msi_stou(val, 1000);
+		return std::to_string(v / 1000000) + "," + std::to_string((v / 1000) % 1000) + "," + std::to_string(v % 1000);
+	}
+
+	virtual std::string help()
+	{
+		return "tripple: v1,v2,v3 where v<=100";
+	}
+};
+
+struct alarm4x_t : public setting_t
+{
+	alarm4x_t(series_t series, std::string cmd, std::string opt)
+	: setting_t(series, WRITE, cmd, opt, {""})
+	{ }
+
+	virtual std::string encode(std::string val)
+	{
+		auto vals = number_list<unsigned>(splitstr(val,','));
+		if (vals.size() != 5)
+			return "";
+
+		std::string r;
+		for (std::size_t i=0; i<4; i++)
+		{
+			if (vals[i] > MAX_ALARM)
+				return "";
+			r = r + msi_utos(vals[i], -60, 2);
+		}
+		if (vals[4] > 4)
+			return "";
+		r = r + msi_utos(vals[4], 10, 1) + "0000000000";
+		return r;
+	}
+
+	virtual std::string decode(std::string val)
+	{
+		fprintf(stderr, "should never be called");
+		return "";
+	}
+
+	virtual std::string help()
+	{
+		return "a1,a2,a3,a4,n where a<"+ std::to_string(MAX_ALARM) + " and n<=4";
+	}
 };
 
 // MPG341CQR:  3DA0
@@ -243,13 +364,12 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00120", "mode", {"-m0","-m1","-m2","-m3","-m4""-m5","-m6","-m7","-m8","-m9",
 		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(ALL, "00130", "serial"), // returns 13 blanks
-	new setting_t(UNKNOWN, "00160", "unknown160"),  // query kills monitor side
+	new setting_t(UNKNOWN, "00160", "unknown160"),  // query kills monitor side on MAG
 	new setting_t(ALL, "00170", "frequency"), // returns 060
-	//new setting_t("00180", "unknown0x"),  // returns 56006
-	new setting_t(PS,  "00190", "unknown190", 0, 100),  // returns 56006 on MAG, 000 on PS
+	new setting_t(PS,  "00190", "unknown190"),  // returns 56006 on MAG, 000 on PS
 	new setting_t(UNKNOWN,  "001@0", "unknown1@0"),
 	new setting_t(MAG, "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
-	new setting_t(MAG, "00210", "unknown210", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	new setting_t(MAG, "00210", "unknown210"),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	new setting_t(ALL, "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur?
 	new setting_t(MAG, "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
@@ -261,10 +381,12 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, "00262", "alarm_clock_time", 0, 99*60+59, -60),  // FIXME: returns timeout on PS
 	new setting_t(MAG, "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(PS,  "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
+	new alarm4x_t(MAG, "001f",  "alarm4x"),
 	// FIXME:
 	new setting_t(MAG, "00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
 	new setting_t(PS,  "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
+	new setting_t(PS,  "00271", "unknown271"),  // returns 000, read only?
 	// FIXME: adaptive sync ? game-mode only
 	new setting_t(MAG, "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	new setting_t(MAG, "00290", "zero_latency", {"off", "on"}),  // returns 001
@@ -283,7 +405,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG, "00431", "color_red", 0, 100),
 	new setting_t(MAG, "00432", "color_green", 0, 100),
 	new setting_t(MAG, "00433", "color_blue", 0, 100),
-	new setting_t(ALL, "00434", "color_rgb", 0, 100100100, 1000),  // returns bbb  -> value = 'b' - '0' = 98-48=50
+	new tripple_t(ALL, "00434", "color_rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
 	new setting_t(MAG, "00435", "unknown435"),  // returns 000, read only
 	new setting_t(ALL, WRITE, "00440", "unknown440", {"off", "on"}),
 
@@ -291,12 +413,12 @@ static std::vector<setting_t *> settings(
 	new setting_t(UNKNOWN,  "00470", "unknown470"),
 	new setting_t(PS,  "00480", "low_blue_light", {"off", "on"}),
 	new setting_t(PS,  "00490", "local_dimming", {"off", "on"}),
-	new setting_t(PS,  "004<0", "hue_rgb", 0, 100100100, 1000),
-	new setting_t(PS,  "004<1", "hue_cmy", 0, 100100100, 1000),
+	new tripple_t(PS,  "004<0", "hue_rgb"),
+	new tripple_t(PS,  "004<1", "hue_cmy"),
 	new setting_t(PS,  "004=0", "zoom", {"off", "on"}),
 	new setting_t(PS,  "004=1", "zoom_location", {"center", "left_top", "right_top", "left_bottom", "right_bottom"}),
-	new setting_t(PS,  "004;0", "saturation_rgb", 0, 100100100, 1000),
-	new setting_t(PS,  "004;1", "saturation_cmy", 0, 100100100, 1000),
+	new tripple_t(PS,  "004;0", "saturation_rgb"),
+	new tripple_t(PS,  "004;1", "saturation_cmy"),
 	new setting_t(PS,  "004:0", "gamma", {"1.8", "2", "2.2", "2.4", "2.6"}),
 	new setting_t(ALL, "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
@@ -322,15 +444,15 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, WRITE, "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG, "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,  "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(MAG, "00860", "back_rgb", {"off", "on"}),  // returns 001
-	new setting_t(MAG, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 006
-	new setting_t(MAG, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 003
-	new setting_t(MAG, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 004
-	new setting_t(MAG, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),  // returns 005
-	new setting_t(PS,  "00900", "navi_up", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 006
-	new setting_t(PS,  "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 003
-	new setting_t(PS,  "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 004
-	new setting_t(PS,  "00930", "navi_right", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),  // returns 005
+	new setting_t(MAG, "00860", "back_rgb", {"off", "on"}),
+	new setting_t(MAG, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(PS,  "00900", "navi_up", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
+	new setting_t(PS,  "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
+	new setting_t(PS,  "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
+	new setting_t(PS,  "00930", "navi_right", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 });
 
 static setting_t sp140(ALL, "00140", "sp140");
@@ -578,16 +700,7 @@ static void help_set(series_t series, series_t exclude)
 		if ((s->m_access == WRITE || s->m_access == READWRITE)
 			&& ((s->m_series & series) == series) && (s->m_series != exclude))
 		{
-			pprintf("      --%-20s values: ", s->m_opt);
-			if (s->m_enc == ENC_STRINGINT)
-			{
-				for (auto &v : s->m_values)
-					if (v.substr(0, 1) != "-")
-						pprintf("%s ", v);
-			}
-			else
-				pprintf("%d to %d", s->m_min, s->m_max);
-			pprintf("\n");
+			pprintf("      --%-20s %s\n", s->m_opt, s->help());
 		}
 }
 
