@@ -289,7 +289,7 @@ static std::vector<setting_t *> settings(
 
 	new setting_t(PS,  "00460", "gray_level", 0, 20),
 	new setting_t(UNKNOWN,  "00470", "unknown470"),
-	new setting_t(PS,  "00480", "unknown480"),
+	new setting_t(PS,  "00480", "low_blue_light", {"off", "on"}),
 	new setting_t(PS,  "00490", "local_dimming", {"off", "on"}),
 	new setting_t(PS,  "004<0", "unknown4<0"),
 	new setting_t(PS,  "004=0", "zoom", {"off", "on"}),
