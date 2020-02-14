@@ -287,7 +287,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG, "00435", "unknown435"),  // returns 000, read only
 	new setting_t(ALL, WRITE, "00440", "unknown440", {"off", "on"}),
 
-	new setting_t(PS,  "00460", "unknown460"),
+	new setting_t(PS,  "00460", "gray_level", 0, 20),
 	new setting_t(UNKNOWN,  "00470", "unknown470"),
 	new setting_t(PS,  "00480", "unknown480"),
 	new setting_t(PS,  "00490", "local_dimming", {"off", "on"}),
