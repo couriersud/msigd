@@ -240,13 +240,13 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, WRITE, "00100", "power", {"off", "-on"}),
 	new setting_t(ALL, READ, "00110", "macro_key", {"off", "pressed"}),  // returns 000 called frequently by OSD app, readonly
 	new setting_t(MAG, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
-	// FIXME:
-	//new setting_t(PS, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
+	new setting_t(PS,  "00120", "mode", {"-m0","-m1","-m2","-m3","-m4""-m5","-m6","-m7","-m8","-m9",
+		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(ALL, "00130", "serial"), // returns 13 blanks
 	new setting_t(UNKNOWN, "00160", "unknown160"),  // query kills monitor side
 	new setting_t(ALL, "00170", "frequency"), // returns 060
 	//new setting_t("00180", "unknown0x"),  // returns 56006
-	new setting_t(PS,  "00190", "unknown190"),  // returns 56006 on MAG, 000 on PS
+	new setting_t(PS,  "00190", "unknown190", 0, 100),  // returns 56006 on MAG, 000 on PS
 	new setting_t(UNKNOWN,  "001@0", "unknown1@0"),
 	new setting_t(MAG, "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
 	new setting_t(MAG, "00210", "unknown210", 0, 100, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
@@ -308,11 +308,12 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, "00640", "pip_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(ALL, WRITE, "00650", "toggle_display", {"-off", "on"}),  // returns 56006
 	new setting_t(MAG, WRITE, "00660", "toggle_sound", {"-off", "on"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
-	new setting_t(PS,  WRITE, "00660", "toggle_sound", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
-	new setting_t(PS,  "00670", "unknown670"),
-	new setting_t(PS,  "00680", "unknown680"),
-	new setting_t(PS,  "00690", "unknown690"),
-	new setting_t(UNKNOWN,  "0069:", "unknown69:"),
+	new setting_t(PS,  "00660", "pip_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
+	new setting_t(PS,  "00670", "pbp_input1", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS,  "00680", "pbp_input2", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS,  "00690", "pbp_input3", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS,  "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS,  "006;0", "pbp_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(MAG, "00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(PS,  "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(ALL, "00810", "osd_transparency", 0, 5),  // returns 000
