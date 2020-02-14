@@ -76,10 +76,10 @@ information by opening an issue.
 | MAG271V       | ?        | ?             | ?     |   ?  | ?              |
 | MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
-| MAG321CURV    | V009     | Y             | "V18" | "00;"| SAM_LSM315FP01 |
+| MAG321CURV    | FW.009   | Y             | "V18" | "00;"| SAM_LSM315FP01 |
 | MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
 | MAG272CRX     | ?        | ?             | ?     |   ?  | ?              |
-| PS341WU       | ?        | Y             | "V06" | "00?"  | ?              |
+| PS341WU       | FW.024   | Y             | "V06" | "00?"| ?              |
 
 ### 2.2. Service menu
 
