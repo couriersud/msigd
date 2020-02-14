@@ -290,15 +290,14 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00460", "unknown460"),
 	new setting_t(UNKNOWN,  "00470", "unknown470"),
 	new setting_t(PS,  "00480", "unknown480"),
-	new setting_t(PS,  "00490", "unknown490"),
+	new setting_t(PS,  "00490", "local_dimming", {"off", "on"}),
 	new setting_t(PS,  "004<0", "unknown4<0"),
-	new setting_t(PS,  "004=0", "unknown4=0"),
+	new setting_t(PS,  "004=0", "zoom", {"off", "on"}),
+	new setting_t(PS,  "004=1", "zoom_location", {"center", "left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(PS,  "004;0", "unknown4;0"),
 	new setting_t(PS,  "004:0", "unknown4:0"),
 	new setting_t(PS,  "004<1", "unknown4<1"),
-	new setting_t(PS,  "004=1", "unknown4=1"),
 	new setting_t(PS,  "004;1", "unknown4;1"),
-
 	new setting_t(ALL, "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(PS,  "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
