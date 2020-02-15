@@ -101,7 +101,7 @@ std::vector<T> number_list(const string_list &sl, int base = 10)
 	return ret;
 }
 
-static unsigned msi_stou(std::string s, int base)
+static unsigned msi_stou(std::string s, std::size_t *idx, int base)
 {
 	unsigned res = 0;
 	for (std::size_t i=0; i < s.size(); i++)
@@ -109,8 +109,15 @@ static unsigned msi_stou(std::string s, int base)
 		unsigned b = static_cast<unsigned>(base < 0 ?
 			(i < s.size() - 1 ? static_cast<unsigned>(256u - '0') :
 				static_cast<unsigned>(-base)) : static_cast<unsigned>(base));
-		res = res * b + (static_cast<unsigned char>(s[i]) - static_cast<unsigned char>('0'));
+		unsigned v = (static_cast<unsigned char>(s[i]) - static_cast<unsigned char>('0'));
+		if (s[i] < '0' || v >= base)
+		{
+			*idx = i;
+			return res;
+		}
+		res = res * b + v;
 	}
+	*idx = s.size();
 	return res;
 }
 
@@ -184,6 +191,12 @@ struct setting_t
 	, m_max(static_cast<unsigned>(values.size()))
 	{ }
 
+	setting_t(series_t series, std::string cmd, std::string opt, int base, string_list values)
+	: setting_t(series, cmd, opt, values)
+	{
+		m_base = base;
+	}
+
 	setting_t(series_t series, access_t access, std::string cmd, std::string opt, string_list values)
 	: m_series(series)
 	, m_access(access)
@@ -192,7 +205,7 @@ struct setting_t
 	, m_opt(opt)
 	, m_values(values)
 	, m_min(0)
-	, m_max(static_cast<unsigned>(values.size()))
+	, m_max(static_cast<unsigned>(values.size()-1))
 	{ }
 
 	setting_t(setting_t &) = delete;
@@ -236,7 +249,10 @@ struct setting_t
 			return val;
 		if (m_enc == ENC_INT)
 		{
-			unsigned v = msi_stou(val, m_base);
+			std::size_t idx(0);
+			unsigned v = msi_stou(val, &idx, m_base);
+			if (idx != val.size())
+				return "";
 			char buf[100];
 			std::snprintf(buf, 100, "%u", v);
 			return buf;
@@ -244,10 +260,10 @@ struct setting_t
 		else if (m_enc == ENC_STRINGINT)
 		{
 			std::size_t eidx(0);
-			auto v = std::stoul(val, &eidx, 10);
+			auto v = msi_stou(val, &eidx, m_base);
 			if (eidx != val.size())
 				return ""; // FIXME - must be checked by caller!
-			else if (v<m_min || v > m_max)
+			else if (v>=m_values.size())
 				return ""; // FIXME - must be checked by caller!
 			return m_values[v];
 		}
@@ -286,7 +302,7 @@ struct tripple_t : public setting_t
 	: setting_t(series, READWRITE, cmd, opt, {""})
 	{ }
 
-	virtual std::string encode(std::string val)
+	std::string encode(std::string val) override
 	{
 		auto vals = number_list<unsigned>(splitstr(val,','));
 		if (vals.size() != 3)
@@ -302,13 +318,16 @@ struct tripple_t : public setting_t
 		return r;
 	}
 
-	virtual std::string decode(std::string val)
+	std::string decode(std::string val) override
 	{
-		unsigned v = msi_stou(val, 1000);
+		std::size_t idx(0);
+		unsigned v = msi_stou(val, &idx, 1000);
+		if (idx != val.size())
+			return "";
 		return std::to_string(v / 1000000) + "," + std::to_string((v / 1000) % 1000) + "," + std::to_string(v % 1000);
 	}
 
-	virtual std::string help()
+	std::string help() override
 	{
 		return "tripple: v1,v2,v3 where v<=100";
 	}
@@ -320,7 +339,7 @@ struct alarm4x_t : public setting_t
 	: setting_t(series, WRITE, cmd, opt, {""})
 	{ }
 
-	virtual std::string encode(std::string val)
+	std::string encode(std::string val) override
 	{
 		auto vals = number_list<unsigned>(splitstr(val,','));
 		if (vals.size() != 5)
@@ -339,13 +358,13 @@ struct alarm4x_t : public setting_t
 		return r;
 	}
 
-	virtual std::string decode(std::string val)
+	std::string decode(std::string val) override
 	{
 		fprintf(stderr, "should never be called");
 		return "";
 	}
 
-	virtual std::string help()
+	std::string help() override
 	{
 		return "a1,a2,a3,a4,n where a<"+ std::to_string(MAX_ALARM) + " and n<=4";
 	}
@@ -369,7 +388,9 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00190", "unknown190"),  // returns 56006 on MAG, 000 on PS
 	new setting_t(UNKNOWN,  "001@0", "unknown1@0"),
 	new setting_t(MAG, "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
-	new setting_t(MAG, "00210", "unknown210"),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	//new setting_t(MAG, "00210", "unknown210"),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	// FIXME: may be "Black Tuner" on MPG series (0-20)
+	new setting_t(MAG, "00210", "unknown210", 0, 20, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	new setting_t(ALL, "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur?
 	new setting_t(MAG, "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
@@ -383,7 +404,8 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
 	new alarm4x_t(ALL, "001f",  "alarm4x"),
 	// FIXME:
-	new setting_t(MAG, "00270", "screen_assistance", 0, 12),  // returns 000, value: '0' + mode, max: "<"
+	new setting_t(MAG,  "00270", "screen_assistance", 100, {"off", "red1", "red2", "red3", "red4", "red5", "red6",
+		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS,  "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
 	new setting_t(PS,  "00271", "unknown271"),  // returns 000, read only?
@@ -440,11 +462,11 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(ALL, "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL, "00820", "osd_timeout",0, 30),  // returns 020
-	new setting_t(PS, "00830", "screen_info", {"off", "on"}),
+	new setting_t(PS,  "00830", "screen_info", {"off", "on"}),
 	new setting_t(ALL, WRITE, "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG, "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,  "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(MAG, "00860", "back_rgb", {"off", "on"}),
+	new setting_t(ALL, "00860", "unknown860", {"off", "on"}),
 	new setting_t(MAG, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
 	new setting_t(MAG, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
 	new setting_t(MAG, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
@@ -711,6 +733,14 @@ static int help()
 		"Query or set monitor settings by usb directly on the device.\n"
 		"For supported devices please refer to the documentation.\n"
 		"\n"
+		"Options are processed in the order they are given. You may specify an option\n"
+		"more than once with identical or different values.\n"
+		"\n"
+		"In addition to preset modes the --mystic option also accepts numeric\n"
+		"values. 0xff0000 will set all leds to red. '0,255,0' will set all leds\n"
+		"to green.\n"
+		"\n"
+		"\nOptions:\n\n"
 		"  -q, --query                display all monitor settings. This will also\n"
 		"                               list readonly settings and settings whose\n"
 		"                               function is currently unknown.\n"
@@ -721,24 +751,22 @@ static int help()
 		"      --mystic               off, static, breathing, blinking, flashing, \n"
 		"                               blinds, meteor, rainbow, random, \n"
 		"                               0xRRGGBB, RRR,GGG,BBB\n");
-	pprintf("\n%s:\n\n", "All monitors");
+	pprintf("%s", "All monitors:\n");
+	pprintf("%s", "    These options apply to all monitors:\n\n");
 	help_set(ALL, UNKNOWN);
 	for (std::size_t i=1; i<known_models.size(); i++)
 	{
-		pprintf("\n%s:\n\n", known_models[i].name);
+		pprintf("%s:\n", known_models[i].name);
+		pprintf("    These options apply to the %s:\n\n", known_models[i].name);
 		help_set(known_models[i].series, ALL);
 	}
+	pprintf("%s", "General options:\n");
+	pprintf("%s", "    These options always apply:\n\n");
 	pprintf("\n%s",
 		"  -d, --debug                enable debug output\n"
+		"                               Enables raw output for query command\n"
 		"  -h, --help                 display this help and exit\n"
 		"      --version              output version information and exit\n"
-		"\n"
-		"Options are processed in the order they are given. You may specify an option\n"
-		"more than once with identical or different values.\n"
-		"\n"
-		"In addition to preset modes the --mystic option also accepts numeric\n"
-		"values. 0xff0000 will set all leds to red. '0,255,0' will set all leds\n"
-		"to green.\n"
 		"\n"
 		"Exit status:\n"
 		" 0  if OK,\n"
@@ -869,7 +897,7 @@ int main (int argc, char **argv)
 				// set after MSI app 20191206 0.0.2.23
 				//usb.debug_cmd("\x01\xd0""b00100000\r");
 				// queried but not supported on MAG321CURV (returns 56006)
-				usb.debug_cmd("\x01""5800190\r");
+				//usb.debug_cmd("\x01""5800190\r");
 				//usb.debug_cmd("\x01""5800130\r");
 			}
 		}
@@ -906,10 +934,15 @@ int main (int argc, char **argv)
 				{
 					std::string res;
 					if (!usb.get_setting(*setting, res))
-						pprintf("%s : %s\n", setting->m_opt, setting->decode(res));
+					{
+						if (debug)
+							pprintf("%s : '%s'\n", setting->m_opt, res);
+						else
+							pprintf("%s : %s\n", setting->m_opt, setting->decode(res));
+					}
 					else
 					{
-						error(0, "Error querying device on %s - got <%s>", setting->m_opt, res);
+						error(0, "Error querying device on %s - got '%s'", setting->m_opt, res);
 						if (!debug)
 							return 2;
 					}
