@@ -213,23 +213,38 @@ pursue this further here.
 
 ## 5. Usage
 ```sh
-./msigd --help
-```
-```
 Usage: msigd [OPTION]... 
 Query or set monitor settings by usb directly on the device.
 For supported devices please refer to the documentation.
+
+Options are processed in the order they are given. You may specify an option
+more than once with identical or different values. An exception is the
+--wait option which will be executed after all other options were
+processed
+
+In addition to preset modes the --mystic option also accepts numeric
+values. 0xff0000 will set all leds to red. '0,255,0' will set all leds
+to green.
+
+
+Options:
 
   -q, --query                display all monitor settings. This will also
                                list readonly settings and settings whose
                                function is currently unknown.
       --info                 display device information. This can be used
                                with --query
-      --mystic               off, static, breathing, blinking, flashing, 
-                               blinds, meteor, rainbow, random, 
+  -f, --filter               limits query result to comma separated list
+                               of settings, e.g. -f contrast,gamma
+  -w, --wait                 SETTING=VALUE. Wait for SETTING to become
+                               VALUE, e.g. macro_key=pressed
+  -n, --numeric              monitor settings are displayed as numeric
+                                settings
+       --mystic              off, static, breathing, blinking, flashing,
+                               blinds, meteor, rainbow, random,
                                0xRRGGBB, RRR,GGG,BBB
-
 All monitors:
+    These options apply to all monitors:
 
       --power                values: off 
       --response_time        values: normal fast fastest 
@@ -250,17 +265,19 @@ All monitors:
       --osd_transparency     values: 0 to 5
       --osd_timeout          values: 0 to 30
       --reset                values: on 
-
+      --unknown860           values: off on 
 MAG Series:
+    These options apply to the MAG Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
       --game_mode            values: user fps racing rts rpg 
+      --unknown210           values: 0 to 20
       --enable_dynamic       values: on off 
       --hdcr                 values: off on 
       --refresh_rate_display values: off on 
       --refresh_rate_position values: left_top right_top left_bottom right_bottom 
       --alarm_clock_position values: left_top right_top left_bottom right_bottom 
-      --screen_assistance    values: 0 to 12
+      --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --zero_latency         values: off on 
       --screen_size          values: 19 24 4:3 16:9 
       --night_vision         values: off normal strong strongest ai 
@@ -276,13 +293,12 @@ MAG Series:
       --toggle_sound         values: on 
       --osd_language         values: 0 to 19
       --sound_enable         values: off on 
-      --back_rgb             values: off on 
       --navi_up              values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
-
 PS Series:
+    These options apply to the PS Series:
 
       --mode                 values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
       --alarm_clock_position values: left_top right_top left_bottom right_bottom custom 
@@ -315,23 +331,20 @@ PS Series:
       --navi_down            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_left            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_right           values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+General options:
+    These options always apply:
+
 
   -d, --debug                enable debug output
+                               Enables raw output for query command
   -h, --help                 display this help and exit
       --version              output version information and exit
-
-Options are processed in the order they are given. You may specify an option
-more than once with identical or different values.
-
-In addition to preset modes the --mystic option also accepts numeric
-values. 0xff0000 will set all leds to red. '0,255,0' will set all leds
-to green.
 
 Exit status:
  0  if OK,
  1  if error during option parsing,
  2  if error during device access,
- 
+
 Report bugs on <https://github.com/couriersud/msigd/issues>
 msigd home page: <https://github.com/couriersud/msigd>
 ```

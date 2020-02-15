@@ -5,6 +5,8 @@
 #include <vector>
 #include <map>
 #include <type_traits>
+#include <chrono>
+#include <thread>
 
 #include <stdio.h>
 #include <string.h>
@@ -21,9 +23,12 @@
 #endif
 
 static const char *appname = "msigd";
-static const char *appversion = "0.3";
+static const char *appversion = "0.4";
 
-static const unsigned MAX_ALARM = 99 * 60 + 59;
+static const unsigned cMAX_ALARM = 99 * 60 + 59;
+
+static const auto cQUERY_DELAY = std::chrono::milliseconds(25);
+static const auto cWAIT_DELAY = std::chrono::milliseconds(250);
 
 enum access_t
 {
@@ -103,14 +108,16 @@ std::vector<T> number_list(const string_list &sl, int base = 10)
 
 static unsigned msi_stou(std::string s, std::size_t *idx, int base)
 {
+	static const unsigned char c0 = '0';
 	unsigned res = 0;
 	for (std::size_t i=0; i < s.size(); i++)
 	{
+		unsigned char c = static_cast<unsigned char>(s[i]);
 		unsigned b = static_cast<unsigned>(base < 0 ?
-			(i < s.size() - 1 ? static_cast<unsigned>(256u - '0') :
+			(i < s.size() - 1 ? static_cast<unsigned>(256u - c0) :
 				static_cast<unsigned>(-base)) : static_cast<unsigned>(base));
-		unsigned v = (static_cast<unsigned char>(s[i]) - static_cast<unsigned char>('0'));
-		if (s[i] < '0' || v >= base)
+		unsigned v = c - c0;
+		if (c < c0 || v >= base)
 		{
 			*idx = i;
 			return res;
@@ -243,6 +250,22 @@ struct setting_t
 			return "";
 	}
 
+	virtual std::string decode_num(std::string val)
+	{
+		// No point in decoding a string
+		if (m_enc == ENC_STRING)
+			return val;
+		if (m_enc == ENC_INT || m_enc == ENC_STRINGINT)
+		{
+			std::size_t idx(0);
+			unsigned v = msi_stou(val, &idx, m_base);
+			if (idx != val.size())
+				return val; // return val
+			return std::to_string(v);
+		}
+		return "";
+	}
+
 	virtual std::string decode(std::string val)
 	{
 		if (m_enc == ENC_STRING)
@@ -318,6 +341,15 @@ struct tripple_t : public setting_t
 		return r;
 	}
 
+	std::string decode_num(std::string val) override
+	{
+		std::size_t idx(0);
+		unsigned v = msi_stou(val, &idx, 1000);
+		if (idx != val.size())
+			return "";
+		return std::to_string(v);
+	}
+
 	std::string decode(std::string val) override
 	{
 		std::size_t idx(0);
@@ -348,7 +380,7 @@ struct alarm4x_t : public setting_t
 		std::string r;
 		for (std::size_t i=0; i<4; i++)
 		{
-			if (vals[i] > MAX_ALARM)
+			if (vals[i] > cMAX_ALARM)
 				return "";
 			r = r + msi_utos(vals[i], -60, 2);
 		}
@@ -366,7 +398,7 @@ struct alarm4x_t : public setting_t
 
 	std::string help() override
 	{
-		return "a1,a2,a3,a4,n where a<"+ std::to_string(MAX_ALARM) + " and n<=4";
+		return "a1,a2,a3,a4,n where a<"+ std::to_string(cMAX_ALARM) + " and n<=4";
 	}
 };
 
@@ -399,7 +431,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG, "00251", "refresh_rate_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(ALL, "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
 	new setting_t(ALL, "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
-	new setting_t(ALL, "00262", "alarm_clock_time", 0, MAX_ALARM, -60),  // FIXME: returns timeout on PS
+	new setting_t(ALL, "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
 	new setting_t(MAG, "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(PS,  "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
 	new alarm4x_t(ALL, "001f",  "alarm4x"),
@@ -476,6 +508,14 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS,  "00930", "navi_right", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 });
+
+static setting_t *get_setting(std::string opt)
+{
+	for (auto &s : settings)
+		if (s->m_opt == opt)
+			return s;
+	return nullptr;
+}
 
 static setting_t sp140(ALL, "00140", "sp140");
 static setting_t sp150(ALL, "00150", "sp150");
@@ -734,7 +774,9 @@ static int help()
 		"For supported devices please refer to the documentation.\n"
 		"\n"
 		"Options are processed in the order they are given. You may specify an option\n"
-		"more than once with identical or different values.\n"
+		"more than once with identical or different values. An exception is the\n"
+		"--wait option which will be executed after all other options were\n"
+		"processed\n"
 		"\n"
 		"In addition to preset modes the --mystic option also accepts numeric\n"
 		"values. 0xff0000 will set all leds to red. '0,255,0' will set all leds\n"
@@ -746,10 +788,16 @@ static int help()
 		"                               function is currently unknown.\n"
 		"      --info                 display device information. This can be used\n"
 		"                               with --query\n"
+		"  -f, --filter               limits query result to comma separated list\n"
+		"                               of settings, e.g. -f contrast,gamma\n"
+		"  -w, --wait                 SETTING=VALUE. Wait for SETTING to become\n"
+		"                               VALUE, e.g. macro_key=pressed\n"
+		"  -n, --numeric              monitor settings are displayed as numeric\n"
+	    "                                settings\n"
 		, appname);
 	pprintf("%s",
-		"      --mystic               off, static, breathing, blinking, flashing, \n"
-		"                               blinds, meteor, rainbow, random, \n"
+		"       --mystic              off, static, breathing, blinking, flashing,\n"
+		"                               blinds, meteor, rainbow, random,\n"
 		"                               0xRRGGBB, RRR,GGG,BBB\n");
 	pprintf("%s", "All monitors:\n");
 	pprintf("%s", "    These options apply to all monitors:\n\n");
@@ -810,6 +858,9 @@ int main (int argc, char **argv)
 	bool info = false;
 	led_data leds;
 	bool mystic = false;
+	bool numeric = false;
+	string_list filters;
+	std::string waitfor;
 
 	std::vector<std::pair<std::string, std::string>> setopts;
 
@@ -827,6 +878,17 @@ int main (int argc, char **argv)
 			debug = true;
 		else if (cur_opt == "--query" || cur_opt == "-q")
 			query = true;
+		else if (cur_opt == "--numeric" || cur_opt == "-n")
+			numeric = true;
+		else if ((cur_opt == "--filter" || cur_opt == "-f") && arg_pointer + 1 < argc)
+		{
+			filters = splitstr(argv[++arg_pointer], ',');
+			query = true;
+		}
+		else if ((cur_opt == "--wait" || cur_opt == "-w") && arg_pointer + 1 < argc)
+		{
+			waitfor = argv[++arg_pointer];
+		}
 		else if (cur_opt == "--mystic" && arg_pointer + 1 < argc)
 		{
 			if (mystic_opt(argv[++arg_pointer], leds) != 0)
@@ -928,25 +990,53 @@ int main (int argc, char **argv)
 		// query first
 		if (query)
 		{
+			std::vector<setting_t *> qsettings;
+			unsigned filters_found(0);
+
 			for (auto &setting : settings)
+			{
 				if ((setting->m_access==READWRITE || setting->m_access==READ)
 					&& (setting->m_series & series.series))
-				{
-					std::string res;
-					if (!usb.get_setting(*setting, res))
-					{
-						if (debug)
-							pprintf("%s : '%s'\n", setting->m_opt, res);
-						else
-							pprintf("%s : %s\n", setting->m_opt, setting->decode(res));
-					}
+					if (filters.empty())
+						qsettings.push_back(setting);
 					else
 					{
-						error(0, "Error querying device on %s - got '%s'", setting->m_opt, res);
-						if (!debug)
-							return 2;
+						for (auto &f : filters)
+						{
+							if (f == setting->m_opt)
+							{
+								qsettings.push_back(setting);
+								filters_found++;
+								break;
+							}
+						}
 					}
+			}
+
+			if (filters_found != filters.size())
+				return error(1, "Unsupported query filter elements: %d of %d", filters.size() - filters_found , filters.size());
+
+			for (auto &setting : qsettings)
+			{
+			    std::this_thread::sleep_for(cQUERY_DELAY);
+
+				std::string res;
+				if (!usb.get_setting(*setting, res))
+				{
+					if (debug)
+						pprintf("%s : '%s'\n", setting->m_opt, res);
+					else if (numeric)
+						pprintf("%s : %s\n", setting->m_opt, setting->decode_num(res));
+					else
+						pprintf("%s : %s\n", setting->m_opt, setting->decode(res));
 				}
+				else
+				{
+					error(0, "Error querying device on %s - got '%s'", setting->m_opt, res);
+					if (!debug)
+						return 2;
+				}
+			}
 		}
 
 		if (mystic)
@@ -956,6 +1046,33 @@ int main (int argc, char **argv)
 		for (auto &s : set_encoded)
 			if (usb.set_setting(*s.first, s.second))
 				return error(2, "Error setting --%s", s.first->m_opt);
+
+		// Now wait for setting
+
+		if (waitfor.size() != 0)
+		{
+			auto sp = splitstr(waitfor, '=');
+			if (sp.size() != 2)
+				return error(1, "--wait syntax error: %s", waitfor);
+			setting_t *setting = get_setting(sp[0]);
+			if (setting == nullptr)
+				return error(1, "--wait setting not found: %s", sp[0]);
+			while (true)
+			{
+			    std::this_thread::sleep_for(cWAIT_DELAY);
+				std::string res;
+				if (!usb.get_setting(*setting, res))
+				{
+					if (sp[1] == setting->decode(res))
+						return 0;
+				}
+				else
+				{
+					return error(2, "Error querying device on %s - got '%s'", sp[0], res);
+				}
+
+			}
+		}
 
 	}
 	else
