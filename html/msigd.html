@@ -1,0 +1,745 @@
+<!-- Creator     : groff version 1.22.3 -->
+<!-- CreationDate: Sun Feb 16 00:46:31 2020 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>MSIGD</title>
+
+</head>
+<body>
+
+<h1 align="center">MSIGD</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#AUTHOR">AUTHOR</a><br>
+<a href="#REPORTING BUGS">REPORTING BUGS</a><br>
+<a href="#COPYRIGHT">COPYRIGHT</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">msigd &minus;
+manual page for msigd 0.4</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>msigd</b>
+[<i>OPTION</i>]...</p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Query or set
+monitor settings by usb directly on the device. For
+supported devices please refer to the documentation.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Options are
+processed in the order they are given. You may specify an
+option more than once with identical or different values. An
+exception is the <b>&minus;&minus;wait</b> option which will
+be executed after all other options were processed</p>
+
+<p style="margin-left:11%; margin-top: 1em">In addition to
+preset modes the <b>&minus;&minus;mystic</b> option also
+accepts numeric values. 0xff0000 will set all leds to red.
+&rsquo;0,255,0&rsquo; will set all leds to green.</p>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>&minus;q</b>,
+<b>&minus;&minus;query</b></p>
+
+<p style="margin-left:22%;">display all monitor settings.
+This will also list readonly settings and settings whose
+function is currently unknown.</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;info</b></p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>display device information. This can be used with
+<b>&minus;&minus;query</b></p> </td></tr>
+</table>
+
+<p style="margin-left:11%;"><b>&minus;f</b>,
+<b>&minus;&minus;filter</b></p>
+
+<p style="margin-left:22%;">limits query result to comma
+separated list of settings, e.g. <b>&minus;f</b>
+contrast,gamma</p>
+
+<p style="margin-left:11%;"><b>&minus;w</b>,
+<b>&minus;&minus;wait</b></p>
+
+<p style="margin-left:22%;">SETTING=VALUE. Wait for SETTING
+to become VALUE, e.g. macro_key=pressed</p>
+
+<p style="margin-left:11%;"><b>&minus;n</b>,
+<b>&minus;&minus;numeric</b></p>
+
+<p style="margin-left:22%;">monitor settings are displayed
+as numeric settings</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;mystic</b></p>
+
+<p style="margin-left:22%;">off, static, breathing,
+blinking, flashing, blinds, meteor, rainbow, random,
+0xRRGGBB, RRR,GGG,BBB</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>All
+monitors:</b></p>
+
+<p style="margin-left:22%;">These options apply to all
+monitors:</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;power</b></p>
+
+<p style="margin-left:22%;">values: off</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;response_time</b></p>
+
+<p style="margin-left:22%;">values: normal fast fastest</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock</b></p>
+
+<p style="margin-left:22%;">values: off 1 2 3 4</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock_index</b></p>
+
+<p style="margin-left:22%;">values: 1 to 4</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock_time</b></p>
+
+<p style="margin-left:22%;">values: 0 to 5999</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;alarm4x</b></p>
+
+<p style="margin-left:22%;">a1,a2,a3,a4,n where a&lt;5999
+and n&lt;=4</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;image_enhancement</b></p>
+
+<p style="margin-left:22%;">values: off weak medium strong
+strongest</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;brightness</b></p>
+
+<p style="margin-left:22%;">values: 0 to 100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;contrast</b></p>
+
+<p style="margin-left:22%;">values: 0 to 100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;sharpness</b></p>
+
+<p style="margin-left:22%;">values: 0 to 5</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;color_rgb</b></p>
+
+<p style="margin-left:22%;">tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown440</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+
+<p style="margin-left:22%;">values: small medium large</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+
+<p style="margin-left:22%;">values: left_top right_top
+left_bottom right_bottom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
+
+<p style="margin-left:22%;">values: on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;osd_transparency</b></p>
+
+<p style="margin-left:22%;">values: 0 to 5</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;osd_timeout</b></p>
+
+<p style="margin-left:22%;">values: 0 to 30</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;reset</b></p>
+
+<p style="margin-left:22%;">values: on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown860</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>MAG
+Series:</b></p>
+
+<p style="margin-left:22%;">These options apply to the MAG
+Series:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;mode</b></p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>values: user fps racing rts rpg mode5 mode6 mode7 mode8
+mode9 user reader cinema designer</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;game_mode</b></p>
+
+<p style="margin-left:22%;">values: user fps racing rts
+rpg</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
+
+<p style="margin-left:22%;">values: 0 to 20</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;enable_dynamic</b></p>
+
+<p style="margin-left:22%;">values: on off</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;hdcr</b></p></td>
+<td width="2%"></td>
+<td width="21%">
+
+
+<p>values: off on</p></td>
+<td width="57%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;refresh_display</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;refresh_position</b></p>
+
+<p style="margin-left:22%;">values: left_top right_top
+left_bottom right_bottom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+
+<p style="margin-left:22%;">values: left_top right_top
+left_bottom right_bottom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_assistance</b></p>
+
+<p style="margin-left:22%;">values: off red1 red2 red3 red4
+red5 red6 white1 white2 white3 white4 white5 white6</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+
+<p style="margin-left:22%;">values: 19 24 4:3 16:9</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+
+<p style="margin-left:22%;">values: off normal strong
+strongest ai</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+
+<p style="margin-left:22%;">values: user reader cinema
+designer</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;eye_saver</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;color_preset</b></p>
+
+<p style="margin-left:22%;">values: cool normal warm
+custom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;color_red</b></p>
+
+<p style="margin-left:22%;">values: 0 to 100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;color_green</b></p>
+
+<p style="margin-left:22%;">values: 0 to 100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;color_blue</b></p>
+
+<p style="margin-left:22%;">values: 0 to 100</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>&minus;&minus;pip</b></p></td>
+<td width="4%"></td>
+<td width="29%">
+
+
+<p>values: off pip pbp</p></td>
+<td width="49%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;toggle_sound</b></p>
+
+<p style="margin-left:22%;">values: on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;osd_language</b></p>
+
+<p style="margin-left:22%;">values: 0 to 19</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;sound_enable</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>PS
+Series:</b></p>
+
+<p style="margin-left:22%;">These options apply to the PS
+Series:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;mode</b></p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>values: user adobe_rgb dci_p3 srgb hdr cinema reader bw
+dicom eyecare cal1 cal2 cal3</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+
+<p style="margin-left:22%;">values: left_top right_top
+left_bottom right_bottom custom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_assistance</b></p>
+
+<p style="margin-left:22%;">values: off center edge scale_v
+scale_h line_v line_h grid thirds 3D_assistance</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+
+<p style="margin-left:22%;">values: auto 4:3 16:9 21:9
+1:1</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+
+<p style="margin-left:22%;">values: user adobe_rgb dci_p3
+srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;color_preset</b></p>
+
+<p style="margin-left:22%;">values: 5000K 5500K 6500K 7500K
+9300K 10000K custom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;gray_level</b></p>
+
+<p style="margin-left:22%;">values: 0 to 20</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;low_blue_light</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;local_dimming</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;hue_rgb</b></p>
+
+<p style="margin-left:22%;">tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;hue_cmy</b></p>
+
+<p style="margin-left:22%;">tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;zoom</b></p></td>
+<td width="2%"></td>
+<td width="21%">
+
+
+<p>values: off on</p></td>
+<td width="57%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;zoom_location</b></p>
+
+<p style="margin-left:22%;">values: center left_top
+right_top left_bottom right_bottom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;saturation_rgb</b></p>
+
+<p style="margin-left:22%;">tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;saturation_cmy</b></p>
+
+<p style="margin-left:22%;">tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;gamma</b></p>
+
+<p style="margin-left:22%;">values: 1.8 2 2.2 2.4 2.6</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>&minus;&minus;pip</b></p></td>
+<td width="4%"></td>
+<td width="55%">
+
+
+<p>values: off pip pbp_x2 pbp_x3 pbp_x4</p></td>
+<td width="23%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_sound_source</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input1</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input2</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input3</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input4</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_sound_source</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;osd_language</b></p>
+
+<p style="margin-left:22%;">values: 0 to 28</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;audio_source</b></p>
+
+<p style="margin-left:22%;">values: analog digital</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+
+<p style="margin-left:22%;">values: off brightness pro_mode
+screen_assistance alarm_clock input pip zoom_in info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+
+<p style="margin-left:22%;">values: off brightness pro_mode
+screen_assistance alarm_clock input pip zoom_in info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+
+<p style="margin-left:22%;">values: off brightness pro_mode
+screen_assistance alarm_clock input pip zoom_in info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+
+<p style="margin-left:22%;">values: off brightness pro_mode
+screen_assistance alarm_clock input pip zoom_in info</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>General
+options:</b></p>
+
+<p style="margin-left:22%;">These options always apply:</p>
+
+<p style="margin-left:11%;"><b>&minus;d</b>,
+<b>&minus;&minus;debug</b></p>
+
+<p style="margin-left:22%;">enable debug output Enables raw
+output for query command</p>
+
+<p style="margin-left:11%;"><b>&minus;h</b>,
+<b>&minus;&minus;help</b></p>
+
+<p style="margin-left:22%;">display this help and exit</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;version</b></p>
+
+<p style="margin-left:22%;">output version information and
+exit</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>Exit
+status:</b></p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="1%">
+
+
+<p>0</p></td>
+<td width="10%"></td>
+<td width="47%">
+
+
+<p>if OK,</p></td>
+<td width="31%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="1%">
+
+
+<p>1</p></td>
+<td width="10%"></td>
+<td width="47%">
+
+
+<p>if error during option parsing,</p></td>
+<td width="31%">
+</td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="1%">
+
+
+<p>2</p></td>
+<td width="10%"></td>
+<td width="47%">
+
+
+<p>if error during device access,</p></td>
+<td width="31%">
+</td></tr>
+</table>
+
+<h2>AUTHOR
+<a name="AUTHOR"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Written by
+Couriersud</p>
+
+<h2>REPORTING BUGS
+<a name="REPORTING BUGS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Report bugs on
+&lt;https://github.com/couriersud/msigd/issues&gt; msigd
+home page: &lt;https://github.com/couriersud/msigd&gt;</p>
+
+<h2>COPYRIGHT
+<a name="COPYRIGHT"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Copyright
+&copy; 2019 Couriersud License GPLv2: GNU GPL version 2 or
+later &lt;http://gnu.org/licenses/gpl.html&gt; <br>
+This is free software: you are free to change and
+redistribute it. There is NO WARRANTY, to the extent
+permitted by law.</p>
+
+<h2>SEE ALSO
+<a name="SEE ALSO"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">More
+documentation for the <b>msigd</b> program is stored at
+https://github.com/couriersud/msigd</p>
+<hr>
+</body>
+</html>

@@ -75,6 +75,14 @@ msigd: $(OBJ)/msigd.o $(OBJS)
 	$(LD) -o $@ $(LDFLAGS) $^ $(LIBS)
 
 #-------------------------------------------------
+# documentation
+#-------------------------------------------------
+
+doc:
+	help2man --include=msigd.help2man --no-info ./msigd > man/msigd.1
+	groff -mandoc -Thtml man/msigd.1 > html/msigd.html
+
+#-------------------------------------------------
 # depends
 #-------------------------------------------------
 

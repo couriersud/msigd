@@ -187,7 +187,7 @@ struct setting_t
 	: m_series(series), m_access(READWRITE), m_enc(ENC_INT), m_cmd(cmd), m_opt(opt), m_min(min), m_max(max), m_base(base)
 	{ }
 
-	setting_t(series_t series, std::string cmd, std::string opt, string_list values)
+	setting_t(series_t series, std::string cmd, std::string opt, const string_list &values)
 	: m_series(series)
 	, m_access(READWRITE)
 	, m_enc(ENC_STRINGINT)
@@ -198,13 +198,13 @@ struct setting_t
 	, m_max(static_cast<unsigned>(values.size()))
 	{ }
 
-	setting_t(series_t series, std::string cmd, std::string opt, int base, string_list values)
+	setting_t(series_t series, std::string cmd, std::string opt, int base, const string_list &values)
 	: setting_t(series, cmd, opt, values)
 	{
 		m_base = base;
 	}
 
-	setting_t(series_t series, access_t access, std::string cmd, std::string opt, string_list values)
+	setting_t(series_t series, access_t access, std::string cmd, std::string opt, const string_list &values)
 	: m_series(series)
 	, m_access(access)
 	, m_enc(ENC_STRINGINT)
@@ -427,13 +427,13 @@ static std::vector<setting_t *> settings(
 	// FIXME: anti-motion blur?
 	new setting_t(MAG, "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	new setting_t(MAG, "00240", "hdcr", {"off", "on"}),
-	new setting_t(MAG, "00250", "refresh_rate_display", {"off", "on"}),
-	new setting_t(MAG, "00251", "refresh_rate_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(MAG, "00250", "refresh_display", {"off", "on"}),
+	new setting_t(MAG, "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(ALL, "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
 	new setting_t(ALL, "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
 	new setting_t(ALL, "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
-	new setting_t(MAG, "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	new setting_t(PS,  "00263", "alarm_clock_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
+	new setting_t(MAG, "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(PS,  "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
 	new alarm4x_t(ALL, "001f",  "alarm4x"),
 	// FIXME:
 	new setting_t(MAG,  "00270", "screen_assistance", 100, {"off", "red1", "red2", "red3", "red4", "red5", "red6",
@@ -943,6 +943,8 @@ int main (int argc, char **argv)
 			eprintf("Detected an unknown monitor. Please report the output of\n"
 				    "'msigd --info --debug --query' as an issue and also provide\n"
 					"the ID (MAG...) of your monitor. Thank you!\n");
+			// Assume mag series
+			series = known_models[1];
 		}
 
 		if (info)
@@ -957,7 +959,7 @@ int main (int argc, char **argv)
 				usb.debug_cmd("\x01\xb0");
 				usb.debug_cmd("\x01\xb4");
 				// set after MSI app 20191206 0.0.2.23
-				//usb.debug_cmd("\x01\xd0""b00100000\r");
+				usb.debug_cmd("\x01\xd0""b00100000\r");
 				// queried but not supported on MAG321CURV (returns 56006)
 				//usb.debug_cmd("\x01""5800190\r");
 				//usb.debug_cmd("\x01""5800130\r");
