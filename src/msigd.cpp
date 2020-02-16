@@ -52,13 +52,14 @@ struct identity_t
 	std::string p140;
 	std::string p150;
 	std::string name;
+	bool        has_mystic;
 };
 
 static std::vector<identity_t> known_models =
 {
-	{ UNKNOWN, "", "", "Unknown" },
-	{ MAG, "00;", "V18", "MAG Series" },
-	{ PS,  "00?", "V06", "PS Series" }
+	{ UNKNOWN, "", "", "Unknown", false },
+	{ MAG, "00;", "V18", "MAG Series", true },
+	{ PS,  "00?", "V06", "PS Series", false }
 };
 
 enum encoding_t
@@ -430,8 +431,8 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG, "00250", "refresh_display", {"off", "on"}),
 	new setting_t(MAG, "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(ALL, "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
-	new setting_t(ALL, "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
-	new setting_t(ALL, "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
+	new setting_t(MAG, "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
+	new setting_t(MAG, "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
 	new setting_t(MAG, "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(PS,  "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
 	new alarm4x_t(ALL, "001f",  "alarm4x"),
@@ -440,7 +441,7 @@ static std::vector<setting_t *> settings(
 		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS,  "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
-	new setting_t(PS,  "00271", "unknown271"),  // returns 000, read only?
+	new setting_t(UNKNOWN,  "00271", "unknown271"),  // returns 000, read only?
 	// FIXME: adaptive sync ? game-mode only
 	new setting_t(MAG, "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	new setting_t(MAG, "00290", "zero_latency", {"off", "on"}),  // returns 001
@@ -498,7 +499,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, WRITE, "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG, "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,  "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(ALL, "00860", "unknown860", {"off", "on"}),
+	new setting_t(MAG, "00860", "unknown860", {"off", "on"}),
 	new setting_t(MAG, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
 	new setting_t(MAG, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
 	new setting_t(MAG, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
@@ -796,7 +797,8 @@ static int help()
 	pprintf("%s",
 		"       --mystic              off, static, breathing, blinking, flashing,\n"
 		"                               blinds, meteor, rainbow, random,\n"
-		"                               0xRRGGBB, RRR,GGG,BBB\n");
+		"                               0xRRGGBB, RRR,GGG,BBB\n"
+		"                               Only on MAG series monitors.\n");
 	pprintf("%s", "\nAll monitors:\n");
 	pprintf("%s", "    These options apply to all monitors:\n\n");
 	help_set(ALL, UNKNOWN);
@@ -966,6 +968,9 @@ int main (int argc, char **argv)
 				//usb.debug_cmd("\x01""5800130\r");
 			}
 		}
+
+		if (mystic && !series.has_mystic)
+			return error(1, "--mystic only supported on MAG series monitors");
 
 		// Check parameters to be set
 		std::vector<std::pair<setting_t *, std::string>> set_encoded;

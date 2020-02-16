@@ -44,6 +44,7 @@ settings
 off, static, breathing, blinking, flashing,
 blinds, meteor, rainbow, random,
 0xRRGGBB, RRR,GGG,BBB
+Only on MAG series monitors.
 .SS "All monitors:"
 .IP
 These options apply to all monitors:
@@ -56,12 +57,6 @@ values: normal fast fastest
 .TP
 \fB\-\-alarm_clock\fR
 values: off 1 2 3 4
-.TP
-\fB\-\-alarm_clock_index\fR
-values: 1 to 4
-.TP
-\fB\-\-alarm_clock_time\fR
-values: 0 to 5999
 .TP
 \fB\-\-alarm4x\fR
 a1,a2,a3,a4,n where a<5999 and n<=4
@@ -104,9 +99,6 @@ values: 0 to 30
 .TP
 \fB\-\-reset\fR
 values: on
-.TP
-\fB\-\-unknown860\fR
-values: off on
 .SS "MAG Series:"
 .IP
 These options apply to the MAG Series:
@@ -131,6 +123,12 @@ values: off on
 .TP
 \fB\-\-refresh_position\fR
 values: left_top right_top left_bottom right_bottom
+.TP
+\fB\-\-alarm_clock_index\fR
+values: 1 to 4
+.TP
+\fB\-\-alarm_clock_time\fR
+values: 0 to 5999
 .TP
 \fB\-\-alarm_position\fR
 values: left_top right_top left_bottom right_bottom
@@ -181,6 +179,9 @@ values: on
 values: 0 to 19
 .TP
 \fB\-\-sound_enable\fR
+values: off on
+.TP
+\fB\-\-unknown860\fR
 values: off on
 .TP
 \fB\-\-navi_up\fR

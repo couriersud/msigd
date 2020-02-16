@@ -247,6 +247,7 @@ Options:
        --mystic              off, static, breathing, blinking, flashing,
                                blinds, meteor, rainbow, random,
                                0xRRGGBB, RRR,GGG,BBB
+                               Only on MAG series monitors.
 
 All monitors:
     These options apply to all monitors:
@@ -254,8 +255,6 @@ All monitors:
       --power                values: off 
       --response_time        values: normal fast fastest 
       --alarm_clock          values: off 1 2 3 4 
-      --alarm_clock_index    values: 1 to 4
-      --alarm_clock_time     values: 0 to 5999
       --alarm4x              a1,a2,a3,a4,n where a<5999 and n<=4
       --image_enhancement    values: off weak medium strong strongest 
       --brightness           values: 0 to 100
@@ -270,7 +269,6 @@ All monitors:
       --osd_transparency     values: 0 to 5
       --osd_timeout          values: 0 to 30
       --reset                values: on 
-      --unknown860           values: off on 
 
 MAG Series:
     These options apply to the MAG Series:
@@ -282,6 +280,8 @@ MAG Series:
       --hdcr                 values: off on 
       --refresh_display      values: off on 
       --refresh_position     values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    values: 1 to 4
+      --alarm_clock_time     values: 0 to 5999
       --alarm_position       values: left_top right_top left_bottom right_bottom 
       --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --zero_latency         values: off on 
@@ -299,6 +299,7 @@ MAG Series:
       --toggle_sound         values: on 
       --osd_language         values: 0 to 19
       --sound_enable         values: off on 
+      --unknown860           values: off on 
       --navi_up              values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
