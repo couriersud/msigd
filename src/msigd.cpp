@@ -509,16 +509,14 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00930", "navi_right", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 });
 
-static setting_t *get_setting(std::string opt)
+static setting_t *get_read_setting(series_t series, std::string opt)
 {
 	for (auto &s : settings)
-		if (s->m_opt == opt)
+		if (s->m_opt == opt && (s->m_access==READWRITE || s->m_access==READ)
+				&& (s->m_series & series))
 			return s;
 	return nullptr;
 }
-
-static setting_t sp140(ALL, "00140", "sp140");
-static setting_t sp150(ALL, "00150", "sp150");
 
 struct led_data
 {
@@ -799,18 +797,18 @@ static int help()
 		"       --mystic              off, static, breathing, blinking, flashing,\n"
 		"                               blinds, meteor, rainbow, random,\n"
 		"                               0xRRGGBB, RRR,GGG,BBB\n");
-	pprintf("%s", "All monitors:\n");
+	pprintf("%s", "\nAll monitors:\n");
 	pprintf("%s", "    These options apply to all monitors:\n\n");
 	help_set(ALL, UNKNOWN);
 	for (std::size_t i=1; i<known_models.size(); i++)
 	{
-		pprintf("%s:\n", known_models[i].name);
+		pprintf("\n%s:\n", known_models[i].name);
 		pprintf("    These options apply to the %s:\n\n", known_models[i].name);
 		help_set(known_models[i].series, ALL);
 	}
-	pprintf("%s", "General options:\n");
+	pprintf("\n%s", "General options:\n");
 	pprintf("%s", "    These options always apply:\n\n");
-	pprintf("\n%s",
+	pprintf("%s",
 		"  -d, --debug                enable debug output\n"
 		"                               Enables raw output for query command\n"
 		"  -h, --help                 display this help and exit\n"
@@ -920,6 +918,9 @@ int main (int argc, char **argv)
 		std::string s140;
 		std::string s150;
 		identity_t &series = known_models[0];
+
+		setting_t sp140(ALL, "00140", "sp140");
+		setting_t sp150(ALL, "00150", "sp150");
 
 		if (!usb.get_setting(sp140, s140) && !usb.get_setting(sp150, s150))
 		{
@@ -1056,7 +1057,7 @@ int main (int argc, char **argv)
 			auto sp = splitstr(waitfor, '=');
 			if (sp.size() != 2)
 				return error(1, "--wait syntax error: %s", waitfor);
-			setting_t *setting = get_setting(sp[0]);
+			setting_t *setting = get_read_setting(series.series, sp[0]);
 			if (setting == nullptr)
 				return error(1, "--wait setting not found: %s", sp[0]);
 			while (true)

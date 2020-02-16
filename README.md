@@ -23,6 +23,7 @@ The `msigd` command line tools allows you to change all settings for MSI monitor
     - [6.1. Automatically switch input source](#61-automatically-switch-input-source)
     - [6.2. Change settings depending on foreground window](#62-change-settings-depending-on-foreground-window)
 - [7. TODO](#7-todo)
+- [8. Credits](#8-credits)
 
 <!-- /TOC -->
 
@@ -246,6 +247,7 @@ Options:
        --mystic              off, static, breathing, blinking, flashing,
                                blinds, meteor, rainbow, random,
                                0xRRGGBB, RRR,GGG,BBB
+
 All monitors:
     These options apply to all monitors:
 
@@ -269,6 +271,7 @@ All monitors:
       --osd_timeout          values: 0 to 30
       --reset                values: on 
       --unknown860           values: off on 
+
 MAG Series:
     These options apply to the MAG Series:
 
@@ -277,9 +280,9 @@ MAG Series:
       --unknown210           values: 0 to 20
       --enable_dynamic       values: on off 
       --hdcr                 values: off on 
-      --refresh_rate_display values: off on 
-      --refresh_rate_position values: left_top right_top left_bottom right_bottom 
-      --alarm_clock_position values: left_top right_top left_bottom right_bottom 
+      --refresh_display      values: off on 
+      --refresh_position     values: left_top right_top left_bottom right_bottom 
+      --alarm_position       values: left_top right_top left_bottom right_bottom 
       --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --zero_latency         values: off on 
       --screen_size          values: 19 24 4:3 16:9 
@@ -300,11 +303,12 @@ MAG Series:
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+
 PS Series:
     These options apply to the PS Series:
 
       --mode                 values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
-      --alarm_clock_position values: left_top right_top left_bottom right_bottom custom 
+      --alarm_position       values: left_top right_top left_bottom right_bottom custom 
       --screen_assistance    values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
       --screen_size          values: auto 4:3 16:9 21:9 1:1 
       --pro_mode             values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
@@ -334,9 +338,9 @@ PS Series:
       --navi_down            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_left            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_right           values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+
 General options:
     These options always apply:
-
 
   -d, --debug                enable debug output
                                Enables raw output for query command
@@ -451,6 +455,6 @@ done
 - Code cleanup
 - Support more monitors - depends on user contributions
 
-## Credits
+## 8. Credits
 
 [John Wehin](https://github.com/Wehin) - PS341WU support and bug fixing
