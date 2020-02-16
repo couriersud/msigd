@@ -212,6 +212,9 @@ This includes turning of security settings and thus I am not going to
 pursue this further here. 
 
 ## 5. Usage
+
+[`msgid --help`](https://htmlpreview.github.io/?https://raw.githubusercontent.com/couriersud/msigd/master/html/msigd.html)
+
 ```sh
 Usage: msigd [OPTION]... 
 Query or set monitor settings by usb directly on the device.
