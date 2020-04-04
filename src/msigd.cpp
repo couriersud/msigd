@@ -23,7 +23,7 @@
 #endif
 
 static const char *appname = "msigd";
-static const char *appversion = "0.4";
+static const char *appversion = "0.5";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 

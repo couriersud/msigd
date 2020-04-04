@@ -267,10 +267,9 @@ All monitors:
       --osd_timeout          values: 0 to 30
       --reset                values: on 
 
-MAG27 Series:
-    These options apply to the MAG27 Series:
+MAG series monitors:
+    These options apply to MAG27 and MAG34 monitors:
 
-      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
       --game_mode            values: user fps racing rts rpg 
       --unknown210           values: 0 to 20
       --enable_dynamic       values: on off 
@@ -281,20 +280,25 @@ MAG27 Series:
       --alarm_clock_time     values: 0 to 5999
       --alarm_position       values: left_top right_top left_bottom right_bottom 
       --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
-      --free_sync            values: off on 
       --zero_latency         values: off on 
-      --screen_size          values: auto 4:3 16:9 
       --night_vision         values: off normal strong strongest ai 
-      --pro_mode             values: user reader cinema designer HDR 
       --eye_saver            values: off on 
       --color_preset         values: cool normal warm custom 
       --color_red            values: 0 to 100
       --color_green          values: 0 to 100
       --color_blue           values: 0 to 100
       --osd_language         values: 0 to 19
-      --screen_info          values: off on 
       --sound_enable         values: off on 
       --unknown860           values: off on 
+
+MAG27 Series:
+    These options apply to the MAG27 Series:
+
+      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --free_sync            values: off on 
+      --screen_size          values: auto 4:3 16:9 
+      --pro_mode             values: user reader cinema designer HDR 
+      --screen_info          values: off on 
       --navi_up              values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -304,25 +308,8 @@ MAG34 Series:
     These options apply to the MAG34 Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
-      --game_mode            values: user fps racing rts rpg 
-      --unknown210           values: 0 to 20
-      --enable_dynamic       values: on off 
-      --hdcr                 values: off on 
-      --refresh_display      values: off on 
-      --refresh_position     values: left_top right_top left_bottom right_bottom 
-      --alarm_clock_index    values: 1 to 4
-      --alarm_clock_time     values: 0 to 5999
-      --alarm_position       values: left_top right_top left_bottom right_bottom 
-      --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
-      --zero_latency         values: off on 
       --screen_size          values: 19 24 4:3 16:9 
-      --night_vision         values: off normal strong strongest ai 
       --pro_mode             values: user reader cinema designer 
-      --eye_saver            values: off on 
-      --color_preset         values: cool normal warm custom 
-      --color_red            values: 0 to 100
-      --color_green          values: 0 to 100
-      --color_blue           values: 0 to 100
       --pip                  values: off pip pbp 
       --pip_input            values: hdmi1 hdmi2 dp usbc 
       --pbp_input            values: hdmi1 hdmi2 dp usbc 
@@ -330,9 +317,6 @@ MAG34 Series:
       --pip_position         values: left_top right_top left_bottom right_bottom 
       --toggle_display       values: on 
       --toggle_sound         values: on 
-      --osd_language         values: 0 to 19
-      --sound_enable         values: off on 
-      --unknown860           values: off on 
       --navi_up              values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
