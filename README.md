@@ -268,7 +268,7 @@ All monitors:
       --reset                values: on 
 
 MAG series monitors:
-    These options apply to MAG27 and MAG34 monitors:
+    These options apply to MAG27 and MAG32 monitors:
 
       --game_mode            values: user fps racing rts rpg 
       --unknown210           values: 0 to 20
@@ -304,8 +304,8 @@ MAG27 Series:
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_right           values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
 
-MAG34 Series:
-    These options apply to the MAG34 Series:
+MAG32 Series:
+    These options apply to the MAG32 Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
       --screen_size          values: 19 24 4:3 16:9 
