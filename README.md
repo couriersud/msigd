@@ -55,31 +55,31 @@ information by opening an issue.
 
 ### 2.1. MSI Monitors
 
-| ID            | Firmware | Supported     | Version output| Special | Panel |
+| ID            | Firmware | Supported     | Version | Special | Panel |
 |:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
-| MAG272QP      | ?        | ?             | ?     |   ?  | ?              |
-| MAG271CQP     | ?        | ?             | ?     |   ?  | ?              | 
 | MPG27CQ       | ?        | ?             | ?     |   ?  | ?              |
-| MAG271R       | ?        | ?             | ?     |   ?  | ?              |
-| MAG272R       | ?        | ?             | ?     |   ?  | ?              |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG241CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271R       | ?        | ?             | ?     |   ?  | ?              |
+| MAG271CQP     | ?        | ?             | ?     |   ?  | ?              | 
+| MAG271CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MAG271CR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG272CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG272QR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271V       | ?        | ?             | ?     |   ?  | ?              |
+| MAG272R       | ?        | Y             | "V18" | "00O"| ?              |
+| MAG272QP      | ?        | Y             | "V18" | "00O"| ?              |
+| MAG272QR      | ?        | Y             | "V18" | "00O"| ?              |
+| MAG272CR      | ?        | Y             | "V18" | "00O"| ?              |
+| MAG272CQR     | ?        | Y             | "V18" | "00O"| ?              |
+| MAG272CRX     | ?        | Y             | "V18" | "00O"| ?              |
+| MAG241CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG321CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MAG271CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MAG272CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MAG271V       | ?        | ?             | ?     |   ?  | ?              |
 | MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG321CURV    | FW.009   | Y             | "V18" | "00;"| SAM_LSM315FP01 |
 | MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
-| MAG272CRX     | ?        | ?             | ?     |   ?  | ?              |
 | PS341WU       | FW.024   | Y             | "V06" | "00?"| ?              |
 
 ### 2.2. Service menu
@@ -263,15 +263,45 @@ All monitors:
       --color_rgb            tripple: v1,v2,v3 where v<=100
       --unknown440           values: off on 
       --input                values: hdmi1 hdmi2 dp usbc 
-      --pip_size             values: small medium large 
-      --pip_position         values: left_top right_top left_bottom right_bottom 
-      --toggle_display       values: on 
       --osd_transparency     values: 0 to 5
       --osd_timeout          values: 0 to 30
       --reset                values: on 
 
-MAG Series:
-    These options apply to the MAG Series:
+MAG27 Series:
+    These options apply to the MAG27 Series:
+
+      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --game_mode            values: user fps racing rts rpg 
+      --unknown210           values: 0 to 20
+      --enable_dynamic       values: on off 
+      --hdcr                 values: off on 
+      --refresh_display      values: off on 
+      --refresh_position     values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    values: 1 to 4
+      --alarm_clock_time     values: 0 to 5999
+      --alarm_position       values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
+      --free_sync            values: off on 
+      --zero_latency         values: off on 
+      --screen_size          values: auto 4:3 16:9 
+      --night_vision         values: off normal strong strongest ai 
+      --pro_mode             values: user reader cinema designer HDR 
+      --eye_saver            values: off on 
+      --color_preset         values: cool normal warm custom 
+      --color_red            values: 0 to 100
+      --color_green          values: 0 to 100
+      --color_blue           values: 0 to 100
+      --osd_language         values: 0 to 19
+      --screen_info          values: off on 
+      --sound_enable         values: off on 
+      --unknown860           values: off on 
+      --navi_up              values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_down            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_left            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_right           values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+
+MAG34 Series:
+    These options apply to the MAG34 Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
       --game_mode            values: user fps racing rts rpg 
@@ -296,6 +326,9 @@ MAG Series:
       --pip                  values: off pip pbp 
       --pip_input            values: hdmi1 hdmi2 dp usbc 
       --pbp_input            values: hdmi1 hdmi2 dp usbc 
+      --pip_size             values: small medium large 
+      --pip_position         values: left_top right_top left_bottom right_bottom 
+      --toggle_display       values: on 
       --toggle_sound         values: on 
       --osd_language         values: 0 to 19
       --sound_enable         values: off on 
@@ -326,6 +359,9 @@ PS Series:
       --gamma                values: 1.8 2 2.2 2.4 2.6 
       --pip                  values: off pip pbp_x2 pbp_x3 pbp_x4 
       --pip_input            values: hdmi1 hdmi2 dp usbc 
+      --pip_size             values: small medium large 
+      --pip_position         values: left_top right_top left_bottom right_bottom 
+      --toggle_display       values: on 
       --pip_sound_source     values: hdmi1 hdmi2 dp usbc 
       --pbp_input1           values: hdmi1 hdmi2 dp usbc 
       --pbp_input2           values: hdmi1 hdmi2 dp usbc 

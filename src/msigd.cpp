@@ -40,11 +40,18 @@ enum access_t
 enum series_t
 {
 	UNKNOWN = 0x0000,
-	MAG     = 0x0001,
-	PS      = 0x0002,
+	MAG34   = 0x0001,
+	MAG27   = 0x0002,
+	PS      = 0x0004,
 
-	ALL     = 0x000f,
+	MAG     = MAG34 | MAG27,
+	ALL     = MAG | PS,
 };
+
+static series_t operator | (series_t a, series_t b)
+{
+	return static_cast<series_t>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 struct identity_t
 {
@@ -58,7 +65,8 @@ struct identity_t
 static std::vector<identity_t> known_models =
 {
 	{ UNKNOWN, "", "", "Unknown", false },
-	{ MAG, "00;", "V18", "MAG Series", true },
+	{ MAG27, "00;", "V18", "MAG27 Series", true },
+	{ MAG34, "00O", "V18", "MAG34 Series", true },
 	{ PS,  "00?", "V06", "PS Series", false }
 };
 
@@ -412,7 +420,8 @@ static std::vector<setting_t *> settings(
 {
 	new setting_t(ALL, WRITE, "00100", "power", {"off", "-on"}),
 	new setting_t(ALL, READ, "00110", "macro_key", {"off", "pressed"}),  // returns 000 called frequently by OSD app, readonly
-	new setting_t(MAG, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
+	new setting_t(MAG27, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer", "HDR"}),
+	new setting_t(MAG34, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
 	new setting_t(PS,  "00120", "mode", {"-m0","-m1","-m2","-m3","-m4""-m5","-m6","-m7","-m8","-m9",
 		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(ALL, "00130", "serial"), // returns 13 blanks
@@ -425,7 +434,7 @@ static std::vector<setting_t *> settings(
 	// FIXME: may be "Black Tuner" on MPG series (0-20)
 	new setting_t(MAG, "00210", "unknown210", 0, 20, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	new setting_t(ALL, "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
-	// FIXME: anti-motion blur?
+	// FIXME: anti-motion blur? -- MAG272QP
 	new setting_t(MAG, "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	new setting_t(MAG, "00240", "hdcr", {"off", "on"}),
 	new setting_t(MAG, "00250", "refresh_display", {"off", "on"}),
@@ -443,12 +452,15 @@ static std::vector<setting_t *> settings(
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
 	new setting_t(UNKNOWN,  "00271", "unknown271"),  // returns 000, read only?
 	// FIXME: adaptive sync ? game-mode only
-	new setting_t(MAG, "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
+	new setting_t(MAG34, "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
+	new setting_t(MAG27, "00280", "free_sync", {"off", "on"}),
 	new setting_t(MAG, "00290", "zero_latency", {"off", "on"}),  // returns 001
-	new setting_t(MAG, "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
+	new setting_t(MAG27, "002:0", "screen_size", {"auto", "4:3", "16:9"}),
+	new setting_t(MAG34, "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
 	new setting_t(PS,  "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
 	new setting_t(MAG, "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
-	new setting_t(MAG, "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
+	new setting_t(MAG27, "00300", "pro_mode", {"user", "reader", "cinema", "designer", "HDR"}),
+	new setting_t(MAG34, "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS,  "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(MAG, "00310", "eye_saver", {"off", "on"}),  // returns 000
 	new setting_t(ALL, "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
@@ -476,15 +488,15 @@ static std::vector<setting_t *> settings(
 	new tripple_t(PS,  "004;1", "saturation_cmy"),
 	new setting_t(PS,  "004:0", "gamma", {"1.8", "2", "2.2", "2.4", "2.6"}),
 	new setting_t(ALL, "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
-	new setting_t(MAG, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
+	new setting_t(MAG34, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(PS,  "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
-	new setting_t(MAG, "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(MAG, "00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(MAG34, "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(MAG34, "00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS,  "00620", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(ALL, "00630", "pip_size", {"small", "medium", "large"}),
-	new setting_t(ALL, "00640", "pip_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	new setting_t(ALL, WRITE, "00650", "toggle_display", {"-off", "on"}),  // returns 56006
-	new setting_t(MAG, WRITE, "00660", "toggle_sound", {"-off", "on"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
+	new setting_t(PS | MAG34, "00630", "pip_size", {"small", "medium", "large"}),
+	new setting_t(PS | MAG34, "00640", "pip_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(PS | MAG34, WRITE, "00650", "toggle_display", {"-off", "on"}),  // returns 56006
+	new setting_t(MAG34, WRITE, "00660", "toggle_sound", {"-off", "on"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
 	new setting_t(PS,  "00660", "pip_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
 	new setting_t(PS,  "00670", "pbp_input1", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS,  "00680", "pbp_input2", {"hdmi1", "hdmi2", "dp", "usbc"}),
@@ -495,15 +507,21 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(ALL, "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL, "00820", "osd_timeout",0, 30),  // returns 020
-	new setting_t(PS,  "00830", "screen_info", {"off", "on"}),
+	new setting_t(PS | MAG27,  "00830", "screen_info", {"off", "on"}),
 	new setting_t(ALL, WRITE, "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG, "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,  "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(MAG, "00860", "unknown860", {"off", "on"}),
-	new setting_t(MAG, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG27, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+	new setting_t(MAG27, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+	new setting_t(MAG27, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+	new setting_t(MAG27, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+
+	new setting_t(MAG34, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG34, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG34, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG34, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+
 	new setting_t(PS,  "00900", "navi_up", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS,  "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS,  "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
@@ -755,11 +773,13 @@ private:
 
 };
 
-static void help_set(series_t series, series_t exclude)
+static void help_set(series_t series, series_t exclude1, series_t exclude2)
 {
 	for (auto &s : settings)
 		if ((s->m_access == WRITE || s->m_access == READWRITE)
-			&& ((s->m_series & series) == series) && (s->m_series != exclude))
+			&& ((s->m_series & series) == series)
+			&& (s->m_series != exclude1)
+			&& (s->m_series != exclude2))
 		{
 			pprintf("      --%-20s %s\n", s->m_opt, s->help());
 		}
@@ -801,12 +821,15 @@ static int help()
 		"                               Only on MAG series monitors.\n");
 	pprintf("%s", "\nAll monitors:\n");
 	pprintf("%s", "    These options apply to all monitors:\n\n");
-	help_set(ALL, UNKNOWN);
+	help_set(ALL, UNKNOWN, UNKNOWN);
+	pprintf("%s", "\nMAG series monitors:\n");
+	pprintf("%s", "    These options apply to MAG27 and MAG34 monitors:\n\n");
+	help_set(MAG, ALL, UNKNOWN);
 	for (std::size_t i=1; i<known_models.size(); i++)
 	{
 		pprintf("\n%s:\n", known_models[i].name);
 		pprintf("    These options apply to the %s:\n\n", known_models[i].name);
-		help_set(known_models[i].series, ALL);
+		help_set(known_models[i].series, ALL, MAG);
 	}
 	pprintf("\n%s", "General options:\n");
 	pprintf("%s", "    These options always apply:\n\n");
@@ -959,6 +982,8 @@ int main (int argc, char **argv)
 			pprintf("Monitor Series: %s\n",     series.name);
 			if (debug)
 			{
+				pprintf("s140:           <%s>\n", s140);
+				pprintf("s150:           <%s>\n", s150);
 				usb.debug_cmd("\x01\xb0");
 				usb.debug_cmd("\x01\xb4");
 				// set after MSI app 20191206 0.0.2.23
@@ -1088,3 +1113,32 @@ int main (int argc, char **argv)
 
 	return 0;
 }
+
+/*
+ * MAG272Q
+ * DEBUG: Special 01 b0 : 01 5a 40 00 00 00 00 00 00 00 00 00 00 00 00 00
+ * DEBUG: Special 01 b4 : 01 5a 71 00 2f 41 00 00 00 00 00 00 00 00 00 00
+ *
+ * MAG341
+ *
+ * DEBUG: Special 01 b0 : 01 5a 35 03 00 00 00 00 00 00 00 00 00 00 00 00
+ * DEBUG: Special 01 b4 : 01 5a 41 00 1e c9 00 00 00 00 00 00 00 00 00 00
+ *
+ * PS341WU
+ *
+ * DEBUG: Special 01 b0 : 01 5a 37 00 00 00 00 00 00 00 00 00 00 00 00 00
+ * DEBUG: Special 01 b4 : 01 5a 41 00 19 b2 00 00 00 00 00 00 00 00 00 00
+ *
+ * 2f41  = 0010111101000001
+ * 1ec9  = 0001111011001001
+ * 19b2  = 0001100110110010
+ *
+ * ALL   = 0000100000000000
+ * MAG   = 0000111001000001
+ * PS272 = 0001100010000000
+ * PS341 = 0000100100000000
+ *
+ *
+ *
+ *
+ */
