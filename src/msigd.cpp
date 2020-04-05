@@ -65,8 +65,8 @@ struct identity_t
 static std::vector<identity_t> known_models =
 {
 	{ UNKNOWN, "", "", "Unknown", false },
-	{ MAG27, "00;", "V18", "MAG27 Series", true },
-	{ MAG32, "00O", "V18", "MAG32 Series", true },
+	{ MAG32, "00;", "V18", "MAG32 Series", true },
+	{ MAG27, "00O", "V18", "MAG27 Series", true },
 	{ PS,  "00?", "V06", "PS Series", false }
 };
 

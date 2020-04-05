@@ -291,19 +291,6 @@ MAG series monitors:
       --sound_enable         values: off on 
       --unknown860           values: off on 
 
-MAG27 Series:
-    These options apply to the MAG27 Series:
-
-      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
-      --free_sync            values: off on 
-      --screen_size          values: auto 4:3 16:9 
-      --pro_mode             values: user reader cinema designer HDR 
-      --screen_info          values: off on 
-      --navi_up              values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_down            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_left            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_right           values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-
 MAG32 Series:
     These options apply to the MAG32 Series:
 
@@ -321,6 +308,19 @@ MAG32 Series:
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+
+MAG27 Series:
+    These options apply to the MAG27 Series:
+
+      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --free_sync            values: off on 
+      --screen_size          values: auto 4:3 16:9 
+      --pro_mode             values: user reader cinema designer HDR 
+      --screen_info          values: off on 
+      --navi_up              values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_down            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_left            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_right           values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
 
 PS Series:
     These options apply to the PS Series:
