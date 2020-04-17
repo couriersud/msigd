@@ -61,7 +61,7 @@ information by opening an issue.
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271R       | ?        | ?             | ?     |   ?  | ?              |
 | MAG271CQP     | ?        | ?             | ?     |   ?  | ?              | 
-| MAG271CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MAG271CQR     | ?        | WIP           | "V19" | "006"| TPM270WQ1_DP01 |
 | MAG271CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271V       | ?        | ?             | ?     |   ?  | ?              |
@@ -124,6 +124,15 @@ Compile with
 ```sh
 make
 ```
+
+For Arch-Linux the name of the usb library differs (usb-1.0). Please use
+
+```sh
+sudo pacman -S libusb hidapi
+make TARGETOS=arch
+```
+
+to install dependencies and compile.
 
 ### 3.2. Windows
 
@@ -262,16 +271,14 @@ All monitors:
       --sharpness            values: 0 to 5
       --color_rgb            tripple: v1,v2,v3 where v<=100
       --unknown440           values: off on 
-      --input                values: hdmi1 hdmi2 dp usbc 
       --osd_transparency     values: 0 to 5
       --osd_timeout          values: 0 to 30
       --reset                values: on 
 
 MAG series monitors:
-    These options apply to MAG27 and MAG32 monitors:
+    These options apply to MAG272 and MAG32 monitors:
 
       --game_mode            values: user fps racing rts rpg 
-      --unknown210           values: 0 to 20
       --enable_dynamic       values: on off 
       --hdcr                 values: off on 
       --refresh_display      values: off on 
@@ -281,7 +288,6 @@ MAG series monitors:
       --alarm_position       values: left_top right_top left_bottom right_bottom 
       --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --zero_latency         values: off on 
-      --night_vision         values: off normal strong strongest ai 
       --eye_saver            values: off on 
       --color_preset         values: cool normal warm custom 
       --color_red            values: 0 to 100
@@ -295,8 +301,11 @@ MAG32 Series:
     These options apply to the MAG32 Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
+      --unknown210           values: 0 to 20
       --screen_size          values: 19 24 4:3 16:9 
+      --night_vision         values: off normal strong strongest ai 
       --pro_mode             values: user reader cinema designer 
+      --input                values: hdmi1 hdmi2 dp usbc 
       --pip                  values: off pip pbp 
       --pip_input            values: hdmi1 hdmi2 dp usbc 
       --pbp_input            values: hdmi1 hdmi2 dp usbc 
@@ -309,13 +318,35 @@ MAG32 Series:
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
 
-MAG27 Series:
-    These options apply to the MAG27 Series:
+MAG271 Series:
+    These options apply to the MAG271 Series:
+
+      --black_tuner          values: 0 to 20
+      --free_sync            values: off on 
+      --screen_size          values: 19 24 4:3 16:9 
+      --pro_mode             values: user reader cinema designer 
+      --input                values: hdmi1 hdmi2 dp 
+      --pip_input            values: hdmi1 hdmi2 dp 
+      --pbp_input            values: hdmi1 hdmi2 dp 
+      --pip_size             values: small medium large 
+      --pip_position         values: left_top right_top left_bottom right_bottom 
+      --toggle_display       values: on 
+      --toggle_sound         values: on 
+      --navi_up              values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+
+MAG272 Series:
+    These options apply to the MAG272 Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --unknown210           values: 0 to 20
       --free_sync            values: off on 
       --screen_size          values: auto 4:3 16:9 
+      --night_vision         values: off normal strong strongest ai 
       --pro_mode             values: user reader cinema designer HDR 
+      --input                values: hdmi1 hdmi2 dp usbc 
       --screen_info          values: off on 
       --navi_up              values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -341,6 +372,7 @@ PS Series:
       --saturation_rgb       tripple: v1,v2,v3 where v<=100
       --saturation_cmy       tripple: v1,v2,v3 where v<=100
       --gamma                values: 1.8 2 2.2 2.4 2.6 
+      --input                values: hdmi1 hdmi2 dp usbc 
       --pip                  values: off pip pbp_x2 pbp_x3 pbp_x4 
       --pip_input            values: hdmi1 hdmi2 dp usbc 
       --pip_size             values: small medium large 
