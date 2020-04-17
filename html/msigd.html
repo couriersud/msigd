@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Sun Apr  5 22:06:08 2020 -->
+<!-- CreationDate: Fri Apr 17 19:25:41 2020 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -38,7 +38,7 @@
 
 
 <p style="margin-left:11%; margin-top: 1em">msigd &minus;
-manual page for msigd 0.5</p>
+manual page for msigd 0.6</p>
 
 <h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
@@ -181,10 +181,6 @@ v&lt;=100</p>
 
 <p style="margin-left:22%;">values: off on</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
-
-<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
-
 
 <p style="margin-left:11%;"><b>&minus;&minus;osd_transparency</b></p>
 
@@ -202,7 +198,7 @@ v&lt;=100</p>
 <p style="margin-left:11%; margin-top: 1em"><b>MAG series
 monitors:</b></p>
 
-<p style="margin-left:22%;">These options apply to MAG27
+<p style="margin-left:22%;">These options apply to MAG272
 and MAG32 monitors:</p>
 
 
@@ -210,11 +206,6 @@ and MAG32 monitors:</p>
 
 <p style="margin-left:22%;">values: user fps racing rts
 rpg</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
-
-<p style="margin-left:22%;">values: 0 to 20</p>
 
 
 <p style="margin-left:11%;"><b>&minus;&minus;enable_dynamic</b></p>
@@ -275,12 +266,6 @@ red5 red6 white1 white2 white3 white4 white5 white6</p>
 <p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
 
 <p style="margin-left:22%;">values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
-
-<p style="margin-left:22%;">values: off normal strong
-strongest ai</p>
 
 
 <p style="margin-left:11%;"><b>&minus;&minus;eye_saver</b></p>
@@ -346,15 +331,30 @@ mode9 user reader cinema designer</p></td></tr>
 </table>
 
 
+<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
+
+<p style="margin-left:22%;">values: 0 to 20</p>
+
+
 <p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
 
 <p style="margin-left:22%;">values: 19 24 4:3 16:9</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+
+<p style="margin-left:22%;">values: off normal strong
+strongest ai</p>
 
 
 <p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
 
 <p style="margin-left:22%;">values: user reader cinema
 designer</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -432,11 +432,101 @@ refresh_rate</p>
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>MAG27
+<p style="margin-left:11%; margin-top: 1em"><b>MAG271
 Series:</b></p>
 
 <p style="margin-left:22%;">These options apply to the
-MAG27 Series:</p>
+MAG271 Series:</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+
+<p style="margin-left:22%;">values: 0 to 20</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;free_sync</b></p>
+
+<p style="margin-left:22%;">values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+
+<p style="margin-left:22%;">values: 19 24 4:3 16:9</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+
+<p style="margin-left:22%;">values: user reader cinema
+designer</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+
+<p style="margin-left:22%;">values: small medium large</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+
+<p style="margin-left:22%;">values: left_top right_top
+left_bottom right_bottom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
+
+<p style="margin-left:22%;">values: on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;toggle_sound</b></p>
+
+<p style="margin-left:22%;">values: on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+
+<p style="margin-left:22%;">values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>MAG272
+Series:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MAG272 Series:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -455,6 +545,11 @@ mode9 user reader cinema designer HDR</p></td></tr>
 </table>
 
 
+<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
+
+<p style="margin-left:22%;">values: 0 to 20</p>
+
+
 <p style="margin-left:11%;"><b>&minus;&minus;free_sync</b></p>
 
 <p style="margin-left:22%;">values: off on</p>
@@ -465,10 +560,20 @@ mode9 user reader cinema designer HDR</p></td></tr>
 <p style="margin-left:22%;">values: auto 4:3 16:9</p>
 
 
+<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+
+<p style="margin-left:22%;">values: off normal strong
+strongest ai</p>
+
+
 <p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
 
 <p style="margin-left:22%;">values: user reader cinema
 designer HDR</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
 
 
 <p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
@@ -620,6 +725,10 @@ v&lt;=100</p>
 <p style="margin-left:11%;"><b>&minus;&minus;gamma</b></p>
 
 <p style="margin-left:22%;">values: 1.8 2 2.2 2.4 2.6</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">values: hdmi1 hdmi2 dp usbc</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">

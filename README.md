@@ -511,3 +511,8 @@ done
 ## 8. Credits
 
 [John Wehin](https://github.com/Wehin) - PS341WU support and bug fixing
+
+[Daniel Connolly](https://github.com/cosmicdan) - MAG271CQR support
+
+[mike-vivas](https://github.com/mike-vivas) - Arch linux support
+
