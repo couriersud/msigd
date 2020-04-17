@@ -43,10 +43,17 @@ ifeq ($(TARGETOS),osx)
 		LIBS += -lhidapi
 	endif
 else
+ifeq ($(TARGETOS),arch)
+	LIBS = -lusb-1.0
+	ifeq ($(USE_HIDAPI),1)
+		LIBS += -lhidapi
+	endif
+else
 	LIBS = -lusb
 	ifeq ($(USE_HIDAPI),1)
 		LIBS += -lhidapi-hidraw
 	endif
+endif
 endif
 endif
 
