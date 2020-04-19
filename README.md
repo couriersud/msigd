@@ -326,6 +326,7 @@ MAG271 Series:
       --screen_size          values: 19 24 4:3 16:9 
       --pro_mode             values: user reader cinema designer 
       --input                values: hdmi1 hdmi2 dp 
+      --pip                  values: off pip pbp 
       --pip_input            values: hdmi1 hdmi2 dp 
       --pbp_input            values: hdmi1 hdmi2 dp 
       --pip_size             values: small medium large 

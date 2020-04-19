@@ -492,7 +492,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,  "004:0", "gamma", {"1.8", "2", "2.2", "2.4", "2.6"}),
 	new setting_t(MAG32 | MAG272 | PS, "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG271, "00500", "input",  {"hdmi1", "hdmi2", "dp"}),
-	new setting_t(MAG32, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
+	new setting_t(MAG32 | MAG271, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(PS,  "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(MAG32, "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(MAG32, "00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
