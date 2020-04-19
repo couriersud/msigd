@@ -154,17 +154,36 @@ static std::string msi_utos(unsigned v, int base, int width)
 }
 
 template<typename T>
-static std::string to_hex(const T *buf, std::size_t len)
+static std::string to_hex(const T *buf, std::size_t len, std::string sep = " ")
 {
 	auto *p = reinterpret_cast<const unsigned char *>(&buf[0]);
 	std::string out("");
 	for (std::size_t i = 0; i < len * sizeof(T); i++)
 	{
 		char b[32];
-		snprintf(b, 32, "%02x ", p[i]);
+		snprintf(b, 32, "%02x", p[i]);
 		out += b;
+		if ( i != len * sizeof(T) - 1)
+			out += sep;
 	}
 	return out;
+}
+
+static std::string hexify_if_not_printable(const std::string &str)
+{
+	bool printable(true);
+
+	for (auto &c : str)
+	{
+		if (c<32 || c > 126)
+		{
+			printable = false;
+			break;
+		}
+	}
+	if (printable)
+		return str;
+	return "0x" + to_hex(str.c_str(), str.length(), "");
 }
 
 static std::string to_hex(const std::string &s)
@@ -1063,7 +1082,7 @@ int main (int argc, char **argv)
 				if (!usb.get_setting(*setting, res))
 				{
 					if (debug)
-						pprintf("%s : '%s'\n", setting->m_opt, res);
+						pprintf("%s : '%s'\n", setting->m_opt, hexify_if_not_printable(res));
 					else if (numeric)
 						pprintf("%s : %s\n", setting->m_opt, setting->decode_num(res));
 					else
