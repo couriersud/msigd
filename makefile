@@ -46,7 +46,7 @@ else
 ifeq ($(TARGETOS),arch)
 	LIBS = -lusb-1.0
 	ifeq ($(USE_HIDAPI),1)
-		LIBS += -lhidapi
+		LIBS += -lhidapi-hidraw
 	endif
 else
 	LIBS = -lusb
