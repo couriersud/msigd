@@ -60,18 +60,29 @@ information by opening an issue.
 | MPG27CQ       | ?        | ?             | ?     |   ?  | ?              |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271R       | ?        | ?             | ?     |   ?  | ?              |
-| MAG271CQP     | ?        | ?             | ?     |   ?  | ?              | 
-| MAG271CQR     | ?        | WIP           | "V19" | "006"| TPM270WQ1_DP01 |
-| MAG271CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 
+| MAG271CQR     | ?        | Y             | "V19" | "006"| TPM270WQ1_DP01 |
 | MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271V       | ?        | ?             | ?     |   ?  | ?              |
-| MAG272R       | ?        | Y             | "V18" | "00O"| ?              |
+| MAG272        | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272C       | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272QP      | ?        | Y             | "V18" | "00O"| ?              |
-| MAG272QR      | ?        | Y             | "V18" | "00O"| ?              |
-| MAG272CR      | ?        | Y             | "V18" | "00O"| ?              |
-| MAG272CQR     | ?        | Y             | "V18" | "00O"| ?              |
-| MAG272CRX     | ?        | Y             | "V18" | "00O"| ?              |
-| MAG241CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272CQR     | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272CRX     | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272QP      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG241C       | ?        | WIP           | "V18" | "002"| ?              |
+| MAG241CR      | ?        | WIP           | "V18" | "002"| ?              |
+| MAG241CP      | ?        | WIP           | "V18" | "002"| ?              |
+| MAG241CV      | ?        | WIP           | "V18" | "002"| ?              |
+| MAG271C       | ?        | WIP           | "V18" | "002"| ?              |
+| MAG271CR      | ?        | WIP           | "V18" | "002"| ?              |
+| MAG271CP      | ?        | WIP           | "V18" | "002"| ?              |
+| MAG271CV      | ?        | WIP           | "V18" | "002"| ?              |
 | MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG321CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
@@ -318,6 +329,19 @@ MAG32 Series:
       --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
 
+MAG241 Series:
+    These options apply to the MAG241 Series:
+
+      --black_tuner          values: 0 to 20
+      --free_sync            values: off on 
+      --screen_size          values: 4:3 16:9 
+      --pro_mode             values: user reader cinema designer 
+      --input                values: hdmi1 hdmi2 dp 
+      --navi_up              values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_down            values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_left            values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_right           values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+
 MAG271 Series:
     These options apply to the MAG271 Series:
 
@@ -514,6 +538,8 @@ done
 [John Wehin](https://github.com/Wehin) - PS341WU support and bug fixing
 
 [Daniel Connolly](https://github.com/cosmicdan) - MAG271CQR support
+
+[Maxime](https://github.com/intello21) - MAG241 support
 
 [mike-vivas](https://github.com/mike-vivas) - Arch linux support
 
