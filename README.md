@@ -539,7 +539,7 @@ done
 
 [Daniel Connolly](https://github.com/cosmicdan) - MAG271CQR support
 
-[Maxime](https://github.com/intello21) - MAG241 support
+[Maxime](https://github.com/intello21) - MAG241C support
 
 [mike-vivas](https://github.com/mike-vivas) - Arch linux support
 
