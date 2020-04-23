@@ -478,7 +478,8 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG32,                   "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	new setting_t(MAG272 | MAG271 | MAG241,"00280", "free_sync", {"off", "on"}),
 	new setting_t(MAG32 | MAG272 | MAG271, "00290", "zero_latency", {"off", "on"}),  // returns 001
-	new setting_t(MAG241,                  "002:0", "screen_size", {"4:3", "16:9"}),
+	// FIXME: MAG241 manual says it is supported but constantly produces time out errors
+	// new setting_t(MAG241,                  "002:0", "screen_size", {"4:3", "16:9"}),
 	new setting_t(MAG272,                  "002:0", "screen_size", {"auto", "4:3", "16:9"}),
 	new setting_t(MAG32 | MAG271,          "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
 	new setting_t(PS,                      "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
@@ -1020,7 +1021,8 @@ int main (int argc, char **argv)
 				usb.debug_cmd("\x01\xb0");
 				usb.debug_cmd("\x01\xb4");
 				// set after MSI app 20191206 0.0.2.23
-				usb.debug_cmd("\x01\xd0""b00100000\r");
+				if (series.series != MAG241) // times out on MAG241
+					usb.debug_cmd("\x01\xd0""b00100000\r");
 				// queried but not supported on MAG321CURV (returns 56006)
 				//usb.debug_cmd("\x01""5800190\r");
 				//usb.debug_cmd("\x01""5800130\r");

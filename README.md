@@ -334,7 +334,6 @@ MAG241 Series:
 
       --black_tuner          values: 0 to 20
       --free_sync            values: off on 
-      --screen_size          values: 4:3 16:9 
       --pro_mode             values: user reader cinema designer 
       --input                values: hdmi1 hdmi2 dp 
       --navi_up              values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
@@ -414,6 +413,7 @@ PS Series:
       --osd_language         values: 0 to 28
       --screen_info          values: off on 
       --audio_source         values: analog digital 
+      --quick_charge         values: off on 
       --navi_up              values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_down            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_left            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
