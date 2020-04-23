@@ -23,7 +23,7 @@
 #endif
 
 static const char *appname = "msigd";
-static const char *appversion = "0.7";
+static const char *appversion = "0.8";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -54,6 +54,15 @@ static series_t operator | (series_t a, series_t b)
 {
 	return static_cast<series_t>(static_cast<int>(a) | static_cast<int>(b));
 }
+
+enum error_e
+{
+	E_OK = 0,
+	E_SYNTAX = 1,
+	E_IDENTIFY = 2,
+	E_SETTING = 3,
+	E_QUERY = 4
+};
 
 struct identity_t
 {
@@ -130,7 +139,7 @@ static unsigned msi_stou(std::string s, std::size_t *idx, int base)
 			(i < s.size() - 1 ? static_cast<unsigned>(256u - c0) :
 				static_cast<unsigned>(-base)) : static_cast<unsigned>(base));
 		unsigned v = c - c0;
-		if (c < c0 || v >= base)
+		if (c < c0 || static_cast<int>(v) >= base)
 		{
 			*idx = i;
 			return res;
@@ -539,7 +548,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, WRITE,              "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,                      "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(PS,                      "00860", "quick_charge", {"off", "on"}), // Needs verification
+	new setting_t(PS, WRITE,               "00860", "quick_charge", {"off", "on"}), // Needs verification
 	new setting_t(MAG,                     "00860", "unknown860", {"off", "on"}),
 	new setting_t(MAG272,                  "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 	new setting_t(MAG272,                  "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
@@ -809,13 +818,14 @@ private:
 
 static void help_set(series_t series, series_t exclude1, series_t exclude2)
 {
+	static std::array<const char *, 3> access_str = { "R", "W", "RW" };
 	for (auto &s : settings)
-		if ((s->m_access == WRITE || s->m_access == READWRITE)
-			&& ((s->m_series & series) == series)
+		if (/*(s->m_access == WRITE || s->m_access == READWRITE)
+			&& */((s->m_series & series) == series)
 			&& (s->m_series != exclude1)
 			&& (s->m_series != exclude2))
 		{
-			pprintf("      --%-20s %s\n", s->m_opt, s->help());
+			pprintf("      --%-20s %2s %s\n", s->m_opt, access_str[s->m_access], s->help());
 		}
 }
 
@@ -826,14 +836,19 @@ static int help()
 		"Query or set monitor settings by usb directly on the device.\n"
 		"For supported devices please refer to the documentation.\n"
 		"\n"
-		"Options are processed in the order they are given. You may specify an option\n"
-		"more than once with identical or different values. An exception is the\n"
-		"--wait option which will be executed after all other options were\n"
-		"processed\n"
+		"Options are processed in the order they are given. You may\n"
+		"specify an option more than once with identical or different\n"
+		"values. After processing, mystic led settings are sent first\n"
+		"to the device. Afterwards all setting changes are sent to\n"
+		"the device. Once completed settings specified are queried.\n"
+		"The --wait option which will be executed last\n"
 		"\n"
 		"In addition to preset modes the --mystic option also accepts numeric\n"
 		"values. 0xff0000 will set all leds to red. '0,255,0' will set all leds\n"
 		"to green.\n"
+		"\n"
+		"All device settings provide which operations are possible:\n"
+		"R: Read, W: Write, RW: Read/Write\n"
 		"\n"
 		"\nOptions:\n\n"
 		"  -q, --query                display all monitor settings. This will also\n"
@@ -876,19 +891,20 @@ static int help()
 		"Exit status:\n"
 		" 0  if OK,\n"
 		" 1  if error during option parsing,\n"
-		" 2  if error during device access,\n"
+		" 2  if error during device identification,\n"
+		" 3  if error during setting parameters on device,\n"
+		" 4  if error during reading parameters from device,\n"
 		"\n"
 		"Report bugs on <https://github.com/couriersud/msigd/issues>\n"
 		"msigd home page: <https://github.com/couriersud/msigd>\n"
 	);
-
 	return 0;
 }
 
 static int version()
 {
 	pprintf("%s %s\n"
-		"Copyright (C) 2019 Couriersud\n"
+		"Copyright (C) 2019, 2020 Couriersud\n"
 		"License GPLv2: GNU GPL version 2 or later <http://gnu.org/licenses/gpl.html>\n"
 		"This is free software: you are free to change and redistribute it.\n"
 		"There is NO WARRANTY, to the extent permitted by law.\n"
@@ -898,7 +914,7 @@ static int version()
 }
 
 template<typename... Args>
-static int error(int err, const char *fmt, Args&&... args)
+static int error(error_e err, const char *fmt, Args&&... args)
 {
 	fprintf(stderr, "%s: ", appname);
 	fprintf(stderr, fmt, log_helper(args)...);
@@ -920,6 +936,7 @@ int main (int argc, char **argv)
 	std::string waitfor;
 
 	std::vector<std::pair<std::string, std::string>> setopts;
+	std::vector<setting_t *> qsettings;
 
 	while (arg_pointer < argc)
 	{
@@ -949,7 +966,7 @@ int main (int argc, char **argv)
 		else if (cur_opt == "--mystic" && arg_pointer + 1 < argc)
 		{
 			if (mystic_opt(argv[++arg_pointer], leds) != 0)
-				return error(1, "Mystic light parameter error: %s", argv[arg_pointer]);
+				return error(E_SYNTAX, "Mystic light parameter error: %s", argv[arg_pointer]);
 			mystic = true;
 		}
 		else
@@ -960,7 +977,7 @@ int main (int argc, char **argv)
 				setopts.emplace_back(search, argv[++arg_pointer]);
 			}
 			else
-				return error(1, "Unknown option: %s", cur_opt);
+				return error(E_SYNTAX, "Unknown option: %s", cur_opt);
 		}
 		arg_pointer++;
 	}
@@ -995,7 +1012,7 @@ int main (int argc, char **argv)
 		}
 		else
 		{
-			return error(2, "Error on device identification");
+			return error(E_IDENTIFY, "Error on device identification");
 		}
 
 		if (notify)
@@ -1030,11 +1047,12 @@ int main (int argc, char **argv)
 		}
 
 		if (mystic && !series.has_mystic)
-			return error(1, "--mystic only supported on MAG series monitors");
+			return error(E_SYNTAX, "--mystic only supported on MAG series monitors");
 
 		// Check parameters to be set
 		std::vector<std::pair<setting_t *, std::string>> set_encoded;
 
+		// Check setopts ...
 		for (auto &opt: setopts)
 		{
 			bool found(false);
@@ -1045,26 +1063,26 @@ int main (int argc, char **argv)
 				{
 					std::string val = s->encode(opt.second);
 					if (val == "")
-						return error(1, "Unknown value <%s> for option %s", opt.second, opt.first);
+						return error(E_SYNTAX, "Unknown value <%s> for option %s", opt.second, opt.first);
 					set_encoded.emplace_back(s, val);
 					found = true;
 					break;
 				}
 			}
 			if (!found)
-				return error(1, "Unknown option: %s", opt.first);
+				return error(E_SYNTAX, "Unknown option: %s", opt.first);
 		}
 
-		// query first
+		// Check filters
 		if (query)
 		{
-			std::vector<setting_t *> qsettings;
 			unsigned filters_found(0);
 
 			for (auto &setting : settings)
 			{
 				if ((setting->m_access==READWRITE || setting->m_access==READ)
 					&& (setting->m_series & series.series))
+				{
 					if (filters.empty())
 						qsettings.push_back(setting);
 					else
@@ -1079,11 +1097,24 @@ int main (int argc, char **argv)
 							}
 						}
 					}
+				}
 			}
-
 			if (filters_found != filters.size())
-				return error(1, "Unsupported query filter elements: %d of %d", filters.size() - filters_found , filters.size());
+				return error(E_SYNTAX, "Unsupported query filter elements: %d of %d", filters.size() - filters_found , filters.size());
+		}
 
+		// Set mystic leds
+		if (mystic)
+			usb.write_led(leds);
+
+		// set values
+		for (auto &s : set_encoded)
+			if (usb.set_setting(*s.first, s.second))
+				return error(E_SETTING, "Error setting --%s", s.first->m_opt);
+
+		// now query
+		if (query)
+		{
 			for (auto &setting : qsettings)
 			{
 			    std::this_thread::sleep_for(cQUERY_DELAY);
@@ -1100,20 +1131,12 @@ int main (int argc, char **argv)
 				}
 				else
 				{
-					error(0, "Error querying device on %s - got '%s'", setting->m_opt, res);
+					error(E_IDENTIFY, "Error querying device on %s - got '%s'", setting->m_opt, res);
 					if (!debug)
-						return 2;
+						return E_IDENTIFY;
 				}
 			}
 		}
-
-		if (mystic)
-			usb.write_led(leds);
-
-		// set values
-		for (auto &s : set_encoded)
-			if (usb.set_setting(*s.first, s.second))
-				return error(2, "Error setting --%s", s.first->m_opt);
 
 		// Now wait for setting
 
@@ -1121,10 +1144,10 @@ int main (int argc, char **argv)
 		{
 			auto sp = splitstr(waitfor, '=');
 			if (sp.size() != 2)
-				return error(1, "--wait syntax error: %s", waitfor);
+				return error(E_SYNTAX, "--wait syntax error: %s", waitfor);
 			setting_t *setting = get_read_setting(series.series, sp[0]);
 			if (setting == nullptr)
-				return error(1, "--wait setting not found: %s", sp[0]);
+				return error(E_SYNTAX, "--wait setting not found: %s", sp[0]);
 			while (true)
 			{
 			    std::this_thread::sleep_for(cWAIT_DELAY);
@@ -1136,7 +1159,7 @@ int main (int argc, char **argv)
 				}
 				else
 				{
-					return error(2, "Error querying device on %s - got '%s'", sp[0], res);
+					return error(E_QUERY, "Error querying device on %s - got '%s'", sp[0], res);
 				}
 
 			}
@@ -1144,7 +1167,7 @@ int main (int argc, char **argv)
 
 	}
 	else
-		return error(1, "No usb device found", 0);
+		return error(E_IDENTIFY, "No usb device found", 0);
 
 	return 0;
 }

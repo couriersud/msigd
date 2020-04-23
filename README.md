@@ -61,37 +61,37 @@ information by opening an issue.
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271R       | ?        | ?             | ?     |   ?  | ?              |
 | MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 
-| MAG271CQR     | ?        | Y             | "V19" | "006"| TPM270WQ1_DP01 |
+| MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 |
 | MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271V       | ?        | ?             | ?     |   ?  | ?              |
 | MAG272        | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272C       | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272QP      | ?        | Y             | "V18" | "00O"| ?              |
+| MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
 | MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272CQR     | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272CRX     | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272QP      | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
-| MAG241C       | ?        | WIP           | "V18" | "002"| ?              |
-| MAG241CR      | ?        | WIP           | "V18" | "002"| ?              |
-| MAG241CP      | ?        | WIP           | "V18" | "002"| ?              |
-| MAG241CV      | ?        | WIP           | "V18" | "002"| ?              |
-| MAG271C       | ?        | WIP           | "V18" | "002"| ?              |
-| MAG271CR      | ?        | WIP           | "V18" | "002"| ?              |
-| MAG271CP      | ?        | WIP           | "V18" | "002"| ?              |
-| MAG271CV      | ?        | WIP           | "V18" | "002"| ?              |
+| MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
+| MAG241CR      | ?        | Yes           | "V18" | "002"| ?              |
+| MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |
+| MAG241CV      | ?        | Yes           | "V18" | "002"| ?              |
+| MAG271C       | ?        | ?             | "V18" | "002"| ?              |
+| MAG271CR      | ?        | ?             | "V18" | "002"| ?              |
+| MAG271CP      | ?        | ?             | "V18" | "002"| ?              |
+| MAG271CV      | ?        | ?             | "V18" | "002"| ?              |
 | MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG321CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
-| MAG321CURV    | FW.009   | Y             | "V18" | "00;"| SAM_LSM315FP01 |
+| MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
 | MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
-| PS341WU       | FW.024   | Y             | "V06" | "00?"| ?              |
+| PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              |
 
 ### 2.2. Service menu
 
@@ -241,14 +241,19 @@ Usage: msigd [OPTION]...
 Query or set monitor settings by usb directly on the device.
 For supported devices please refer to the documentation.
 
-Options are processed in the order they are given. You may specify an option
-more than once with identical or different values. An exception is the
---wait option which will be executed after all other options were
-processed
+Options are processed in the order they are given. You may
+specify an option more than once with identical or different
+values. After processing, mystic led settings are sent first
+to the device. Afterwards all setting changes are sent to
+the device. Once completed settings specified are queried.
+The --wait option which will be executed last
 
 In addition to preset modes the --mystic option also accepts numeric
 values. 0xff0000 will set all leds to red. '0,255,0' will set all leds
 to green.
+
+All device settings provide which operations are possible:
+R: Read, W: Write, RW: Read/Write
 
 
 Options:
@@ -272,152 +277,158 @@ Options:
 All monitors:
     These options apply to all monitors:
 
-      --power                values: off 
-      --response_time        values: normal fast fastest 
-      --alarm_clock          values: off 1 2 3 4 
-      --alarm4x              a1,a2,a3,a4,n where a<5999 and n<=4
-      --image_enhancement    values: off weak medium strong strongest 
-      --brightness           values: 0 to 100
-      --contrast             values: 0 to 100
-      --sharpness            values: 0 to 5
-      --color_rgb            tripple: v1,v2,v3 where v<=100
-      --unknown440           values: off on 
-      --osd_transparency     values: 0 to 5
-      --osd_timeout          values: 0 to 30
-      --reset                values: on 
+      --power                 W values: off 
+      --macro_key             R values: off pressed 
+      --serial                R values: 0 to 100
+      --frequency             R values: 0 to 100
+      --response_time        RW values: normal fast fastest 
+      --alarm_clock          RW values: off 1 2 3 4 
+      --alarm4x               W a1,a2,a3,a4,n where a<5999 and n<=4
+      --image_enhancement    RW values: off weak medium strong strongest 
+      --brightness           RW values: 0 to 100
+      --contrast             RW values: 0 to 100
+      --sharpness            RW values: 0 to 5
+      --color_rgb            RW tripple: v1,v2,v3 where v<=100
+      --unknown440            W values: off on 
+      --osd_transparency     RW values: 0 to 5
+      --osd_timeout          RW values: 0 to 30
+      --reset                 W values: on 
 
 MAG series monitors:
     These options apply to MAG272 and MAG32 monitors:
 
-      --game_mode            values: user fps racing rts rpg 
-      --enable_dynamic       values: on off 
-      --hdcr                 values: off on 
-      --refresh_display      values: off on 
-      --refresh_position     values: left_top right_top left_bottom right_bottom 
-      --alarm_clock_index    values: 1 to 4
-      --alarm_clock_time     values: 0 to 5999
-      --alarm_position       values: left_top right_top left_bottom right_bottom 
-      --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
-      --eye_saver            values: off on 
-      --color_preset         values: cool normal warm custom 
-      --color_red            values: 0 to 100
-      --color_green          values: 0 to 100
-      --color_blue           values: 0 to 100
-      --osd_language         values: 0 to 19
-      --sound_enable         values: off on 
-      --unknown860           values: off on 
+      --game_mode            RW values: user fps racing rts rpg 
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
+      --eye_saver            RW values: off on 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
+      --unknown435            R values: 0 to 100
+      --osd_language         RW values: 0 to 19
+      --sound_enable         RW values: off on 
+      --unknown860           RW values: off on 
 
 MAG32 Series:
     These options apply to the MAG32 Series:
 
-      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
-      --unknown210           values: 0 to 20
-      --zero_latency         values: off on 
-      --screen_size          values: 19 24 4:3 16:9 
-      --night_vision         values: off normal strong strongest ai 
-      --pro_mode             values: user reader cinema designer 
-      --input                values: hdmi1 hdmi2 dp usbc 
-      --pip                  values: off pip pbp 
-      --pip_input            values: hdmi1 hdmi2 dp usbc 
-      --pbp_input            values: hdmi1 hdmi2 dp usbc 
-      --pip_size             values: small medium large 
-      --pip_position         values: left_top right_top left_bottom right_bottom 
-      --toggle_display       values: on 
-      --toggle_sound         values: on 
-      --navi_up              values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
-      --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
-      --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
-      --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
+      --unknown210           RW values: 0 to 20
+      --unknown280            R values: 0 to 100
+      --zero_latency         RW values: off on 
+      --screen_size          RW values: 19 24 4:3 16:9 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema designer 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --pip                  RW values: off pip pbp 
+      --pip_input            RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input            RW values: hdmi1 hdmi2 dp usbc 
+      --pip_size             RW values: small medium large 
+      --pip_position         RW values: left_top right_top left_bottom right_bottom 
+      --toggle_display        W values: on 
+      --toggle_sound          W values: on 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
 
 MAG241 Series:
     These options apply to the MAG241 Series:
 
-      --black_tuner          values: 0 to 20
-      --free_sync            values: off on 
-      --pro_mode             values: user reader cinema designer 
-      --input                values: hdmi1 hdmi2 dp 
-      --navi_up              values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
-      --navi_down            values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
-      --navi_left            values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
-      --navi_right           values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --black_tuner          RW values: 0 to 20
+      --free_sync            RW values: off on 
+      --pro_mode             RW values: user reader cinema designer 
+      --input                RW values: hdmi1 hdmi2 dp 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
 
 MAG271 Series:
     These options apply to the MAG271 Series:
 
-      --black_tuner          values: 0 to 20
-      --free_sync            values: off on 
-      --zero_latency         values: off on 
-      --screen_size          values: 19 24 4:3 16:9 
-      --pro_mode             values: user reader cinema designer 
-      --input                values: hdmi1 hdmi2 dp 
-      --pip                  values: off pip pbp 
-      --pip_input            values: hdmi1 hdmi2 dp 
-      --pbp_input            values: hdmi1 hdmi2 dp 
-      --pip_size             values: small medium large 
-      --pip_position         values: left_top right_top left_bottom right_bottom 
-      --toggle_display       values: on 
-      --toggle_sound         values: on 
-      --navi_up              values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
-      --navi_down            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
-      --navi_left            values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
-      --navi_right           values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --black_tuner          RW values: 0 to 20
+      --free_sync            RW values: off on 
+      --zero_latency         RW values: off on 
+      --screen_size          RW values: 19 24 4:3 16:9 
+      --pro_mode             RW values: user reader cinema designer 
+      --input                RW values: hdmi1 hdmi2 dp 
+      --pip                  RW values: off pip pbp 
+      --pip_input            RW values: hdmi1 hdmi2 dp 
+      --pbp_input            RW values: hdmi1 hdmi2 dp 
+      --pip_size             RW values: small medium large 
+      --pip_position         RW values: left_top right_top left_bottom right_bottom 
+      --toggle_display        W values: on 
+      --toggle_sound          W values: on 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
 
 MAG272 Series:
     These options apply to the MAG272 Series:
 
-      --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
-      --unknown210           values: 0 to 20
-      --free_sync            values: off on 
-      --zero_latency         values: off on 
-      --screen_size          values: auto 4:3 16:9 
-      --night_vision         values: off normal strong strongest ai 
-      --pro_mode             values: user reader cinema designer HDR 
-      --input                values: hdmi1 hdmi2 dp usbc 
-      --screen_info          values: off on 
-      --navi_up              values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_down            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_left            values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_right           values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --unknown210           RW values: 0 to 20
+      --free_sync            RW values: off on 
+      --zero_latency         RW values: off on 
+      --screen_size          RW values: auto 4:3 16:9 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema designer HDR 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --screen_info          RW values: off on 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
 
 PS Series:
     These options apply to the PS Series:
 
-      --mode                 values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
-      --alarm_position       values: left_top right_top left_bottom right_bottom custom 
-      --screen_assistance    values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
-      --screen_size          values: auto 4:3 16:9 21:9 1:1 
-      --pro_mode             values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
-      --color_preset         values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
-      --gray_level           values: 0 to 20
-      --low_blue_light       values: off on 
-      --local_dimming        values: off on 
-      --hue_rgb              tripple: v1,v2,v3 where v<=100
-      --hue_cmy              tripple: v1,v2,v3 where v<=100
-      --zoom                 values: off on 
-      --zoom_location        values: center left_top right_top left_bottom right_bottom 
-      --saturation_rgb       tripple: v1,v2,v3 where v<=100
-      --saturation_cmy       tripple: v1,v2,v3 where v<=100
-      --gamma                values: 1.8 2 2.2 2.4 2.6 
-      --input                values: hdmi1 hdmi2 dp usbc 
-      --pip                  values: off pip pbp_x2 pbp_x3 pbp_x4 
-      --pip_input            values: hdmi1 hdmi2 dp usbc 
-      --pip_size             values: small medium large 
-      --pip_position         values: left_top right_top left_bottom right_bottom 
-      --toggle_display       values: on 
-      --pip_sound_source     values: hdmi1 hdmi2 dp usbc 
-      --pbp_input1           values: hdmi1 hdmi2 dp usbc 
-      --pbp_input2           values: hdmi1 hdmi2 dp usbc 
-      --pbp_input3           values: hdmi1 hdmi2 dp usbc 
-      --pbp_input4           values: hdmi1 hdmi2 dp usbc 
-      --pbp_sound_source     values: hdmi1 hdmi2 dp usbc 
-      --osd_language         values: 0 to 28
-      --screen_info          values: off on 
-      --audio_source         values: analog digital 
-      --quick_charge         values: off on 
-      --navi_up              values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
-      --navi_down            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
-      --navi_left            values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
-      --navi_right           values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --mode                 RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --unknown190            R values: 0 to 100
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom custom 
+      --screen_assistance    RW values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
+      --screen_size          RW values: auto 4:3 16:9 21:9 1:1 
+      --pro_mode             RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --color_preset         RW values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
+      --gray_level           RW values: 0 to 20
+      --low_blue_light       RW values: off on 
+      --local_dimming        RW values: off on 
+      --hue_rgb              RW tripple: v1,v2,v3 where v<=100
+      --hue_cmy              RW tripple: v1,v2,v3 where v<=100
+      --zoom                 RW values: off on 
+      --zoom_location        RW values: center left_top right_top left_bottom right_bottom 
+      --saturation_rgb       RW tripple: v1,v2,v3 where v<=100
+      --saturation_cmy       RW tripple: v1,v2,v3 where v<=100
+      --gamma                RW values: 1.8 2 2.2 2.4 2.6 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --pip                  RW values: off pip pbp_x2 pbp_x3 pbp_x4 
+      --pip_input            RW values: hdmi1 hdmi2 dp usbc 
+      --pip_size             RW values: small medium large 
+      --pip_position         RW values: left_top right_top left_bottom right_bottom 
+      --toggle_display        W values: on 
+      --pip_sound_source     RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input1           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input2           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input3           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input4           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_sound_source     RW values: hdmi1 hdmi2 dp usbc 
+      --osd_language         RW values: 0 to 28
+      --screen_info          RW values: off on 
+      --audio_source         RW values: analog digital 
+      --quick_charge          W values: off on 
+      --navi_up              RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_down            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_left            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_right           RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
 
 General options:
     These options always apply:
@@ -430,7 +441,9 @@ General options:
 Exit status:
  0  if OK,
  1  if error during option parsing,
- 2  if error during device access,
+ 2  if error during device identification,
+ 3  if error during setting parameters on device,
+ 4  if error during reading parameters from device,
 
 Report bugs on <https://github.com/couriersud/msigd/issues>
 msigd home page: <https://github.com/couriersud/msigd>
