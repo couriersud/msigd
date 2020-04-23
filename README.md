@@ -298,7 +298,6 @@ MAG series monitors:
       --alarm_clock_time     values: 0 to 5999
       --alarm_position       values: left_top right_top left_bottom right_bottom 
       --screen_assistance    values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
-      --zero_latency         values: off on 
       --eye_saver            values: off on 
       --color_preset         values: cool normal warm custom 
       --color_red            values: 0 to 100
@@ -313,6 +312,7 @@ MAG32 Series:
 
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
       --unknown210           values: 0 to 20
+      --zero_latency         values: off on 
       --screen_size          values: 19 24 4:3 16:9 
       --night_vision         values: off normal strong strongest ai 
       --pro_mode             values: user reader cinema designer 
@@ -347,6 +347,7 @@ MAG271 Series:
 
       --black_tuner          values: 0 to 20
       --free_sync            values: off on 
+      --zero_latency         values: off on 
       --screen_size          values: 19 24 4:3 16:9 
       --pro_mode             values: user reader cinema designer 
       --input                values: hdmi1 hdmi2 dp 
@@ -368,6 +369,7 @@ MAG272 Series:
       --mode                 values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
       --unknown210           values: 0 to 20
       --free_sync            values: off on 
+      --zero_latency         values: off on 
       --screen_size          values: auto 4:3 16:9 
       --night_vision         values: off normal strong strongest ai 
       --pro_mode             values: user reader cinema designer HDR 

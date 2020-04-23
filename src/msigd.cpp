@@ -455,7 +455,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG,                     "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
 	// FIXME: may be "Black Tuner" on MPG series (0-20)
 	new setting_t(MAG32 | MAG272,          "00210", "unknown210", 0, 20, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
-	new setting_t(MAG271 | MAG241,         "00210", "black_tuner", 0, 20, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	new setting_t(MAG271 | MAG241,         "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241
 	new setting_t(MAG,                     "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
@@ -477,7 +477,7 @@ static std::vector<setting_t *> settings(
 	// FIXME: adaptive sync ? game-mode only
 	new setting_t(MAG32,                   "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	new setting_t(MAG272 | MAG271 | MAG241,"00280", "free_sync", {"off", "on"}),
-	new setting_t(MAG,                     "00290", "zero_latency", {"off", "on"}),  // returns 001
+	new setting_t(MAG32 | MAG272 | MAG271, "00290", "zero_latency", {"off", "on"}),  // returns 001
 	new setting_t(MAG241,                  "002:0", "screen_size", {"4:3", "16:9"}),
 	new setting_t(MAG272,                  "002:0", "screen_size", {"auto", "4:3", "16:9"}),
 	new setting_t(MAG32 | MAG271,          "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
