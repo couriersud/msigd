@@ -23,7 +23,7 @@
 #endif
 
 static const char *appname = "msigd";
-static const char *appversion = "0.6";
+static const char *appversion = "0.7";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -68,7 +68,7 @@ static std::vector<identity_t> known_models =
 {
 	{ UNKNOWN, "", "", "Unknown", false },
 	{ MAG32, "00;", "V18", "MAG32 Series", true },
-	{ MAG241, "002", "V19", "MAG241 Series", true },
+	{ MAG241, "002", "V18", "MAG241 Series", true },
 	{ MAG271, "006", "V19", "MAG271 Series", true },
 	{ MAG272, "00O", "V18", "MAG272 Series", true },
 	{ PS,  "00?", "V06", "PS Series", false }
@@ -538,6 +538,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, WRITE,              "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,                      "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
+	new setting_t(PS,                      "00860", "quick_charge", {"off", "on"}), // Needs verification
 	new setting_t(MAG,                     "00860", "unknown860", {"off", "on"}),
 	new setting_t(MAG272,                  "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 	new setting_t(MAG272,                  "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
