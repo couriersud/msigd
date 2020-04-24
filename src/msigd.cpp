@@ -467,6 +467,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG271 | MAG241,         "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241
+	// FIXME: MAG321 manual says only supported for For Optix MAG322CQRV
 	new setting_t(MAG,                     "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	new setting_t(MAG,                     "00240", "hdcr", {"off", "on"}),
 	new setting_t(MAG,                     "00250", "refresh_display", {"off", "on"}),
@@ -509,7 +510,7 @@ static std::vector<setting_t *> settings(
 	new tripple_t(ALL,                     "00434", "color_rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
 	new setting_t(MAG,                     "00435", "unknown435"),  // returns 000, read only
 	new setting_t(ALL, WRITE,              "00440", "unknown440", {"off", "on"}),
-
+	new setting_t(UNKNOWN,                 "00450", "unknown450"),
 	new setting_t(PS,                      "00460", "gray_level", 0, 20),
 	new setting_t(UNKNOWN,                 "00470", "unknown470"),
 	new setting_t(PS,                      "00480", "low_blue_light", {"off", "on"}),
@@ -548,8 +549,21 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, WRITE,              "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,                      "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(PS, WRITE,               "00860", "quick_charge", {"off", "on"}), // Needs verification
-	new setting_t(MAG,                     "00860", "unknown860", {"off", "on"}),
+	new setting_t(MAG,                     "00860", "rgb_led", {"off", "on"}),
+	// FIXME: Needs verification
+	new setting_t(PS, WRITE,               "00860", "quick_charge", {"off", "on"}),
+
+	// The following are for experimental purposes
+	new setting_t(UNKNOWN,	               "00700", "unknown700", 0, 100),
+	new setting_t(UNKNOWN,	               "00710", "unknown710", 0, 100),
+	new setting_t(UNKNOWN,	               "00720", "unknown720", 0, 100),
+	new setting_t(UNKNOWN,	               "00730", "unknown730", 0, 100),
+	new setting_t(UNKNOWN,	               "00740", "unknown740", 0, 100),
+	new setting_t(UNKNOWN,	               "00870", "unknown870", 0, 100),
+	new setting_t(UNKNOWN,	               "00880", "unknown880", 0, 100),
+	new setting_t(UNKNOWN,	               "00890", "unknown890", 0, 100),
+	new setting_t(UNKNOWN,	               "008:0", "unknown8:0", 0, 100),
+
 	new setting_t(MAG272,                  "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 	new setting_t(MAG272,                  "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 	new setting_t(MAG272,                  "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),

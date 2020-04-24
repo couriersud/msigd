@@ -314,7 +314,7 @@ MAG series monitors:
       --unknown435            R values: 0 to 100
       --osd_language         RW values: 0 to 19
       --sound_enable         RW values: off on 
-      --unknown860           RW values: off on 
+      --rgb_led              RW values: off on 
 
 MAG32 Series:
     These options apply to the MAG32 Series:
