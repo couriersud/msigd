@@ -323,7 +323,8 @@ MAG32 Series:
     These options apply to the MAG32 Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
-      --unknown210           RW values: 0 to 20
+      --unknown210            W values: 0 to 10
+      --unknown210            R values: 0 to 10
       --unknown280            R values: 0 to 100
       --zero_latency         RW values: off on 
       --screen_size          RW values: 19 24 4:3 16:9 
@@ -379,7 +380,8 @@ MAG272 Series:
     These options apply to the MAG272 Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
-      --unknown210           RW values: 0 to 20
+      --unknown210            W values: 0 to 10
+      --unknown210            R values: 0 to 10
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: auto 4:3 16:9 
@@ -396,11 +398,13 @@ PS Series:
     These options apply to the PS Series:
 
       --mode                 RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --quick_charge          R values: off on 
       --unknown190            R values: 0 to 100
       --alarm_position       RW values: left_top right_top left_bottom right_bottom custom 
       --screen_assistance    RW values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
       --screen_size          RW values: auto 4:3 16:9 21:9 1:1 
       --pro_mode             RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --unknown310           RW values: off on 
       --color_preset         RW values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
       --gray_level           RW values: 0 to 20
       --low_blue_light       RW values: off on 
@@ -470,8 +474,9 @@ plug/unplug power cable cycle.
 
 #### 6.2.1. Quick charge
 
-The quick charge setting is not supported. We were not able to identify
-how to enable or disable quick charge programmatically.
+Changing the quick charge setting is not supported. We were not able to identify
+how to enable or disable quick charge programmatically. The status however 
+can be queried.
 
 ## 7. Examples
 

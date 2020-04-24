@@ -23,7 +23,7 @@
 #endif
 
 static const char *appname = "msigd";
-static const char *appversion = "0.8";
+static const char *appversion = "0.9";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -130,16 +130,16 @@ std::vector<T> number_list(const string_list &sl, int base = 10)
 
 static unsigned msi_stou(std::string s, std::size_t *idx, int base)
 {
-	static const unsigned char c0 = '0';
-	unsigned res = 0;
+	static const char c0 = '0';
+	int res = 0;
 	for (std::size_t i=0; i < s.size(); i++)
 	{
-		unsigned char c = static_cast<unsigned char>(s[i]);
-		unsigned b = static_cast<unsigned>(base < 0 ?
-			(i < s.size() - 1 ? static_cast<unsigned>(256u - c0) :
-				static_cast<unsigned>(-base)) : static_cast<unsigned>(base));
-		unsigned v = c - c0;
-		if (c < c0 || static_cast<int>(v) >= base)
+		char c = s[i];
+		int b = (base < 0 ?
+			(i < s.size() - 1 ? 256u - c0 :
+				-base) : base);
+		int v = c - c0;
+		if (c < c0 || v >= b)
 		{
 			*idx = i;
 			return res;
@@ -258,6 +258,8 @@ struct setting_t
 
 	setting_t(setting_t &) = delete;
 	setting_t(setting_t &&) = delete;
+
+	setting_t *set_access(access_t access) { m_access = access; return this; }
 
 	virtual ~setting_t() { }
 
@@ -458,12 +460,13 @@ static std::vector<setting_t *> settings(
 		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(ALL,                     "00130", "serial"), // returns 13 blanks
 	new setting_t(UNKNOWN,                 "00160", "unknown160"),  // query kills monitor side on MAG
-	new setting_t(ALL,                     "00170", "frequency"), // returns 060
+	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
+	new setting_t(PS, READ,                "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS
 	new setting_t(PS,                      "00190", "unknown190"),  // returns 56006 on MAG, 000 on PS
 	new setting_t(UNKNOWN,                 "001@0", "unknown1@0"),
 	new setting_t(MAG,                     "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
-	// FIXME: may be "Black Tuner" on MPG series (0-20)
-	new setting_t(MAG32 | MAG272,          "00210", "unknown210", 0, 20, -100),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	(new setting_t(MAG32 | MAG272,         "00210", "unknown210", 0, 10))->set_access(WRITE),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	(new setting_t(MAG32 | MAG272,         "00210", "unknown210", 0, 10, -100))->set_access(READ),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	new setting_t(MAG271 | MAG241,         "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241
@@ -483,7 +486,7 @@ static std::vector<setting_t *> settings(
 		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS,                      "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
-	new setting_t(UNKNOWN,                 "00271", "unknown271"),  // returns 000, read only?
+	new setting_t(UNKNOWN,                 "00271", "unknown271", 0, 100),  // returns 000, read only?
 	// FIXME: adaptive sync ? game-mode only
 	new setting_t(MAG32,                   "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 	new setting_t(MAG272 | MAG271 | MAG241,"00280", "free_sync", {"off", "on"}),
@@ -498,7 +501,11 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG32 | MAG271 | MAG241, "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS,                      "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(MAG,                     "00310", "eye_saver", {"off", "on"}),  // returns 000
+	new setting_t(PS,                      "00310", "unknown310", {"off", "on"}),
+	new setting_t(UNKNOWN,                 "00320", "unknown320", 0, 100),
+	new setting_t(UNKNOWN,                 "00330", "unknown330",0 , 100),
 	new setting_t(ALL,                     "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
+	new setting_t(UNKNOWN,                 "00350", "unknown350", 0, 100),
 	new setting_t(ALL,                     "00400", "brightness", 0, 100),  // returns 048
 	new setting_t(ALL,                     "00410", "contrast", 0, 100),  // returns 050
 	new setting_t(ALL,                     "00420", "sharpness", 0, 5),  // returns 000
@@ -510,9 +517,9 @@ static std::vector<setting_t *> settings(
 	new tripple_t(ALL,                     "00434", "color_rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
 	new setting_t(MAG,                     "00435", "unknown435"),  // returns 000, read only
 	new setting_t(ALL, WRITE,              "00440", "unknown440", {"off", "on"}),
-	new setting_t(UNKNOWN,                 "00450", "unknown450"),
+	new setting_t(UNKNOWN,                 "00450", "unknown450",0, 100),
 	new setting_t(PS,                      "00460", "gray_level", 0, 20),
-	new setting_t(UNKNOWN,                 "00470", "unknown470"),
+	new setting_t(UNKNOWN,                 "00470", "unknown470", 0, 100),
 	new setting_t(PS,                      "00480", "low_blue_light", {"off", "on"}),
 	new setting_t(PS,                      "00490", "local_dimming", {"off", "on"}),
 	new tripple_t(PS,                      "004<0", "hue_rgb"),
