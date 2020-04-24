@@ -1,8 +1,8 @@
-# msigd
+# 1. msigd
 
 The `msigd` command line tools allows you to change all settings for MSI monitors which can be set in the monitor's OSD menu. 
 
-<!-- TOC depthFrom:2 orderedList:false -->
+<!-- TOC depthFrom:2 depthTo:3 orderedList:false -->
 
 - [1. Build status:](#1-build-status)
 - [2. Supported monitors](#2-supported-monitors)
@@ -19,11 +19,14 @@ The `msigd` command line tools allows you to change all settings for MSI monitor
     - [4.3. OSX](#43-osx)
     - [4.4. Building with libusb](#44-building-with-libusb)
 - [5. Usage](#5-usage)
-- [6. Examples](#6-examples)
-    - [6.1. Automatically switch input source](#61-automatically-switch-input-source)
-    - [6.2. Change settings depending on foreground window](#62-change-settings-depending-on-foreground-window)
-- [7. TODO](#7-todo)
-- [8. Credits](#8-credits)
+- [6. Settings not supported](#6-settings-not-supported)
+    - [6.1. MAG241 series](#61-mag241-series)
+    - [6.2. PS341 series](#62-ps341-series)
+- [7. Examples](#7-examples)
+    - [7.1. Automatically switch input source](#71-automatically-switch-input-source)
+    - [7.2. Change settings depending on foreground window](#72-change-settings-depending-on-foreground-window)
+- [8. TODO](#8-todo)
+- [9. Credits](#9-credits)
 
 <!-- /TOC -->
 
@@ -424,7 +427,6 @@ PS Series:
       --osd_language         RW values: 0 to 28
       --screen_info          RW values: off on 
       --audio_source         RW values: analog digital 
-      --quick_charge          W values: off on 
       --navi_up              RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_down            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
       --navi_left            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
@@ -454,10 +456,26 @@ You may also use the following to display man style help
 ```sh
 help2man --include=msigd.help2man --no-info ./msigd | nroff -man |less
 ```
+## 6. Settings not supported
 
-## 6. Examples
+### 6.1. MAG241 series
 
-### 6.1. Automatically switch input source
+#### 6.1.1. Screen size
+
+Although documented in the manual setting the screen size (4:3, 16:9) is not 
+supported. The setting will kill the usb interface and the monitor needs a 
+plug/unplug power cable cycle.
+
+### 6.2. PS341 series
+
+#### 6.2.1. Quick charge
+
+The quick charge setting is not supported. We were not able to identify
+how to enable or disable quick charge programmatically.
+
+## 7. Examples
+
+### 7.1. Automatically switch input source
 
 I have a usb swiched port. Upon pressing a button on the switch, keyboard and 
 mouse (or up to four devices) are switched between two computers: my desktop and
@@ -491,7 +509,7 @@ inotifywait -q -m ${WATCH_DIR} | while read event
 	done
 ```
 
-### 6.2. Change settings depending on foreground window
+### 7.2. Change settings depending on foreground window
 
 The script below is an example on how to change display settings automatically
 depending on the active application. When watching movies, you may want to use
@@ -543,12 +561,12 @@ while true; do
 done
 ```
 
-## 7. TODO
+## 8. TODO
 
 - Code cleanup
 - Support more monitors - depends on user contributions
 
-## 8. Credits
+## 9. Credits
 
 [John Wehin](https://github.com/Wehin) - PS341WU support and bug fixing
 

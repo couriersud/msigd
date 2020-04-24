@@ -550,8 +550,6 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,                      "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(MAG,                     "00860", "rgb_led", {"off", "on"}),
-	// FIXME: Needs verification
-	new setting_t(PS, WRITE,               "00860", "quick_charge", {"off", "on"}),
 
 	// The following are for experimental purposes
 	new setting_t(UNKNOWN,	               "00700", "unknown700", 0, 100),
@@ -1201,12 +1199,18 @@ int main (int argc, char **argv)
  * DEBUG: Special 01 b0 : 01 5a 37 00 00 00 00 00 00 00 00 00 00 00 00 00
  * DEBUG: Special 01 b4 : 01 5a 41 00 19 b2 00 00 00 00 00 00 00 00 00 00
  *
+ * MAG241
+ *
+ * DEBUG: Special 01 b0 : 01 5a 15 00 00 00 00 00 00 00 00 00 00 00 00 00
+ * DEBUG: Special 01 b4 : 01 5a 02 50 20 7e 00 00 00 00 00 00 00 00 00 00
+ *
  * 2f41  = 0010111101000001
  * 1ec9  = 0001111011001001
  * 19b2  = 0001100110110010
+ * 207e  = 0010000001111110
  *
- * ALL   = 0000100000000000
- * MAG   = 0000111001000001
+ * ALL   = 0000000000000000
+ * MAG   = 0000000001000000
  * PS272 = 0001100010000000
  * PS341 = 0000100100000000
  *
