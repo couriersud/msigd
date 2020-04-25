@@ -25,6 +25,7 @@ The `msigd` command line tools allows you to change all settings for MSI monitor
 - [7. Examples](#7-examples)
     - [7.1. Automatically switch input source](#71-automatically-switch-input-source)
     - [7.2. Change settings depending on foreground window](#72-change-settings-depending-on-foreground-window)
+    - [7.3. Using msigd in a libvirt-qemu hook](#73-using-msigd-in-a-libvirt-qemu-hook)
 - [8. TODO](#8-todo)
 - [9. Credits](#9-credits)
 
@@ -571,6 +572,13 @@ while true; do
 done
 ```
 
+### 7.3. Using msigd in a libvirt-qemu hook
+
+[mike-vivas](https://github.com/mike-vivas) contributed an example of using
+msigd within a [libvirt-qemu](contrib/qemu) hook to automatically switch the monitor to
+virtual guests booting up.
+
+
 ## 8. TODO
 
 - Code cleanup
@@ -584,5 +592,5 @@ done
 
 [Maxime](https://github.com/intello21) - MAG241C support
 
-[mike-vivas](https://github.com/mike-vivas) - Arch linux support
+[mike-vivas](https://github.com/mike-vivas) - Arch linux support, `contrib`
 
