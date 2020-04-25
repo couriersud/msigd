@@ -500,8 +500,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG272,                  "00300", "pro_mode", {"user", "reader", "cinema", "designer", "HDR"}),
 	new setting_t(MAG32 | MAG271 | MAG241, "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS,                      "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
-	new setting_t(MAG,                     "00310", "eye_saver", {"off", "on"}),  // returns 000
-	new setting_t(PS,                      "00310", "unknown310", {"off", "on"}),
+	new setting_t(MAG | PS,                "00310", "eye_saver", {"off", "on"}),  // returns 000
 	new setting_t(UNKNOWN,                 "00320", "unknown320", 0, 100),
 	new setting_t(UNKNOWN,                 "00330", "unknown330",0 , 100),
 	new setting_t(ALL,                     "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),

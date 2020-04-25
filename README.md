@@ -287,6 +287,7 @@ All monitors:
       --response_time        RW values: normal fast fastest 
       --alarm_clock          RW values: off 1 2 3 4 
       --alarm4x               W a1,a2,a3,a4,n where a<5999 and n<=4
+      --eye_saver            RW values: off on 
       --image_enhancement    RW values: off weak medium strong strongest 
       --brightness           RW values: 0 to 100
       --contrast             RW values: 0 to 100
@@ -309,7 +310,6 @@ MAG series monitors:
       --alarm_clock_time     RW values: 0 to 5999
       --alarm_position       RW values: left_top right_top left_bottom right_bottom 
       --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
-      --eye_saver            RW values: off on 
       --color_preset         RW values: cool normal warm custom 
       --color_red            RW values: 0 to 100
       --color_green          RW values: 0 to 100
@@ -404,7 +404,6 @@ PS Series:
       --screen_assistance    RW values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
       --screen_size          RW values: auto 4:3 16:9 21:9 1:1 
       --pro_mode             RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
-      --unknown310           RW values: off on 
       --color_preset         RW values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
       --gray_level           RW values: 0 to 20
       --low_blue_light       RW values: off on 
@@ -477,6 +476,12 @@ plug/unplug power cable cycle.
 Changing the quick charge setting is not supported. We were not able to identify
 how to enable or disable quick charge programmatically. The status however 
 can be queried.
+
+#### 6.2.2. Eye saver
+
+`--eye_saver` works with the modes `user`, `hdr`, `cinema`, `reader` and `bw`.
+In mode `eyecare` it is always reported as `on` while in modes `adobe_rgb`, 
+`dci_p3`, `srgb` and `dicom` it is always `off`.
 
 ## 7. Examples
 
