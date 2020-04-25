@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# This script is used as libvirt hook when a qemu virtual machine is started or stopped
+# it has to be placed in /etc/libvirt/hooks/, it has to be made executable (chmod +x) and libvirt has to be restarted to load it
+
+# Reasons behind the script
+# - I have several virtual machines (VM), running in kvm-qemu on top of my arch-host
+# - some of them use the SPICE virtualized graphical output, i.e. using the same video output as the host - in my case HDMI1
+# - some others use a VGA-Passthrough on a NVIDIA graphic card and have a direct video output - in my case DisplayPort
+# - when I start the NVIDIA machines, my monitor should automatically switch to DisplayPort (and switch to gaming-mode for the gaming VM)
+# - when I shutdown these VMs, the monitor should go back to the main input = HDMI1 (and go back to the normal mode)
+# - as some VMs take a long time to boot, the change from HDMI1 to DisplayPort should be repeated several times until the input is there
+
+# TODO - not yet solved:
+# - pass the monitor's USB to the VM after booting - in this way I could use the "MSI Gaming OSD App" on Windows --> libvirt crashes when calling virsh in a hook (as written in the docs :-) )
+
+
+#change this variable to your own location of MSIGD
+EXEC="/usr/github/MSIGD/msigd"
+
+#change the names of the VMs as needed
+if [[ $1 == "win10_games_NVIDIA" ]] || [[ $1 == "win10_VideoEditing_NVIDIA" ]]
+then
+	if [[ $2 == "started" ]]
+	then
+		if [[ $1 == "win10_games_NVIDIA" ]]
+		then
+			eval $EXEC --game_mode fps
+		fi
+		for in in {1..20}
+		do
+			CurrentInput=$(eval $EXEC -f input)
+			if [[ $CurrentInput != "input : dp" ]]
+			then
+				eval $EXEC --input dp
+			fi
+			sleep 1
+		done
+		#virsh attach-device $1 /etc/libvirt/hooks/monitor-usb.xml
+	elif [[ $2 == "release" ]]
+	then
+		eval $EXEC --input hdmi1
+		eval $EXEC --game_mode user
+	fi
+fi
