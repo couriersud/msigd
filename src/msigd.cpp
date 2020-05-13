@@ -80,6 +80,7 @@ static std::vector<identity_t> known_models =
 	{ MAG241, "002", "V18", "MAG241 Series", true },
 	{ MAG271, "006", "V19", "MAG271 Series", true },
 	{ MAG272, "00O", "V18", "MAG272 Series", true },
+	{ MAG272, "00L", "V18", "MAG272 Series", true },
 	{ PS,  "00?", "V06", "PS Series", false }
 };
 
