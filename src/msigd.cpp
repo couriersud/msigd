@@ -81,6 +81,7 @@ static std::vector<identity_t> known_models =
 	{ MAG271, "006", "V19", "MAG271 Series", true },
 	{ MAG272, "00O", "V18", "MAG272 Series", true },
 	{ MAG272, "00L", "V18", "MAG272 Series", true },
+	{ MAG271, "001", "V18", "MPG271 Series", true },
 	{ PS,  "00?", "V06", "PS Series", false }
 };
 
@@ -446,6 +447,7 @@ struct alarm4x_t : public setting_t
 	}
 };
 
+// MPG27CQ:    FA3
 // MPG341CQR:  3DA0
 // MAG321CURV  3DA2
 // MAG322CQRV  3DA4
