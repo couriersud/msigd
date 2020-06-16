@@ -61,7 +61,7 @@ information by opening an issue.
 
 | ID            | Firmware | Supported     | Version | Special | Panel |
 |:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
-| MPG27CQ       | ?        | ?             | ?     |   ?  | ?              |
+| MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271R       | ?        | ?             | ?     |   ?  | ?              |
 | MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 

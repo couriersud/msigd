@@ -11,10 +11,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef USE_HID
+#if !defined(USE_HID)
 #define USE_HID 	(1)
 #endif
-
 
 #if USE_HID
 #include "phid.h"
@@ -81,7 +80,7 @@ static std::vector<identity_t> known_models =
 	{ MAG271, "006", "V19", "MAG271 Series", true },
 	{ MAG272, "00O", "V18", "MAG272 Series", true },
 	{ MAG272, "00L", "V18", "MAG272 Series", true },
-	{ MAG271, "001", "V18", "MPG271 Series", true },
+	{ MAG271, "001", "V18", "MPG27 Series", true },
 	{ PS,  "00?", "V06", "PS Series", false }
 };
 
@@ -646,6 +645,126 @@ struct led_data
 	uint8_t  f13 = 0x00;
 };
 
+struct steel_rgb_entry
+{
+
+	steel_rgb_entry() {}
+	steel_rgb_entry(uint8_t n, uint8_t vr, uint8_t vg, uint8_t vb)
+	{
+		num = n;
+		mode = 1;
+		r = vr; g = vg; b = vb;
+	}
+
+	void set_rgb(uint8_t n, uint8_t vr, uint8_t vg, uint8_t vb)
+	{
+		num = n;
+		mode = 1;
+		r = vr; g = vg; b = vb;
+	}
+
+	uint8_t r       = 0x00; // ??
+	uint8_t g       = 0x00; // ??
+	uint8_t b       = 0x00; // ??
+	uint8_t f03     = 0x00; // ??
+	uint8_t f04     = 0x00; // ??
+	uint8_t f05     = 0x00; // ??
+	uint8_t f06     = 0x00; // ??
+	uint8_t f07     = 0x00; // ??
+	uint8_t f08     = 0x00; // ??
+	uint8_t mode    = 0x00; // ??
+	uint8_t f10     = 0x00; // ??
+	uint8_t num     = 0x00; // ??
+
+};
+
+struct steel_data
+{
+	steel_data()
+	{
+		//pure test mode - first 8 leds, all red
+		num_rec = 8;
+		for (int i=0; i<num_rec; i++)
+		{
+			entries[i].set_rgb(i, 0xff, 0x00, 0x00);
+		}
+	}
+
+#if 0
+	void set_rgb(uint8_t r, uint8_t g, uint8_t b)
+	{
+		for (int i=0; i<9; i++)
+		{
+			rgb[i*3 + 0] = r;
+			rgb[i*3 + 1] = g;
+			rgb[i*3 + 2] = b;
+		}
+	}
+#endif
+
+	// total size should be 525
+	uint8_t report_id = 0x00;
+	uint8_t command   = 0x0e; // also seen 0x0b, 0x0c and 0x0d
+	uint8_t f00       = 0x00; // ??
+	uint8_t num_rec   = 0x08;
+	// number of records
+	uint8_t f01       = 0x00; // ??
+	std::array<steel_rgb_entry, 43> entries;
+	uint8_t f02       = 0x00; // ??
+	uint8_t f03       = 0x00; // ??
+	uint8_t f04       = 0x00; // ??
+	uint8_t f05       = 0x00; // ??
+#if 0
+	ff 00 00 00 00 00 00 00 00 01 00 00
+	ff 00 00 00 00 00 00 00 00 01 00 01
+	ff 00 00 00 00 00 00 00 00 01 00 02
+	ff 00 00 00 00 00 00 00 00 01 00 03
+	ff 00 00 00 00 00 00 00 00 01 00 04
+	ff 00 00 00 00 00 00 00 00 01 00 05
+	ff 00 00 00 00 00 00 00 00 01 00 06
+	ff 00 00 00 00 00 00 00 00 01 00 07
+
+	00 00 00 00 00 00 00 00 00 00 00 00  // 08
+	00 00 00 00 00 00 00 00 00 00 00 00  // 09
+	00 00 00 00 00 00 00 00 00 00 00 00  // 10
+	00 00 00 00 00 00 00 00 00 00 00 00  // 11
+	00 00 00 00 00 00 00 00 00 00 00 00  // 12
+	00 00 00 00 00 00 00 00 00 00 00 00  // 13
+	00 00 00 00 00 00 00 00 00 00 00 00  // 14
+	00 00 00 00 00 00 00 00 00 00 00 00  // 15
+	00 00 00 00 00 00 00 00 00 00 00 00  // 16
+	00 00 00 00 00 00 00 00 00 00 00 00  // 17
+	00 00 00 00 00 00 00 00 00 00 00 00  // 18
+	00 00 00 00 00 00 00 00 00 00 00 00  // 19
+	00 00 00 00 00 00 00 00 00 00 00 00  // 20
+	00 00 00 00 00 00 00 00 00 00 00 00  // 21
+	00 00 00 00 00 00 00 00 00 00 00 00  // 22
+	00 00 00 00 00 00 00 00 00 00 00 00  // 23
+	00 00 00 00 00 00 00 00 00 00 00 00  // 24
+	00 00 00 00 00 00 00 00 00 00 00 00  // 25
+	00 00 00 00 00 00 00 00 00 00 00 00  // 26
+	00 00 00 00 00 00 00 00 00 00 00 00  // 27
+	00 00 00 00 00 00 00 00 00 00 00 00  // 28
+	00 00 00 00 00 00 00 00 00 00 00 00  // 29
+	00 00 00 00 00 00 00 00 00 00 00 00  // 30
+	00 00 00 00 00 00 00 00 00 00 00 00  // 31
+	00 00 00 00 00 00 00 00 00 00 00 00  // 32
+	00 00 00 00 00 00 00 00 00 00 00 00  // 33
+	00 00 00 00 00 00 00 00 00 00 00 00  // 34
+	00 00 00 00 00 00 00 00 00 00 00 00  // 35
+	00 00 00 00 00 00 00 00 00 00 00 00  // 36
+	00 00 00 00 00 00 00 00 00 00 00 00  // 37
+	00 00 00 00 00 00 00 00 00 00 00 00  // 38
+	00 00 00 00 00 00 00 00 00 00 00 00  // 39
+	00 00 00 00 00 00 00 00 00 00 00 00  // 40
+	00 00 00 00 00 00 00 00 00 00 00 00  // 41
+	00 00 00 00 00 00 00 00 00 00 00 00  // 42
+	00 00 00 00
+#endif
+};
+
+static_assert(sizeof(steel_data) == 525, "steel_data size mismatch");
+
 // Mode:
 // Off: 0
 // Static: 0x01
@@ -837,6 +956,38 @@ private:
 
 };
 
+class steeldev_t : public usbdev_t
+{
+public:
+	steeldev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
+	: usbdev_t(logger, idVendor, idProduct, sProduct)
+	{
+		// no endpoints on steel device ?
+	#if 0
+	#if !(USE_HID)
+			if (!checkep(1, false) && !checkep(2, true))
+				return;
+			else
+				cleanup();
+	#endif
+	#endif
+	}
+
+	~steeldev_t()
+	{
+	}
+
+	int write_led(steel_data &data)
+	{
+		return control_msg_write(0x21, 0x09, 0x300, 0,
+			&data, static_cast<int>(sizeof(steel_data)), 1000);
+	}
+
+
+private:
+
+};
+
 static void help_set(series_t series, series_t exclude1, series_t exclude2)
 {
 	static std::array<const char *, 3> access_str = { "R", "W", "RW" };
@@ -950,11 +1101,14 @@ int main (int argc, char **argv)
 	bool query = false;
 	bool debug = false;
 	bool info = false;
+	bool test_steel = false;
 	led_data leds;
 	bool mystic = false;
 	bool numeric = false;
 	string_list filters;
 	std::string waitfor;
+
+	std_logger_t logger;
 
 	std::vector<std::pair<std::string, std::string>> setopts;
 	std::vector<setting_t *> qsettings;
@@ -975,6 +1129,8 @@ int main (int argc, char **argv)
 			query = true;
 		else if (cur_opt == "--numeric" || cur_opt == "-n")
 			numeric = true;
+		else if (cur_opt == "--test_steel")
+			test_steel = true;
 		else if ((cur_opt == "--filter" || cur_opt == "-f") && arg_pointer + 1 < argc)
 		{
 			filters = splitstr(argv[++arg_pointer], ',');
@@ -1003,7 +1159,23 @@ int main (int argc, char **argv)
 		arg_pointer++;
 	}
 
-	std_logger_t logger;
+	if (test_steel)
+	{
+		logger.set_level(DEBUG, true);
+		//steeldev_t steel(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
+		steeldev_t steel(logger, 0x1038, 0x1126, "SteelSeries MLC");
+		if (steel)
+		{
+			steel_data sd;
+			steel.write_led(sd);
+		}
+		else
+			return error(E_IDENTIFY, "No steel series usb device found", 0);
+
+		return 0;
+	}
+
+
 	logger.set_level(DEBUG, debug);
 
 	mondev_t usb(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");

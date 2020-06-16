@@ -21,9 +21,9 @@
 	#include <sys/ioctl.h>
 	#include <errno.h>
 	#include <fcntl.h>
-#ifndef __APPLE__
-	#include <linux/usbdevice_fs.h>
-#endif
+	#ifndef __APPLE__
+		#include <linux/usbdevice_fs.h>
+	#endif
 	#endif
 #endif
 
@@ -76,8 +76,13 @@ protected:
 	int control_msg_write(int requesttype, int request, int value, int index,
 		void *bytes, int size, int timeout)
 	{
+		auto p(static_cast<char *>(bytes));
+
+		unsigned hidreport0 = ((value & 0xff00) == 0x0300 && (value & 0x00ff) == p[0]
+			&& p[0] == 0 && requesttype == 0x21 && request == 0x09 && index == 0);
+
 		if (int result = usb_control_msg(m_devHandle, requesttype | USB_ENDPOINT_OUT,
-			request, value, index, static_cast<char *>(bytes), size, timeout) < 0)
+			request, value, index, p + hidreport0, size - hidreport0, timeout) < 0)
 		{
 			m_log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
 			return 1;
