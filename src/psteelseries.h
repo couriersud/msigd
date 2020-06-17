@@ -391,13 +391,16 @@ public:
 
 	int write_led(uint8_t r, uint8_t g, uint8_t b)
 	{
-		// FIXME
+		// FIXME: effects not yet supported
+		// Back led - left group of 10-10-10-10
 		write_led_rec(steel_data_0e(0x3f, 0x66, r, g, b));
+		// Front led ....
 		write_led_rec(steel_data_0e(0x00, 0x07, r, g, b));
 		write_led_rec(steel_data_0e(0x10, 0x17, r, g, b));
 		write_led_rec(steel_data_0e(0x08, 0x0f, r, g, b));
 		write_led_rec(steel_data_0e(0x18, 0x1f, r, g, b));
 		write_led_rec(steel_data_0e(0x20, 0x27, r, g, b));
+		// Back led - right group of 23 (10-9-4)
 		write_led_rec(steel_data_0e(0x28, 0x3e, r, g, b));
 		return 0;
 	}
