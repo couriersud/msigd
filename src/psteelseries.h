@@ -389,7 +389,7 @@ public:
 	// e 28-3e (=0x17) red 0x00 0x01 0x00 num
 	// 9 00 -> persist
 
-	int write_led(uint8_t r, uint8_t g, uint8_t b)
+	int write_all_leds(uint8_t r, uint8_t g, uint8_t b)
 	{
 		// FIXME: effects not yet supported
 
@@ -405,6 +405,11 @@ public:
 		// Back led - right group of 23 (10-9-4)
 		write_led_rec(steel_data_0e(0x28, 0x3e, r, g, b));
 		return 0;
+	}
+
+	int write_led(uint8_t led, uint8_t r, uint8_t g, uint8_t b)
+	{
+		return write_led_rec(steel_data_0e(led, led, r, g, b));
 	}
 
 	int persist()

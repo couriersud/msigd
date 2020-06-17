@@ -1026,17 +1026,23 @@ int main (int argc, char **argv)
 			static const auto cSTEEL_DELAY = std::chrono::milliseconds(1000);
 			steel.c_ff();
 			steel.persist();
-			steel.write_led(0xff, 0xff, 0xff);
+			steel.write_all_leds(0xff, 0xff, 0xff);
 			steel.persist();
 		    std::this_thread::sleep_for(cSTEEL_DELAY);
-			steel.write_led(0xff, 0x00, 0x00);
+			steel.write_all_leds(0xff, 0x00, 0x00);
 			steel.persist();
 		    std::this_thread::sleep_for(cSTEEL_DELAY);
-			steel.write_led(0x00, 0xff, 0x00);
+			steel.write_all_leds(0x00, 0xff, 0x00);
 			steel.persist();
 		    std::this_thread::sleep_for(cSTEEL_DELAY);
-			steel.write_led(0x00, 0x00, 0xff);
+			steel.write_all_leds(0x00, 0x00, 0xff);
 			steel.persist();
+			for (uint8_t i = 0; i<0x28; i++)
+			{
+			    std::this_thread::sleep_for(cSTEEL_DELAY / 10);
+				steel.write_led(i, 0xff, 0xff, 0x00);
+				steel.persist();
+			}
 		}
 		else
 			return error(E_IDENTIFY, "No steel series usb device found", 0);
