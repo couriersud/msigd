@@ -392,9 +392,11 @@ public:
 	int write_led(uint8_t r, uint8_t g, uint8_t b)
 	{
 		// FIXME: effects not yet supported
+
+		// We seem to have 7 groups - 0xb messages ?
 		// Back led - left group of 10-10-10-10
 		write_led_rec(steel_data_0e(0x3f, 0x66, r, g, b));
-		// Front led ....
+		// Front leds .... 8-8-8-8-8
 		write_led_rec(steel_data_0e(0x00, 0x07, r, g, b));
 		write_led_rec(steel_data_0e(0x10, 0x17, r, g, b));
 		write_led_rec(steel_data_0e(0x08, 0x0f, r, g, b));
