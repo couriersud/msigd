@@ -982,7 +982,7 @@ static int test_steel_device(std_logger_t &logger)
 			steel.flush();
 		}
 		logger(DEBUG, "Testing global illumination 0 to 255, step 8");
-		for (uint8_t i = 0; i<0xff; i+=0x08)
+		for (uint16_t i = 0; i<0xff; i+=0x08)
 		{
 		    std::this_thread::sleep_for(cSTEEL_DELAY / 10);
 			steel.global_illumination(i);
