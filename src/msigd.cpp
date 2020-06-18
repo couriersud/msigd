@@ -952,6 +952,56 @@ static int error(error_e err, const char *fmt, Args&&... args)
 	return err;
 }
 
+static int test_steel_device(std_logger_t &logger)
+{
+	logger.set_level(DEBUG, true);
+	//steeldev_t steel(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
+	steeldev_t steel(logger, 0x1038, 0x1126, "SteelSeries MLC");
+	if (steel)
+	{
+		logger(DEBUG, "Testing group color");
+		static const auto cSTEEL_DELAY = std::chrono::milliseconds(1000);
+		steel.global_illumination(0xff);
+		steel.flush();
+		steel.write_all_leds(0xff, 0xff, 0xff);
+		steel.flush();
+	    std::this_thread::sleep_for(cSTEEL_DELAY);
+		steel.write_all_leds(0xff, 0x00, 0x00);
+		steel.flush();
+	    std::this_thread::sleep_for(cSTEEL_DELAY);
+		steel.write_all_leds(0x00, 0xff, 0x00);
+		steel.flush();
+	    std::this_thread::sleep_for(cSTEEL_DELAY);
+		steel.write_all_leds(0x00, 0x00, 0xff);
+		steel.flush();
+		logger(DEBUG, "Testing single color");
+		for (uint8_t i = 0; i<0x28; i++)
+		{
+		    std::this_thread::sleep_for(cSTEEL_DELAY / 10);
+			steel.write_led(i, 0xff, 0xff, 0x00);
+			steel.flush();
+		}
+		logger(DEBUG, "Testing global illumination 0 to 255, step 8");
+		for (uint8_t i = 0; i<0xff; i+=0x08)
+		{
+		    std::this_thread::sleep_for(cSTEEL_DELAY / 10);
+			steel.global_illumination(i);
+			steel.flush();
+		}
+		logger(DEBUG, "Enanbling colorshift for two seconds");
+		steel.colorshift_all_leds(0x01);
+	    std::this_thread::sleep_for(cSTEEL_DELAY * 2);
+		logger(DEBUG, "Disabling colorshift for two seconds");
+		steel.colorshift_all_leds(0x00);
+	    std::this_thread::sleep_for(cSTEEL_DELAY * 2);
+	}
+	else
+		return error(E_IDENTIFY, "No steel series usb device found", 0);
+
+	return E_OK;
+
+}
+
 int main (int argc, char **argv)
 {
 	int arg_pointer = 1;
@@ -1018,36 +1068,7 @@ int main (int argc, char **argv)
 
 	if (test_steel)
 	{
-		logger.set_level(DEBUG, true);
-		//steeldev_t steel(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
-		steeldev_t steel(logger, 0x1038, 0x1126, "SteelSeries MLC");
-		if (steel)
-		{
-			static const auto cSTEEL_DELAY = std::chrono::milliseconds(1000);
-			steel.c_ff();
-			steel.persist();
-			steel.write_all_leds(0xff, 0xff, 0xff);
-			steel.persist();
-		    std::this_thread::sleep_for(cSTEEL_DELAY);
-			steel.write_all_leds(0xff, 0x00, 0x00);
-			steel.persist();
-		    std::this_thread::sleep_for(cSTEEL_DELAY);
-			steel.write_all_leds(0x00, 0xff, 0x00);
-			steel.persist();
-		    std::this_thread::sleep_for(cSTEEL_DELAY);
-			steel.write_all_leds(0x00, 0x00, 0xff);
-			steel.persist();
-			for (uint8_t i = 0; i<0x28; i++)
-			{
-			    std::this_thread::sleep_for(cSTEEL_DELAY / 10);
-				steel.write_led(i, 0xff, 0xff, 0x00);
-				steel.persist();
-			}
-		}
-		else
-			return error(E_IDENTIFY, "No steel series usb device found", 0);
-
-		return 0;
+		return test_steel_device(logger);
 	}
 
 

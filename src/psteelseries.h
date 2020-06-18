@@ -21,18 +21,23 @@ struct steel_rgb_entry
 	steel_rgb_entry(uint8_t n, uint8_t vr, uint8_t vg, uint8_t vb)
 	{
 		num = n;
-		mode = 1;
+		set_col = 1;
 		r = vr; g = vg; b = vb;
 	}
 
 	void set_rgb(uint8_t n, uint8_t vr, uint8_t vg, uint8_t vb)
 	{
 		num = n;
-		mode = 0x01;
+		set_col = 0x01;
 		r = vr; g = vg; b = vb;
-		// FIXME: hardcoded
-		if (n < 0x28)
-			f08 = 0x01;
+	}
+
+	void set_mode(uint8_t n, uint8_t val)
+	{
+		num = n;
+		set_col = 0x00;
+		mode = val;
+		r = 0; g = 0; b = 0;
 	}
 
 	uint8_t r       = 0x00; // ??
@@ -43,8 +48,8 @@ struct steel_rgb_entry
 	uint8_t f05     = 0x00; // ??
 	uint8_t f06     = 0x00; // ??
 	uint8_t f07     = 0x00; // ??
-	uint8_t f08     = 0x00; // ??
 	uint8_t mode    = 0x00; // ??
+	uint8_t set_col = 0x00; // ??
 	uint8_t f10     = 0x00; // ??
 	uint8_t num     = 0x00; // ??
 
@@ -52,6 +57,7 @@ struct steel_rgb_entry
 
 struct steel_data_0e
 {
+	// Set color constructor
 	steel_data_0e(uint8_t start, uint8_t end, uint8_t r, uint8_t g, uint8_t b)
 	{
 		num_rec = end - start + 1;
@@ -61,17 +67,15 @@ struct steel_data_0e
 		}
 	}
 
-#if 0
-	void set_rgb(uint8_t r, uint8_t g, uint8_t b)
+	// set mode constructor
+	steel_data_0e(uint8_t start, uint8_t end, uint8_t mode)
 	{
-		for (int i=0; i<9; i++)
+		num_rec = end - start + 1;
+		for (int i=start; i<=end; i++)
 		{
-			rgb[i*3 + 0] = r;
-			rgb[i*3 + 1] = g;
-			rgb[i*3 + 2] = b;
+			entries[i-start].set_mode(i, mode);
 		}
 	}
-#endif
 
 	// total size should be 525
 	uint8_t report_id = 0x00;
@@ -85,99 +89,23 @@ struct steel_data_0e
 	uint8_t f03       = 0x00; // ??
 	uint8_t f04       = 0x00; // ??
 	uint8_t f05       = 0x00; // ??
-#if 0
-	ff 00 00 00 00 00 00 00 00 01 00 00
-	ff 00 00 00 00 00 00 00 00 01 00 01
-	ff 00 00 00 00 00 00 00 00 01 00 02
-	ff 00 00 00 00 00 00 00 00 01 00 03
-	ff 00 00 00 00 00 00 00 00 01 00 04
-	ff 00 00 00 00 00 00 00 00 01 00 05
-	ff 00 00 00 00 00 00 00 00 01 00 06
-	ff 00 00 00 00 00 00 00 00 01 00 07
-
-	00 00 00 00 00 00 00 00 00 00 00 00  // 08
-	00 00 00 00 00 00 00 00 00 00 00 00  // 09
-	00 00 00 00 00 00 00 00 00 00 00 00  // 10
-	00 00 00 00 00 00 00 00 00 00 00 00  // 11
-	00 00 00 00 00 00 00 00 00 00 00 00  // 12
-	00 00 00 00 00 00 00 00 00 00 00 00  // 13
-	00 00 00 00 00 00 00 00 00 00 00 00  // 14
-	00 00 00 00 00 00 00 00 00 00 00 00  // 15
-	00 00 00 00 00 00 00 00 00 00 00 00  // 16
-	00 00 00 00 00 00 00 00 00 00 00 00  // 17
-	00 00 00 00 00 00 00 00 00 00 00 00  // 18
-	00 00 00 00 00 00 00 00 00 00 00 00  // 19
-	00 00 00 00 00 00 00 00 00 00 00 00  // 20
-	00 00 00 00 00 00 00 00 00 00 00 00  // 21
-	00 00 00 00 00 00 00 00 00 00 00 00  // 22
-	00 00 00 00 00 00 00 00 00 00 00 00  // 23
-	00 00 00 00 00 00 00 00 00 00 00 00  // 24
-	00 00 00 00 00 00 00 00 00 00 00 00  // 25
-	00 00 00 00 00 00 00 00 00 00 00 00  // 26
-	00 00 00 00 00 00 00 00 00 00 00 00  // 27
-	00 00 00 00 00 00 00 00 00 00 00 00  // 28
-	00 00 00 00 00 00 00 00 00 00 00 00  // 29
-	00 00 00 00 00 00 00 00 00 00 00 00  // 30
-	00 00 00 00 00 00 00 00 00 00 00 00  // 31
-	00 00 00 00 00 00 00 00 00 00 00 00  // 32
-	00 00 00 00 00 00 00 00 00 00 00 00  // 33
-	00 00 00 00 00 00 00 00 00 00 00 00  // 34
-	00 00 00 00 00 00 00 00 00 00 00 00  // 35
-	00 00 00 00 00 00 00 00 00 00 00 00  // 36
-	00 00 00 00 00 00 00 00 00 00 00 00  // 37
-	00 00 00 00 00 00 00 00 00 00 00 00  // 38
-	00 00 00 00 00 00 00 00 00 00 00 00  // 39
-	00 00 00 00 00 00 00 00 00 00 00 00  // 40
-	00 00 00 00 00 00 00 00 00 00 00 00  // 41
-	00 00 00 00 00 00 00 00 00 00 00 00  // 42
-	00 00 00 00
-#endif
 };
 
-struct steel_data_0d
+struct steel_command
 {
-	steel_data_0d()
+	explicit steel_command(uint8_t com, uint8_t val = 0x00)
+	: command(com), subcmd(val)
 	{
 		std::fill(f02.begin(), f02.end(), 0);
 	}
 
 	// total size should be 65
 	uint8_t report_id = 0x00;
-	uint8_t command   = 0x0d; // also seen 0x0b, 0x0c and 0x0d
+	uint8_t command;          // 0x09, 0x0c and 0x0d
 	uint8_t f00       = 0x00; // ??
-	uint8_t subcmd    = 0x02; // 02,
+	uint8_t subcmd;
 	uint8_t f01       = 0x00; // ??
 	std::array<uint8_t, 60> f02;
-};
-
-struct steel_data_0c
-{
-	steel_data_0c()
-	{
-		std::fill(f02.begin(), f02.end(), 0);
-	}
-
-	// total size should be 65
-	uint8_t report_id = 0x00;
-	uint8_t command   = 0x0c; // also seen 0x0b, 0x0c and 0x0d
-	uint8_t f00       = 0x00; // ??
-	uint8_t subcmd    = 0xff; // ff
-	uint8_t f01       = 0x00; // ??
-	std::array<uint8_t, 60> f02;
-};
-
-struct steel_data_09
-{
-	steel_data_09()
-	{
-		std::fill(f02.begin(), f02.end(), 0);
-	}
-
-	// total size should be 65
-	uint8_t report_id = 0x00;
-	uint8_t command   = 0x09; // also seen 0x0b, 0x0c and 0x0d
-	uint8_t f00       = 0x00; // ??
-	std::array<uint8_t, 62> f02;
 };
 
 struct steel_data_0b
@@ -212,8 +140,6 @@ struct steel_data_0b
 	, e05(0x05, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x40, 0x00)
 
 	, e16(0x00, 0x00, 0x0f, 0x0f, 0x00, 0x00, 0x00, 0x00)
-	, e17(0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00)
-	, e18(0x00, 0x00, 0x80, 0x00, 0x06, 0x00, 0x80, 0x01)
 	, e19(0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
 	{
 	}
@@ -231,8 +157,22 @@ struct steel_data_0b
 	sub e05;
 	std::array<sub, 10> f01;
 	sub e16;
-	sub e17;
-	sub e18;
+	uint8_t e17_0 = 0xff;
+	uint8_t e17_1 = 0x00;
+	uint8_t e17_2 = 0x00;
+	uint8_t e17_3 = 0x00;
+	uint8_t e17_4 = 0x00;
+	uint8_t e17_5 = 0x00;
+	uint8_t wave_mode = 0x00;
+	uint8_t e17_7 = 0x00;
+	uint8_t e18_0 = 0x00;
+	uint8_t e18_1 = 0x00;
+	uint8_t wave_speed = 0x80; // min 0x1e, max 0xe9
+	uint8_t e18_3 = 0x00;      // changes to 0x03 on setting wave speed to max ?
+	uint8_t e18_4 = 0x06;
+	uint8_t e18_5 = 0x00;
+	uint8_t e18_6 = 0x80;
+	uint8_t e18_7 = 0x01;
 	sub e19;
 	std::array<uint8_t, 22*16 + 10> f02;
 };
@@ -354,9 +294,7 @@ ff 00 00 00 00 00 01 00
 
 
 static_assert(sizeof(steel_data_0e) == 525, "steel_data size mismatch");
-static_assert(sizeof(steel_data_0d) == 65, "steel_data size mismatch");
-static_assert(sizeof(steel_data_0c) == 65, "steel_data size mismatch");
-static_assert(sizeof(steel_data_09) == 65, "steel_data size mismatch");
+static_assert(sizeof(steel_command) == 65, "steel_data size mismatch");
 static_assert(sizeof(steel_data_0b) == 525, "steel_data size mismatch");
 
 class steeldev_t : public usbdev_t
@@ -416,23 +354,38 @@ public:
 
 	int persist()
 	{
-		const bool preview = true;
-		if (preview)
-		{
-			steel_data_0d d;
-			return write(&d, sizeof(d));
-		}
-		else
-		{
-			steel_data_09 d;
-			return write(&d, sizeof(d));
-		}
+		steel_command d(0x09);
+		return write(&d, sizeof(d));
 	}
 
-	int c_ff()
+	int flush()
 	{
-		steel_data_0c d;
+		steel_command d(0x0d, 0x02);
 		return write(&d, sizeof(d));
+	}
+
+	int global_illumination(uint8_t val)
+	{
+		steel_command d(0x0c, val);
+		return write(&d, sizeof(d));
+	}
+
+	int colorshift_all_leds(uint8_t v)
+	{
+		// FIXME: effects not yet supported
+
+		// We seem to have 7 groups - 0xb messages ?
+		// Back led - left group of 10-10-10-10
+		write_led_rec(steel_data_0e(0x3f, 0x66, v));
+		// Front leds .... 8-8-8-8-8
+		write_led_rec(steel_data_0e(0x00, 0x07, v));
+		write_led_rec(steel_data_0e(0x10, 0x17, v));
+		write_led_rec(steel_data_0e(0x08, 0x0f, v));
+		write_led_rec(steel_data_0e(0x18, 0x1f, v));
+		write_led_rec(steel_data_0e(0x20, 0x27, v));
+		// Back led - right group of 23 (10-9-4)
+		write_led_rec(steel_data_0e(0x28, 0x3e, v));
+		return 0;
 	}
 
 private:
@@ -445,3 +398,52 @@ private:
 };
 
 #endif /* PSTEELSERIES_H_ */
+
+#if 0
+0000   0b 00
+00 00 00 16 eb 00 a8 00
+01 00 e8 fe 18 00 a8 00
+02 00 17 ee fe 00 ad 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+
+00 00 f0 0f 00 00 10 0e
+ff 00 eb 00 37 00 01 00
+01 00 3c 00 03 00 fd 01
+
+00 00 00 00 00 00
+00a0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00b0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00c0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00d0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00e0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00f0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0100   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0110   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0120   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0130   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0140   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0150   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0160   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0170   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0180   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0190   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01a0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01b0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01c0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01d0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01e0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+01f0   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+0200   00 00 00 00 00 00 00 00 00 00 00 00
+#endif
