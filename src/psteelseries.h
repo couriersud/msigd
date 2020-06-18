@@ -389,6 +389,8 @@ public:
 	// e 28-3e (=0x17) red 0x00 0x01 0x00 num
 	// 9 00 -> persist
 
+	// 10 -> device sends packet via interrupt (contains 1a 02 00 ...)
+
 	int write_all_leds(uint8_t r, uint8_t g, uint8_t b)
 	{
 		// FIXME: effects not yet supported
@@ -414,8 +416,17 @@ public:
 
 	int persist()
 	{
-		steel_data_09 d;
-		return write(&d, sizeof(d));
+		const bool preview = true;
+		if (preview)
+		{
+			steel_data_0d d;
+			return write(&d, sizeof(d));
+		}
+		else
+		{
+			steel_data_09 d;
+			return write(&d, sizeof(d));
+		}
 	}
 
 	int c_ff()
