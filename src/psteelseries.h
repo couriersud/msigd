@@ -364,6 +364,11 @@ public:
 		return write_led_rec(steel_data_0e(led, led, r, g, b));
 	}
 
+	int write_led_range(uint8_t start, uint8_t end,  uint8_t r, uint8_t g, uint8_t b)
+	{
+		return write_led_rec(steel_data_0e(start, end, r, g, b));
+	}
+
 	int persist()
 	{
 		steel_command d(0x09);

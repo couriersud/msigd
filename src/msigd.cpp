@@ -952,61 +952,141 @@ static int error(error_e err, const char *fmt, Args&&... args)
 	return err;
 }
 
-static int test_steel_device(std_logger_t &logger)
+static int test_steel_device(steeldev_t &steeldev, std_logger_t &logger)
+{
+	logger(DEBUG, "Testing group color");
+	static const auto cSTEEL_DELAY = std::chrono::milliseconds(1000);
+	steeldev.global_illumination(0xff);
+	steeldev.flush();
+	steeldev.write_all_leds(0xff, 0xff, 0xff);
+	steeldev.flush();
+	std::this_thread::sleep_for(cSTEEL_DELAY);
+	steeldev.write_all_leds(0xff, 0x00, 0x00);
+	steeldev.flush();
+	std::this_thread::sleep_for(cSTEEL_DELAY);
+	steeldev.write_all_leds(0x00, 0xff, 0x00);
+	steeldev.flush();
+	std::this_thread::sleep_for(cSTEEL_DELAY);
+	steeldev.write_all_leds(0x00, 0x00, 0xff);
+	steeldev.flush();
+	logger(DEBUG, "Testing single color");
+	for (uint8_t i = 0; i<0x28; i++)
+	{
+		std::this_thread::sleep_for(cSTEEL_DELAY / 10);
+		steeldev.write_led(i, 0xff, 0xff, 0x00);
+		steeldev.flush();
+	}
+	logger(DEBUG, "Testing global illumination 0 to 255, step 8");
+	for (uint16_t i = 0; i<0xff; i+=0x08)
+	{
+		std::this_thread::sleep_for(cSTEEL_DELAY / 10);
+		steeldev.global_illumination(i);
+		steeldev.flush();
+	}
+	logger(DEBUG, "Enabling colorshift for five seconds");
+	steeldev.colorshift_all_leds(0x01);
+	steeldev.flush();
+	std::this_thread::sleep_for(cSTEEL_DELAY * 5);
+	logger(DEBUG, "Sending b record ... Waiting 5 seconds");
+	steel_data_0b data_0b(0, true);
+	steeldev.write_0b(data_0b);
+	steeldev.flush();
+	std::this_thread::sleep_for(cSTEEL_DELAY * 5);
+	logger(DEBUG, "Disabling colorshift for two seconds");
+	steeldev.colorshift_all_leds(0x00);
+	steeldev.flush();
+	std::this_thread::sleep_for(cSTEEL_DELAY * 2);
+	return E_OK;
+}
+
+static int steel_main(std_logger_t &logger, int argc, char **argv)
 {
 	logger.set_level(DEBUG, true);
-	//steeldev_t steel(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
-	steeldev_t steel(logger, 0x1038, 0x1126, "SteelSeries MLC");
-	if (steel)
-	{
-		logger(DEBUG, "Testing group color");
-		static const auto cSTEEL_DELAY = std::chrono::milliseconds(1000);
-		steel.global_illumination(0xff);
-		steel.flush();
-		steel.write_all_leds(0xff, 0xff, 0xff);
-		steel.flush();
-	    std::this_thread::sleep_for(cSTEEL_DELAY);
-		steel.write_all_leds(0xff, 0x00, 0x00);
-		steel.flush();
-	    std::this_thread::sleep_for(cSTEEL_DELAY);
-		steel.write_all_leds(0x00, 0xff, 0x00);
-		steel.flush();
-	    std::this_thread::sleep_for(cSTEEL_DELAY);
-		steel.write_all_leds(0x00, 0x00, 0xff);
-		steel.flush();
-		logger(DEBUG, "Testing single color");
-		for (uint8_t i = 0; i<0x28; i++)
-		{
-		    std::this_thread::sleep_for(cSTEEL_DELAY / 10);
-			steel.write_led(i, 0xff, 0xff, 0x00);
-			steel.flush();
-		}
-		logger(DEBUG, "Testing global illumination 0 to 255, step 8");
-		for (uint16_t i = 0; i<0xff; i+=0x08)
-		{
-		    std::this_thread::sleep_for(cSTEEL_DELAY / 10);
-			steel.global_illumination(i);
-			steel.flush();
-		}
-		logger(DEBUG, "Enabling colorshift for five seconds");
-		steel.colorshift_all_leds(0x01);
-		steel.flush();
-	    std::this_thread::sleep_for(cSTEEL_DELAY * 5);
-		logger(DEBUG, "Sending b record ... Waiting 5 seconds");
-		steel_data_0b data_0b(0, true);
-		steel.write_0b(data_0b);
-		steel.flush();
-	    std::this_thread::sleep_for(cSTEEL_DELAY * 5);
-		logger(DEBUG, "Disabling colorshift for two seconds");
-		steel.colorshift_all_leds(0x00);
-		steel.flush();
-	    std::this_thread::sleep_for(cSTEEL_DELAY * 2);
-	}
-	else
+	//steeldev_t steeldev(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
+	steeldev_t steeldev(logger, 0x1038, 0x1126, "SteelSeries MLC");
+
+	if (!steeldev)
 		return error(E_IDENTIFY, "No steel series usb device found", 0);
 
-	return E_OK;
+	int argp = 0;
+	int ret = 0;
 
+	while (argp < argc)
+	{
+		std::string cur_opt(argv[argp]);
+
+		if (cur_opt == "--test")
+		{
+			if ((ret = test_steel_device(steeldev, logger)) > 0)
+				return ret;
+		}
+		else if (cur_opt == "--persist")
+		{
+			steeldev.persist();
+		}
+		else if (cur_opt == "--flush")
+		{
+			steeldev.flush();
+		}
+		else if (cur_opt == "--color" && argp + 1 < argc)
+		{
+			auto p = splitstr(argv[++argp], ':');
+			if (p.size() != 2)
+				return error(E_SYNTAX, "Error decoding range and color: %s", argv[argp]);
+			auto r = splitstr(p[0], '-');
+			if (r.size() > 2)
+				return error(E_SYNTAX, "Error decoding range and color: %s", argv[argp]);
+			auto start = std::stoul(r[0]);
+			auto end = start;
+			if (r.size() == 2)
+				end = std::stoul(r[1]);
+			std::size_t idx(0);
+			auto col = std::stoul(p[1], &idx, 16);
+			if (idx != p[1].size())
+				return error(E_SYNTAX, "Error decoding color: %s", argv[argp]);
+			if (start > end || start >= (40*2 + 23) || end >= (40*2 +23))
+				return error(E_SYNTAX, "max led num is %d - parameter error: %s", 40*2 + 23 - 1, argv[argp]);
+			auto i=start;
+			for (; i+40 <= end; i+=40)
+			{
+				logger(DEBUG, "setting color %d-%d:%06x", i, 40, col);
+				steeldev.write_led_range(i, i + 40 - 1, (col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff);
+			}
+			if (i < end)
+			{
+				logger(DEBUG, "setting color %d-%d:%06x", i, end - i + 1, col);
+				steeldev.write_led_range(i, end, (col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff);
+			}
+		}
+		else if (cur_opt == "--illum" && argp + 1 < argc)
+		{
+			std::size_t idx(0);
+			std::string a(argv[++argp]);
+			auto i = std::stoul(a, &idx, 10);
+			if (a.size() != idx)
+				return error(E_SYNTAX, "Error decoding illumination: %s", argv[argp]);
+			if (i > 255)
+				return error(E_SYNTAX, "Error illumination max value is 255: %s", argv[argp]);
+			steeldev.global_illumination(i);
+		}
+		else if (cur_opt == "--delay" && argp + 1 < argc)
+		{
+			std::size_t idx(0);
+			std::string a(argv[++argp]);
+			auto i = std::stoul(a, &idx, 10);
+			if (a.size() != idx)
+				return error(E_SYNTAX, "Error decoding illumination: %s", argv[argp]);
+			if (i > 10000)
+				return error(E_SYNTAX, "Error illumination max value is 10000: %s", argv[argp]);
+			std::this_thread::sleep_for(std::chrono::milliseconds(i));
+		}
+		else
+		{
+			return error(E_SYNTAX, "Unknown option: %s", cur_opt);
+		}
+		argp++;
+	}
+	return E_OK;
 }
 
 int main (int argc, char **argv)
@@ -1015,7 +1095,7 @@ int main (int argc, char **argv)
 	bool query = false;
 	bool debug = false;
 	bool info = false;
-	bool test_steel = false;
+	bool steel = false;
 	led_data leds;
 	bool mystic = false;
 	bool numeric = false;
@@ -1043,8 +1123,13 @@ int main (int argc, char **argv)
 			query = true;
 		else if (cur_opt == "--numeric" || cur_opt == "-n")
 			numeric = true;
-		else if (cur_opt == "--test_steel")
-			test_steel = true;
+		else if (cur_opt == "--steel")
+		{
+			// anything behind the --steel parameter is interpreted as steel commands
+			steel = true;
+			++arg_pointer;
+			break;
+		}
 		else if ((cur_opt == "--filter" || cur_opt == "-f") && arg_pointer + 1 < argc)
 		{
 			filters = splitstr(argv[++arg_pointer], ',');
@@ -1073,9 +1158,11 @@ int main (int argc, char **argv)
 		arg_pointer++;
 	}
 
-	if (test_steel)
+	if (steel)
 	{
-		return test_steel_device(logger);
+		int ret = 0;
+		if ((ret = steel_main(logger, argc - arg_pointer, argv + arg_pointer)) > 0)
+			return ret;
 	}
 
 
