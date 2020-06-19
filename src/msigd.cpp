@@ -988,11 +988,18 @@ static int test_steel_device(std_logger_t &logger)
 			steel.global_illumination(i);
 			steel.flush();
 		}
-		logger(DEBUG, "Enanbling colorshift for two seconds");
+		logger(DEBUG, "Enabling colorshift for five seconds");
 		steel.colorshift_all_leds(0x01);
-	    std::this_thread::sleep_for(cSTEEL_DELAY * 2);
+		steel.flush();
+	    std::this_thread::sleep_for(cSTEEL_DELAY * 5);
+		logger(DEBUG, "Sending b record ... Waiting 5 seconds");
+		steel_data_0b data_0b(0, true);
+		steel.write_0b(data_0b);
+		steel.flush();
+	    std::this_thread::sleep_for(cSTEEL_DELAY * 5);
 		logger(DEBUG, "Disabling colorshift for two seconds");
 		steel.colorshift_all_leds(0x00);
+		steel.flush();
 	    std::this_thread::sleep_for(cSTEEL_DELAY * 2);
 	}
 	else
