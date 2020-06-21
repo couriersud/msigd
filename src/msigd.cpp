@@ -834,13 +834,6 @@ private:
 				ret += '_';
 		}
 		return ret;
-#if 0
-		std::string ret(buf+1);
-		if (ret.size() > 0 && ret[ret.size()-1] == '\r')
-			return ret.substr(0,ret.size()-1);
-		else
-			return ret;
-#endif
 	}
 
 };
@@ -999,17 +992,36 @@ static int test_steel_device(steeldev_t &steeldev, std_logger_t &logger)
 	return E_OK;
 }
 
+static int arg_to_u(unsigned &v, const std::string &s, const std::string &name, unsigned max)
+{
+	std::size_t idx(0);
+	v = std::stoul(s, &idx, 10);
+	if (s.size() != idx)
+		return error(E_SYNTAX, "Error decoding %s: %s", name, s);
+	if (v > max)
+		return error(E_SYNTAX, "Error %s max value is %d: %s", name, max, s);
+	return E_OK;
+}
+
 static int steel_main(std_logger_t &logger, int argc, char **argv)
 {
 	logger.set_level(DEBUG, true);
 	//steeldev_t steeldev(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
 	steeldev_t steeldev(logger, 0x1038, 0x1126, "SteelSeries MLC");
+	//part of the code may as well work on keyboards with per key led.
+	// Examples are GE63, GE73 with usb ids 1038:1122
 
 	if (!steeldev)
 		return error(E_IDENTIFY, "No steel series usb device found", 0);
 
 	int argp = 0;
 	int ret = 0;
+	unsigned profile = 0;
+	std::array<steel_data_0b, 16> pdata;
+
+	// First entry has profile id.
+	for (std::size_t i = 0; i < pdata.size(); i++)
+		pdata[i].col[0].e[0] = i;
 
 	while (argp < argc)
 	{
@@ -1030,55 +1042,99 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 		}
 		else if (cur_opt == "--color" && argp + 1 < argc)
 		{
+			int ret(0);
+			unsigned start(0);
+			unsigned end(0);
+
 			auto p = splitstr(argv[++argp], ':');
 			if (p.size() != 2)
 				return error(E_SYNTAX, "Error decoding range and color: %s", argv[argp]);
 			auto r = splitstr(p[0], '-');
 			if (r.size() > 2)
 				return error(E_SYNTAX, "Error decoding range and color: %s", argv[argp]);
-			auto start = std::stoul(r[0]);
-			auto end = start;
-			if (r.size() == 2)
-				end = std::stoul(r[1]);
-			std::size_t idx(0);
-			auto col = std::stoul(p[1], &idx, 16);
-			if (idx != p[1].size())
-				return error(E_SYNTAX, "Error decoding color: %s", argv[argp]);
-			if (start > end || start >= (40*2 + 23) || end >= (40*2 +23))
+
+			if (arg_to_u(start, r[0], "range start", 40*2+23-1) != 0
+				|| arg_to_u(end, r[r.size() == 2 ? 1 : 0], "range end", 40*2+23-1) != 0 || start > end)
 				return error(E_SYNTAX, "max led num is %d - parameter error: %s", 40*2 + 23 - 1, argv[argp]);
-			auto i=start;
-			for (; i+40 <= end; i+=40)
+
+			std::size_t idx(0);
+			if (!p[1].empty() && p[1][0] == 'P')
 			{
-				logger(DEBUG, "setting color %d-%d:%06x", i, 40, col);
-				steeldev.write_led_range(i, i + 40 - 1, (col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff);
+				unsigned v(0);
+				if (arg_to_u(v, p[1].substr(1), "led profile", 15) !=0 )
+					return error(E_SYNTAX, "Error decoding color: %s", argv[argp]);
+				auto i=start;
+				for (; i+40 <= end; i+=40)
+				{
+					logger(DEBUG, "setting profile %d-%d:P%d", i, 40, v);
+					steeldev.write_led_profile(i, i + 40 - 1, v);
+				}
+				if (i <= end)
+				{
+					logger(DEBUG, "setting profile %d-%d:P%d", i, 40, v);
+					steeldev.write_led_profile(i, end, v);
+				}
 			}
-			if (i < end)
+			else
 			{
-				logger(DEBUG, "setting color %d-%d:%06x", i, end - i + 1, col);
-				steeldev.write_led_range(i, end, (col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff);
+				auto col = std::stoul(p[1], &idx, 16);
+				if (idx != p[1].size())
+					return error(E_SYNTAX, "Error decoding color: %s", argv[argp]);
+
+				auto i=start;
+				for (; i+40 <= end; i+=40)
+				{
+					logger(DEBUG, "setting color %d-%d:%06x", i, 40, col);
+					steeldev.write_led_range(i, i + 40 - 1, (col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff);
+				}
+				if (i <= end)
+				{
+					logger(DEBUG, "setting color %d-%d:%06x", i, end - i + 1, col);
+					steeldev.write_led_range(i, end, (col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff);
+				}
 			}
 		}
 		else if (cur_opt == "--illum" && argp + 1 < argc)
 		{
-			std::size_t idx(0);
-			std::string a(argv[++argp]);
-			auto i = std::stoul(a, &idx, 10);
-			if (a.size() != idx)
-				return error(E_SYNTAX, "Error decoding illumination: %s", argv[argp]);
-			if (i > 255)
-				return error(E_SYNTAX, "Error illumination max value is 255: %s", argv[argp]);
+			unsigned i = 0;
+			int ret = 0;
+			if ((ret = arg_to_u(i, argv[++argp], "illum", 255))>0)
+				return ret;
 			steeldev.global_illumination(i);
 		}
 		else if (cur_opt == "--delay" && argp + 1 < argc)
 		{
-			std::size_t idx(0);
-			std::string a(argv[++argp]);
-			auto i = std::stoul(a, &idx, 10);
-			if (a.size() != idx)
-				return error(E_SYNTAX, "Error decoding illumination: %s", argv[argp]);
-			if (i > 10000)
-				return error(E_SYNTAX, "Error illumination max value is 10000: %s", argv[argp]);
+			unsigned i = 0;
+			int ret = 0;
+			if ((ret = arg_to_u(i, argv[++argp], "delay", 10000))>0)
+				return ret;
 			std::this_thread::sleep_for(std::chrono::milliseconds(i));
+		}
+		else if (cur_opt == "--profile" && argp + 1 < argc)
+		{
+			int ret = 0;
+			if ((ret = arg_to_u(profile, argv[++argp], "profile", 16))>0)
+				return ret;
+			logger(DEBUG, "setting current profile to %d", profile);
+		}
+		else if (cur_opt == "--pcolors" && argp + 1 < argc)
+		{
+			auto p = splitstr(argv[++argp], ',');
+			std::vector<unsigned> cols;
+
+			for (auto &e : p)
+			{
+				std::size_t idx(0);
+				auto col = std::stoul(e, &idx, 16);
+				if (idx != e.size())
+					return error(E_SYNTAX, "Error decoding profile color: %s", argv[argp]);
+				cols.push_back(col);
+			}
+			if (cols.size() > 16)
+				return error(E_SYNTAX, "Error: too many profile colors (max 16): %s", argv[argp]);
+			logger(DEBUG, "setting %d colors for profile %d", cols.size(), profile);
+			pdata[profile].set_colors(cols);
+			steeldev.write_0b(pdata[profile]);
 		}
 		else
 		{
