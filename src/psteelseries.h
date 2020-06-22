@@ -161,15 +161,50 @@ struct steel_data_0b
 	template <typename C>
 	void set_colors(C &colors)
 	{
+		int last_r = 0xFF;
+		int last_g = 0;
+		int last_b = 0;
+		const int steps = 8;
+
+		numrec = colors.size();
 		for (uint8_t i=0; i < colors.size(); i++)
 		{
 			if (i>0)
 				col[i].e[0] = i;
 			unsigned rgb = colors[i];
-			col[i].e[2] = (rgb >> 16) & 0xff;
-			col[i].e[3] = (rgb >>  8) & 0xff;
-			col[i].e[4] = (rgb >>  0) & 0xff;
-			col[i].e[6] = 0x21;
+			int r = (rgb >> 16) & 0xff;
+			int g = (rgb >>  8) & 0xff;
+			int b = (rgb >>  0) & 0xff;
+
+			int dr = (r - last_r);
+			int dg = (g - last_g);
+			int db = (b - last_b);
+
+			int dm = std::max(std::abs(dr), std::max(std::abs(dg), std::abs(db)));
+
+			dr /= steps;
+			dg /= steps;
+			db /= steps;
+
+			uint8_t r8 = (dr >= 0 ? dr : 256 + dr);
+			uint8_t g8 = (dg >= 0 ? dg : 256 + dg);
+			uint8_t b8 = (db >= 0 ? db : 256 + db);
+
+			if (dm == 0)
+				dm = steps * 16;
+			else
+				dm = dm * 16 / (dm / steps);
+
+			col[i].e[2] = r8;
+			col[i].e[3] = g8;
+			col[i].e[4] = b8;
+			col[i].e[6] = dm % 256;
+			col[i].e[7] = dm / 256;
+
+			printf("%02d: %02x %02x %02x %02x\n", i, r8, g8, b8, dm);
+			last_r = r;
+			last_g = g;
+			last_b = b;
 		}
 		for (uint8_t i=colors.size(); i < col.size(); i++)
 			col[i] = sub();
@@ -195,7 +230,7 @@ struct steel_data_0b
 	uint8_t e18_1 = 0x00;
 	uint8_t wave_speed = 0x80; // min 0x1e, max 0xe9
 	uint8_t e18_3 = 0x00;      // changes to 0x03 on setting wave speed to max ?
-	uint8_t e18_4 = 0x03;
+	uint8_t numrec = 0x03;
 	uint8_t e18_5 = 0x00;
 	uint8_t e18_6 = 0x63;  // Fd 01 - may be colorshift speed (min 0x0063, max 0x0bd9)
 	uint8_t e18_7 = 0x00;

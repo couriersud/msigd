@@ -1006,8 +1006,8 @@ static int arg_to_u(unsigned &v, const std::string &s, const std::string &name, 
 static int steel_main(std_logger_t &logger, int argc, char **argv)
 {
 	logger.set_level(DEBUG, true);
-	//steeldev_t steeldev(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
-	steeldev_t steeldev(logger, 0x1038, 0x1126, "SteelSeries MLC");
+	steeldev_t steeldev(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
+	//steeldev_t steeldev(logger, 0x1038, 0x1126, "SteelSeries MLC");
 	//part of the code may as well work on keyboards with per key led.
 	// Examples are GE63, GE73 with usb ids 1038:1122
 
