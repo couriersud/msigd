@@ -1117,6 +1117,16 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 				return ret;
 			logger(DEBUG, "setting current profile to %d", profile);
 		}
+		else if (cur_opt == "--wave_speed" && argp + 1 < argc)
+		{
+			int ret = 0;
+			unsigned val = 0;
+			if ((ret = arg_to_u(val, argv[++argp], "wave_speed", 100))>0)
+				return ret;
+			logger(DEBUG, "setting wave speed to %d (status %s)", profile, val ? "enabled" : "disabled");
+			pdata[profile].set_wave_speed(val);
+			steeldev.write_0b(pdata[profile]);
+		}
 		else if (cur_opt == "--pcolors" && argp + 1 < argc)
 		{
 			auto p = splitstr(argv[++argp], ',');

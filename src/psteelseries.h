@@ -208,9 +208,24 @@ struct steel_data_0b
 		}
 		for (uint8_t i=colors.size(); i < col.size(); i++)
 			col[i] = sub();
-
 	}
 
+	// setting wave speed enables it wave mode,
+	// set wave speed to 0 to disable
+	void set_wave_speed(int speed)
+	{
+		if (speed == 0)
+			wave_mode = 0x00;
+		else
+		{
+			speed = speed * 0x3e9 / 100;
+			if (speed < 0x1e) speed = 0x1e;
+			else if (speed > 0x3e9) speed = 0x3e9;
+			wave_mode = 1;
+			wave_speed_lo = speed & 0xFF;
+			wave_speed_hi = speed >> 8;
+		}
+	}
 	// total size should be 525
 	uint8_t report_id = 0x00;
 	uint8_t command   = 0x0b; // also seen 0x0b, 0x0c and 0x0d
@@ -228,12 +243,12 @@ struct steel_data_0b
 	uint8_t e17_7 = 0x00;
 	uint8_t e18_0 = 0x00;
 	uint8_t e18_1 = 0x00;
-	uint8_t wave_speed = 0x80; // min 0x1e, max 0xe9
-	uint8_t e18_3 = 0x00;      // changes to 0x03 on setting wave speed to max ?
+	uint8_t wave_speed_lo = 0x80; // min 0x1e, max 0xe9
+	uint8_t wave_speed_hi = 0x00;      // changes to 0x03 on setting wave speed to max ?
 	uint8_t numrec = 0x03;
 	uint8_t e18_5 = 0x00;
 	uint8_t e18_6 = 0x63;  // Fd 01 - may be colorshift speed (min 0x0063, max 0x0bd9)
-	uint8_t e18_7 = 0x00;
+	uint8_t effect = 0x00;  // effect mode, 0 ColorShift, 1 Multi Color Breathe, 2 Cooldown Timer (?)
 	sub e19;
 	std::array<uint8_t, 22*16 + 10> f02;
 };
