@@ -562,7 +562,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS,                      "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(ALL,                     "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL,                     "00820", "osd_timeout",0, 30),  // returns 020
-	new setting_t(PS | MAG272,             "00830", "screen_info", {"off", "on"}),
+	new setting_t(PS,                      "00830", "screen_info", {"off", "on"}),
 	new setting_t(ALL, WRITE,              "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS,                      "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
