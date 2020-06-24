@@ -1017,11 +1017,16 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 	int argp = 0;
 	int ret = 0;
 	unsigned profile = 0;
-	std::array<steel_data_0b, 16> pdata;
+	std::array<steel_data_0b, 16> profile_data;
+	std::array<std::vector<unsigned>, 16> profile_cols;
+	std::array<int, 16> profile_speed;
 
 	// First entry has profile id.
-	for (std::size_t i = 0; i < pdata.size(); i++)
-		pdata[i].col[0].e[0] = i;
+	for (std::size_t i = 0; i < profile_data.size(); i++)
+	{
+		profile_data[i].col[0].e[0] = i;
+		profile_speed[i] = 5;
+	}
 
 	while (argp < argc)
 	{
@@ -1123,14 +1128,15 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 			unsigned val = 0;
 			if ((ret = arg_to_u(val, argv[++argp], "wave_speed", 100))>0)
 				return ret;
-			logger(DEBUG, "setting wave speed to %d (status %s)", profile, val ? "enabled" : "disabled");
-			pdata[profile].set_wave_speed(val);
-			steeldev.write_0b(pdata[profile]);
+			logger(DEBUG, "setting wave speed for profile %d to %d (status %s)", profile, val, val ? "enabled" : "disabled");
+			profile_data[profile].set_wave_speed(val);
+			steeldev.write_0b(profile_data[profile]);
 		}
 		else if (cur_opt == "--pcolors" && argp + 1 < argc)
 		{
+			auto &cols = profile_cols[profile];
+			cols.clear();
 			auto p = splitstr(argv[++argp], ',');
-			std::vector<unsigned> cols;
 
 			for (auto &e : p)
 			{
@@ -1143,8 +1149,23 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 			if (cols.size() > 16)
 				return error(E_SYNTAX, "Error: too many profile colors (max 16): %s", argv[argp]);
 			logger(DEBUG, "setting %d colors for profile %d", cols.size(), profile);
-			pdata[profile].set_colors(cols);
-			steeldev.write_0b(pdata[profile]);
+			profile_data[profile].set_colors(cols, profile_speed[profile]);
+			steeldev.write_0b(profile_data[profile]);
+		}
+		else if (cur_opt == "--pspeed" && argp + 1 < argc)
+		{
+			int ret = 0;
+			unsigned val = 0;
+			if ((ret = arg_to_u(val, argv[++argp], "pspeed", 30))>0)
+				return ret;
+			if (val < 1)
+				return error(E_SYNTAX, "Error: pspeed (min 1): %s", argv[argp]);
+			auto &cols = profile_cols[profile];
+
+			logger(DEBUG, "setting speed %d %d", val, profile);
+			profile_data[profile].set_colors(cols, val);
+			steeldev.write_0b(profile_data[profile]);
+			profile_speed[profile] = val;
 		}
 		else
 		{

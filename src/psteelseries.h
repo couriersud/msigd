@@ -13,6 +13,7 @@
 #endif
 
 #include <array>
+#include <vector>
 
 struct steel_rgb_entry
 {
@@ -159,12 +160,46 @@ struct steel_data_0b
 	}
 
 	template <typename C>
-	void set_colors(C &colors)
+	void set_colors(C &colors_in, int speed)
 	{
 		int last_r = 0xFF;
 		int last_g = 0;
 		int last_b = 0;
 		const int steps = 8;
+		std::vector<int> dur;
+		std::vector<unsigned> colors;
+
+		int total_dur = 0;
+
+		for (int i=0; i<colors_in.size(); i++)
+		{
+			colors.push_back(colors_in[i]);
+			dur.push_back(1);
+			total_dur += 1;
+		}
+		if (colors_in[colors_in.size()-1] != colors_in[0])
+		{
+			colors.push_back(colors_in[0]);
+			dur.push_back(0);
+			total_dur += 0;
+		}
+
+		int target_speed = speed * 100;
+		int final_speed = 0;
+
+		int last_p = 0;
+		int d = 0;
+		for (int i=0; i<colors.size(); i++)
+		{
+			d += dur[i];
+			int p = target_speed * d / total_dur;
+			int d = std::max(0x21, p - last_p);
+			final_speed += d;
+			last_p += d;
+			dur[i] = d;
+			printf("dur %d %d\n", i, d);
+		}
+		printf("final speed is %d\n", final_speed, d);
 
 		numrec = colors.size();
 		for (uint8_t i=0; i < colors.size(); i++)
@@ -180,20 +215,16 @@ struct steel_data_0b
 			int dg = (g - last_g);
 			int db = (b - last_b);
 
-			int dm = std::max(std::abs(dr), std::max(std::abs(dg), std::abs(db)));
+			//int dm = std::max(std::abs(dr), std::max(std::abs(dg), std::abs(db)));
 
-			dr /= steps;
-			dg /= steps;
-			db /= steps;
+			int dm = dur[i];
+			dr = dr * 16 / dur[i];
+			dg = dg * 16 / dur[i];
+			db = db * 16 / dur[i];
 
 			uint8_t r8 = (dr >= 0 ? dr : 256 + dr);
 			uint8_t g8 = (dg >= 0 ? dg : 256 + dg);
 			uint8_t b8 = (db >= 0 ? db : 256 + db);
-
-			if (dm == 0)
-				dm = steps * 16;
-			else
-				dm = dm * 16 / (dm / steps);
 
 			col[i].e[2] = r8;
 			col[i].e[3] = g8;
@@ -208,6 +239,8 @@ struct steel_data_0b
 		}
 		for (uint8_t i=colors.size(); i < col.size(); i++)
 			col[i] = sub();
+		speed_lo = final_speed & 0xff;
+		speed_hi = final_speed >> 8;
 	}
 
 	// setting wave speed enables it wave mode,
@@ -247,8 +280,8 @@ struct steel_data_0b
 	uint8_t wave_speed_hi = 0x00;      // changes to 0x03 on setting wave speed to max ?
 	uint8_t numrec = 0x03;
 	uint8_t e18_5 = 0x00;
-	uint8_t e18_6 = 0x63;  // Fd 01 - may be colorshift speed (min 0x0063, max 0x0bd9)
-	uint8_t effect = 0x00;  // effect mode, 0 ColorShift, 1 Multi Color Breathe, 2 Cooldown Timer (?)
+	uint8_t speed_lo = 0x63;
+	uint8_t speed_hi = 0x00;
 	sub e19;
 	std::array<uint8_t, 22*16 + 10> f02;
 };
