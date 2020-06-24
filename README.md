@@ -633,4 +633,6 @@ virtual guests booting up.
 
 [mike-vivas](https://github.com/mike-vivas) - Arch linux support, `contrib`
 
+[gbirchley](https://github.com/gbirchley) - MAG272 support
+
 [Térence Clastres](https://github.com/terencode) - MPG27CQ support
