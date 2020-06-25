@@ -159,13 +159,12 @@ struct steel_data_0b
 		std::fill(f02.begin(), f02.end(), 0);
 	}
 
-	template <typename C>
-	void set_colors(C &colors_in, int speed)
+	template <typename C1, typename C2>
+	void set_colors(C1 &colors_in, C2 &dur_in, int speed)
 	{
 		int last_r = 0xFF;
 		int last_g = 0;
 		int last_b = 0;
-		const int steps = 8;
 		std::vector<int> dur;
 		std::vector<unsigned> colors;
 
@@ -174,8 +173,8 @@ struct steel_data_0b
 		for (int i=0; i<colors_in.size(); i++)
 		{
 			colors.push_back(colors_in[i]);
-			dur.push_back(1);
-			total_dur += 1;
+			dur.push_back(dur_in[i]);
+			total_dur += dur_in[i];
 		}
 		if (colors_in[colors_in.size()-1] != colors_in[0])
 		{

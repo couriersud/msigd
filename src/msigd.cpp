@@ -1019,6 +1019,7 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 	unsigned profile = 0;
 	std::array<steel_data_0b, 16> profile_data;
 	std::array<std::vector<unsigned>, 16> profile_cols;
+	std::array<std::vector<unsigned>, 16> profile_dur;
 	std::array<int, 16> profile_speed;
 
 	// First entry has profile id.
@@ -1135,21 +1136,37 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 		else if (cur_opt == "--pcolors" && argp + 1 < argc)
 		{
 			auto &cols = profile_cols[profile];
+			auto &dur = profile_dur[profile];
 			cols.clear();
-			auto p = splitstr(argv[++argp], ',');
+			dur.clear();
+			auto entries = splitstr(argv[++argp], ',');
 
-			for (auto &e : p)
+			for (auto &e : entries)
 			{
-				std::size_t idx(0);
-				auto col = std::stoul(e, &idx, 16);
-				if (idx != e.size())
-					return error(E_SYNTAX, "Error decoding profile color: %s", argv[argp]);
-				cols.push_back(col);
+				try
+				{
+					auto sp = splitstr(e, ':');
+					if (sp.size() != 2)
+						return error(E_SYNTAX, "Error decoding profile color <%s> from: %s", e, argv[argp]);
+					std::size_t idx(0);
+					auto d = std::stoul(sp[0], &idx, 10);
+					if (idx != sp[0].size())
+						return error(E_SYNTAX, "Error decoding profile color <%s> from: %s", e, argv[argp]);
+					auto col = std::stoul(sp[1], &idx, 16);
+					if (idx != sp[1].size())
+						return error(E_SYNTAX, "Error decoding profile color <%s> from: %s", e, argv[argp]);
+					cols.push_back(col);
+					dur.push_back(d);
+				}
+				catch (...)
+				{
+					return error(E_SYNTAX, "Error decoding profile color <%s> from: %s", e, argv[argp]);
+				}
 			}
 			if (cols.size() > 16)
 				return error(E_SYNTAX, "Error: too many profile colors (max 16): %s", argv[argp]);
 			logger(DEBUG, "setting %d colors for profile %d", cols.size(), profile);
-			profile_data[profile].set_colors(cols, profile_speed[profile]);
+			profile_data[profile].set_colors(cols, dur, profile_speed[profile]);
 			steeldev.write_0b(profile_data[profile]);
 		}
 		else if (cur_opt == "--pspeed" && argp + 1 < argc)
@@ -1163,7 +1180,7 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 			auto &cols = profile_cols[profile];
 
 			logger(DEBUG, "setting speed %d %d", val, profile);
-			profile_data[profile].set_colors(cols, val);
+			profile_data[profile].set_colors(cols, profile_dur[profile], val);
 			steeldev.write_0b(profile_data[profile]);
 			profile_speed[profile] = val;
 		}
