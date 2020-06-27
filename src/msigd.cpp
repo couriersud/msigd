@@ -15,7 +15,9 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <unordered_map>
 #include <map>
+#include <utility>
 #include <type_traits>
 #include <chrono>
 #include <thread>
@@ -994,14 +996,32 @@ static int test_steel_device(steeldev_t &steeldev, std_logger_t &logger)
 
 static int arg_to_u(unsigned &v, const std::string &s, const std::string &name, unsigned max)
 {
-	std::size_t idx(0);
-	v = std::stoul(s, &idx, 10);
+	std::size_t idx(std::string::npos);
+	try
+	{
+		v = std::stoul(s, &idx, 10);
+	}
+	catch (...)
+	{
+	}
 	if (s.size() != idx)
 		return error(E_SYNTAX, "Error decoding %s: %s", name, s);
 	if (v > max)
 		return error(E_SYNTAX, "Error %s max value is %d: %s", name, max, s);
 	return E_OK;
 }
+
+static std::unordered_map<std::string, std::pair<unsigned, unsigned>>
+steel_groups =
+{
+	{ "G1", {0x00,0x07} },
+	{ "G2", {0x08,0x0f} },
+	{ "G3", {0x10,0x17} },
+	{ "G4", {0x18,0x1f} },
+	{ "G5", {0x20,0x27} },
+	{ "G6", {0x28,0x3e} },
+	{ "G7", {0x3f,0x66} },
+};
 
 static int steel_main(std_logger_t &logger, int argc, char **argv)
 {
@@ -1055,14 +1075,23 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 			auto p = splitstr(argv[++argp], ':');
 			if (p.size() != 2)
 				return error(E_SYNTAX, "Error decoding range and color: %s", argv[argp]);
-			auto r = splitstr(p[0], '-');
-			if (r.size() > 2)
-				return error(E_SYNTAX, "Error decoding range and color: %s", argv[argp]);
+			printf("%s\n", p[0].c_str());
+			auto git = steel_groups.find(p[0].c_str());
+			if (git != steel_groups.end())
+			{
+				start = git->second.first;
+				end = git->second.second;
+			}
+			else
+			{
+				auto r = splitstr(p[0], '-');
+				if (r.size() > 2)
+					return error(E_SYNTAX, "Error decoding range and color: %s", argv[argp]);
 
-			if (arg_to_u(start, r[0], "range start", 40*2+23-1) != 0
-				|| arg_to_u(end, r[r.size() == 2 ? 1 : 0], "range end", 40*2+23-1) != 0 || start > end)
-				return error(E_SYNTAX, "max led num is %d - parameter error: %s", 40*2 + 23 - 1, argv[argp]);
-
+				if (arg_to_u(start, r[0], "range start", 40*2+23-1) != 0
+					|| arg_to_u(end, r[r.size() == 2 ? 1 : 0], "range end", 40*2+23-1) != 0 || start > end)
+					return error(E_SYNTAX, "max led num is %d - parameter error: %s", 40*2 + 23 - 1, argv[argp]);
+			}
 			std::size_t idx(0);
 			if (!p[1].empty() && p[1][0] == 'P')
 			{
@@ -1129,8 +1158,18 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 			unsigned val = 0;
 			if ((ret = arg_to_u(val, argv[++argp], "wave_speed", 100))>0)
 				return ret;
-			logger(DEBUG, "setting wave speed for profile %d to %d (status %s)", profile, val, val ? "enabled" : "disabled");
+			logger(DEBUG, "setting wave speed for profile %d to %d", profile, val);
 			profile_data[profile].set_wave_speed(val);
+			steeldev.write_0b(profile_data[profile]);
+		}
+		else if (cur_opt == "--wave_mode" && argp + 1 < argc)
+		{
+			int ret = 0;
+			unsigned val = 0;
+			if ((ret = arg_to_u(val, argv[++argp], "wave_mode", 5))>0)
+				return ret;
+			logger(DEBUG, "setting wave mode for profile %d to %d (status %s)", profile, val, val ? "enabled" : "disabled");
+			profile_data[profile].set_wave_mode(val);
 			steeldev.write_0b(profile_data[profile]);
 		}
 		else if (cur_opt == "--pcolors" && argp + 1 < argc)
@@ -1150,7 +1189,7 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 						return error(E_SYNTAX, "Error decoding profile color <%s> from: %s", e, argv[argp]);
 					std::size_t idx(0);
 					auto d = std::stoul(sp[0], &idx, 10);
-					if (idx != sp[0].size())
+					if (idx != sp[0].size() || d > 10000)
 						return error(E_SYNTAX, "Error decoding profile color <%s> from: %s", e, argv[argp]);
 					auto col = std::stoul(sp[1], &idx, 16);
 					if (idx != sp[1].size())

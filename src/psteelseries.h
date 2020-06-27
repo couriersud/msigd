@@ -150,7 +150,7 @@ struct steel_data_0b
 	, e05(0x05, 0x00, 0x00, 0x00, 0xc0, 0x00, 0x40, 0x00)
 #endif
 	: e16(0x00, 0x00, 0xf0, 0x0f, 0x00, 0x00, 0x00, 0x00)  // 00 00 f0 0f 00 00 10 0e
-	, e19(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00) // 01 00 00 00 00 00 00 00 // 0x01 ????
+	, e19(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
 	{
 		//                        r     g     b
 		col[0] = sub(0x01, 0x00, 0xc5, 0x00, 0x41, 0x00, 0x21, 0x00);
@@ -182,6 +182,8 @@ struct steel_data_0b
 			dur.push_back(0);
 			total_dur += 0;
 		}
+
+		total_dur = (total_dur > 0) ? total_dur : 1;
 
 		int target_speed = speed * 100;
 		int final_speed = 0;
@@ -242,22 +244,27 @@ struct steel_data_0b
 		speed_hi = final_speed >> 8;
 	}
 
-	// setting wave speed enables it wave mode,
-	// set wave speed to 0 to disable
+	void set_wave_mode(int mode)
+	{
+		// FIXME: mode 3 same as mode 5
+		static std::array<unsigned, 6> modemap= { 0x00, 0x06, 0x04, 0x02, 0x03, 0x02};
+
+		unsigned x = modemap[mode];
+
+		wave_mode_0 = (x >> 2) & 1;
+		wave_mode_1 = (x >> 1) & 1;
+		e19.e[0] = (x >> 0) & 1;
+	}
+
 	void set_wave_speed(int speed)
 	{
-		if (speed == 0)
-			wave_mode = 0x00;
-		else
-		{
-			speed = speed * 0x3e9 / 100;
-			if (speed < 0x1e) speed = 0x1e;
-			else if (speed > 0x3e9) speed = 0x3e9;
-			wave_mode = 1;
-			wave_speed_lo = speed & 0xFF;
-			wave_speed_hi = speed >> 8;
-		}
+		speed = speed * 0x3e9 / 100;
+		if (speed < 0x1e) speed = 0x1e;
+		else if (speed > 0x3e9) speed = 0x3e9;
+		wave_speed_lo = speed & 0xFF;
+		wave_speed_hi = speed >> 8;
 	}
+
 	// total size should be 525
 	uint8_t report_id = 0x00;
 	uint8_t command   = 0x0b; // also seen 0x0b, 0x0c and 0x0d
@@ -271,9 +278,9 @@ struct steel_data_0b
 	uint8_t e17_3 = 0x00;
 	uint8_t e17_4 = 0x00; // 0x37;
 	uint8_t e17_5 = 0x00;
-	uint8_t wave_mode = 0x00;  // 0x01 if enable
+	uint8_t wave_mode_0 = 0x00;  // 0x01 if enable
 	uint8_t e17_7 = 0x00;
-	uint8_t e18_0 = 0x00;
+	uint8_t wave_mode_1 = 0x00;
 	uint8_t e18_1 = 0x00;
 	uint8_t wave_speed_lo = 0x80; // min 0x1e, max 0xe9
 	uint8_t wave_speed_hi = 0x00;      // changes to 0x03 on setting wave speed to max ?
