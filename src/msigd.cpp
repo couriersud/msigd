@@ -89,9 +89,10 @@ static std::vector<identity_t> known_models =
 	{ MAG32, "00;", "V18", "MAG32 Series", LT_MYSTIC },
 	{ MAG241, "002", "V18", "MAG241 Series", LT_MYSTIC },
 	{ MAG271, "006", "V19", "MAG271 Series", LT_MYSTIC },
-	{ MAG272, "00O", "V18", "MAG272 Series", LT_MYSTIC },
-	{ MAG272, "00L", "V18", "MAG272 Series", LT_MYSTIC },
-	{ MAG271, "001", "V18", "MPG27 Series", LT_STEEL },
+	{ MAG272, "00O", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272QP
+	{ MAG272, "00L", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272
+	{ MAG272, "00E", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272CQR
+	{ MAG271, "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
 	{ PS,  "00?", "V06", "PS Series", LT_NONE }
 };
 

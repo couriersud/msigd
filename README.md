@@ -62,39 +62,36 @@ information by opening an issue.
 | ID            | Firmware | Supported     | Version | Special | Panel |
 |:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
 | MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              |
-| MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG271R       | ?        | ?             | ?     |   ?  | ?              |
-| MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 
-| MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 |
-| MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG271V       | ?        | ?             | ?     |   ?  | ?              |
-| MAG272        | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272C       | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
-| MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272CQR     | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272CRX     | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272QP      | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
+| MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
-| MAG241CR      | ?        | Yes           | "V18" | "002"| ?              |
 | MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |
+| MAG241CR      | ?        | Yes           | "V18" | "002"| ?              |
 | MAG241CV      | ?        | Yes           | "V18" | "002"| ?              |
+| MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
+| MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271C       | ?        | ?             | "V18" | "002"| ?              |
 | MAG271CR      | ?        | ?             | "V18" | "002"| ?              |
 | MAG271CP      | ?        | ?             | "V18" | "002"| ?              |
+| MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 
+| MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 |
 | MAG271CV      | ?        | ?             | "V18" | "002"| ?              |
-| MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
+| MAG271R       | ?        | ?             | ?     |   ?  | ?              |
+| MAG271V       | ?        | ?             | ?     |   ?  | ?              |
+| MAG272        | ?        | Yes           | "V18" | "00L"| ?              |
+| MAG272C       | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              |
+| MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272CRX     | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
+| MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
 | MAG321CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
-| MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
-| MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
+| MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
+| MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
 | PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              |
 
 ### 2.2. Service menu
@@ -635,4 +632,8 @@ virtual guests booting up.
 
 [gbirchley](https://github.com/gbirchley) - MAG272 support
 
-[Térence Clastres](https://github.com/terencode) - MPG27CQ support
+[Térence Clastres](https://github.com/terencode) - MPG27CQ support and steel series LED support
+
+[elric1789](https://github.com/elric1789) - MAG272QP support
+
+[andaag](https://github.com/andaag) - MAG272CQR support
