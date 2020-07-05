@@ -16,16 +16,18 @@
 #else
 	#include <usb.h>        // this is libusb, see http://libusb.sourceforge.net/
 	#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
-	#include <sys/types.h>
-	#include <sys/stat.h>
-	#include <sys/ioctl.h>
-	#include <errno.h>
-	#include <fcntl.h>
-	#ifndef __APPLE__
-		#include <linux/usbdevice_fs.h>
-	#endif
+		#include <sys/types.h>
+		#include <sys/stat.h>
+		#include <sys/ioctl.h>
+		#include <errno.h>
+		#include <fcntl.h>
+		#ifndef __APPLE__
+			#include <linux/usbdevice_fs.h>
+		#endif
 	#endif
 #endif
+
+#include <string.h> // strerror
 
 
 #include "plogger.h"
