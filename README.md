@@ -87,7 +87,7 @@ information by opening an issue.
 | MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
 | MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
-| MAG321CQR     | ?        | ?             | ?     |   ?  | ?              |
+| MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              |
 | MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
 | MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
