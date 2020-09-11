@@ -66,12 +66,12 @@ information by opening an issue.
 | MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
 | MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |
-| MAG241CR      | ?        | Yes           | "V18" | "002"| ?              |
+| MAG241CR      | ?        | Yes           | "V18" | "004"| ?              |
 | MAG241CV      | ?        | Yes           | "V18" | "002"| ?              |
 | MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271C       | ?        | ?             | "V18" | "002"| ?              |
-| MAG271CR      | ?        | ?             | "V18" | "002"| ?              |
+| MAG271CR      | ?        | ?             | "V18" | "004"| ?              |
 | MAG271CP      | ?        | ?             | "V18" | "002"| ?              |
 | MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 
 | MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 |
