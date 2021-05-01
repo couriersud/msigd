@@ -2,6 +2,8 @@
 
 The `msigd` command line tools allows you to change all settings for MSI monitors which can be set in the monitor's OSD menu. 
 
+Update 01.05.2021: In October 2020 my partner, wife and mother of my daughter passed away. This is the reason why there has not been any activity on the msgid project. The project is not abandoned and it will slowly get more attention again.
+
 <!-- TOC depthFrom:2 depthTo:3 orderedList:false -->
 
 - [1. Build status:](#1-build-status)
