@@ -87,7 +87,7 @@ information by opening an issue.
 | MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272CRX     | ?        | ?             | "V18" | "00O"| ?              |
 | MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
-| MAG272QR      | ?        | ?             | "V18" | "00O"| ?              |
+| MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |
 | MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
 | MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              |
 | MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
@@ -95,6 +95,8 @@ information by opening an issue.
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
 | MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
 | PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              |
+
+1) Mystic support is not working. Has 12 lights - Steel series interface? 
 
 ### 2.2. Service menu
 
@@ -698,3 +700,5 @@ virtual guests booting up.
 [elric1789](https://github.com/elric1789) - MAG272QP support
 
 [andaag](https://github.com/andaag) - MAG272CQR support
+
+[usrErr0r](https://github.com/usrErr0r) - MAG272QR support
