@@ -38,7 +38,8 @@ public:
 
 	static constexpr const unsigned DEFAULT_TIMEOUT = 1000;
 
-	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
+	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct,
+		const std::string &sProduct, const std::string &sSerial)
 	: m_log(logger)
 	, m_device(nullptr)
 	, m_devHandle(nullptr)
@@ -49,7 +50,7 @@ public:
 	, m_ep_in(0)
 	, m_detached(false)
 	{
-		if (init(idVendor, idProduct, sProduct) > 0)
+		if (init(idVendor, idProduct, sProduct, sSerial) > 0)
 			cleanup();
 	}
 	~usbdev_t()
@@ -293,7 +294,7 @@ protected:
 private:
 
 	int init(unsigned idVendor, unsigned idProduct, const std::string &sProduct,
-		int interface_class = USB_CLASS_HID)
+		const std::string &sSerial, int interface_class = USB_CLASS_HID)
 	{
 		if (reference()++ == 0)
 		{
@@ -304,7 +305,7 @@ private:
 			usb_find_busses();
 			usb_find_devices();
 		}
-		m_device = find_device(idVendor, idProduct, sProduct);
+		m_device = find_device(idVendor, idProduct, sProduct, sSerial);
 		if (m_device != nullptr)
 		{
 			m_devHandle = usb_open(m_device);
@@ -382,7 +383,7 @@ private:
 			else
 				return 1;
 		}
-		return 0;
+		return 1;
 	}
 
 	bool is_class(int iclass)
@@ -449,7 +450,8 @@ private:
 #endif
 	}
 
-	struct usb_device *find_device(unsigned idVendor, unsigned idProduct, const std::string &sProduct)
+	struct usb_device *find_device(unsigned idVendor, unsigned idProduct,
+		const std::string &sProduct, const std::string &sSerial)
 	{
 		struct usb_bus *bus = nullptr;
 		struct usb_device *device = nullptr;
@@ -478,18 +480,19 @@ private:
 						m_log(DEBUG, "cannot query product for device: %s", usb_strerror());
 						continue;
 					}
-					m_log(DEBUG, "Found device %s \n", m_product);
 
 					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, m_serial))
 					{
 						m_log(DEBUG, "cannot query serial for device: %s", usb_strerror());
 				 	}
 
+					m_log(DEBUG, "Found device <%s> with serial <%s> \n", m_product, m_serial);
+
 					usb_close(handle);
 					m_vendor_id = idVendor;
 					m_product_id = idProduct;
 
-					if (m_product == sProduct)
+					if (m_product == sProduct && (!sSerial.empty() && sSerial == m_serial))
 						return device;
 				}
 			}

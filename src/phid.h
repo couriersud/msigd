@@ -27,11 +27,12 @@ public:
 	static constexpr const unsigned PACKETSIZE = 64;
 	static constexpr const unsigned DEFAULT_TIMEOUT = 1000;
 
-	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
+	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct,
+		const std::string &sProduct, const std::string &sSerial)
 	: m_log(logger)
 	, m_devHandle(nullptr)
 	{
-		if (init(idVendor, idProduct, sProduct) > 0)
+		if (init(idVendor, idProduct, sProduct, sSerial) > 0)
 			cleanup();
 	}
 	~usbdev_t()
@@ -171,7 +172,8 @@ protected:
 
 private:
 
-	int init(unsigned idVendor, unsigned idProduct, const std::string &sProduct)
+	int init(unsigned idVendor, unsigned idProduct, const std::string &sProduct,
+		const std::string &sSerial)
 	{
 		if (reference()++ == 0)
 		{
@@ -179,7 +181,7 @@ private:
 			// Initialize the USB library
 			hid_init();
 		}
-		m_devHandle = hid_open(idVendor, idProduct, nullptr);
+		m_devHandle = hid_open(idVendor, idProduct, sSerial.empty() ? nullptr : s_to_ws(sSerial).c_str());
 		if(m_devHandle != nullptr)
 		{
 			static const std::size_t BUFSIZE = 256;
@@ -197,11 +199,19 @@ private:
 				return 1;
 			}
 			m_serial = w_to_s(buf);
+
+			m_log(DEBUG, "Found <%s> with serial <%s>", m_product, m_serial);
+
 			m_vendor_id = idVendor;
 			m_product_id = idProduct;
 			if (sProduct != m_product)
 			{
 				m_log(DEBUG, "Product Id <%s> does not match requested <%s>", m_product, sProduct);
+				return 1;
+			}
+			if (!sSerial.empty() && sSerial != m_serial)
+			{
+				m_log(DEBUG, "Serial Id <%s> does not match requested <%s>", m_serial, sProduct);
 				return 1;
 			}
 
@@ -227,6 +237,11 @@ private:
 			i++;
 		}
 		return ret;
+	}
+
+	std::wstring s_to_ws(const std::string &s)
+	{
+		return std::wstring(s.begin(), s.end());
 	}
 
 	static int &reference()

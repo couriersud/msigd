@@ -727,8 +727,9 @@ static int mystic_opt(std::string opt, led_data &leds)
 class mondev_t : public usbdev_t
 {
 public:
-	mondev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
-	: usbdev_t(logger, idVendor, idProduct, sProduct)
+	mondev_t(logger_t &logger, unsigned idVendor, unsigned idProduct,
+		const std::string &sProduct, const std::string &sSerial)
+	: usbdev_t(logger, idVendor, idProduct, sProduct, sSerial)
 	{
 #if !(USE_HID)
 		if (!checkep(1, false) && !checkep(2, true))
@@ -891,6 +892,10 @@ static int help()
 		"  -q, --query                display all monitor settings. This will also\n"
 		"                               list readonly settings and settings whose\n"
 		"                               function is currently unknown.\n"
+		"  -s, --serial               serial number of the monitor to control.\n"
+		"                               Use the serial number to identify the target\n"
+		"                               monitor in a multi-monitor environment\n"
+		"                               If omitted, the first monitor found is used\n"
 		"      --info                 display device information. This can be used\n"
 		"                               with --query\n"
 		"  -f, --filter               limits query result to comma separated list\n"
@@ -905,6 +910,11 @@ static int help()
 		"                               blinds, meteor, rainbow, random,\n"
 		"                               0xRRGGBB, RRR,GGG,BBB\n"
 		"                               Only on MAG series monitors.\n");
+	pprintf("%s", "\nMulti monitor support:\n");
+	pprintf("%s", "    On libHid systems use 'lsusb -v' to get the serial number\n"
+		    "    of attached monitors.\n"
+		    "    On libUSB systems use 'msgid --debug -s unknown` to get a list\n"
+		    "    of attached monitors.\n\n");
 	pprintf("%s", "\nAll monitors:\n");
 	pprintf("%s", "    These options apply to all monitors:\n\n");
 	help_set(ALL, UNKNOWN, UNKNOWN);
@@ -1040,7 +1050,7 @@ static int steel_main(std_logger_t &logger, int argc, char **argv)
 {
 	logger.set_level(DEBUG, true);
 	//steeldev_t steeldev(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
-	steeldev_t steeldev(logger, 0x1038, 0x1126, "SteelSeries MLC");
+	steeldev_t steeldev(logger, 0x1038, 0x1126, "SteelSeries MLC", "");
 	//part of the code may as well work on keyboards with per key led.
 	// Examples are GE63, GE73 with usb ids 1038:1122
 
@@ -1257,6 +1267,7 @@ int main (int argc, char **argv)
 	bool numeric = false;
 	string_list filters;
 	std::string waitfor;
+	std::string serial;
 
 	std_logger_t logger;
 
@@ -1285,6 +1296,10 @@ int main (int argc, char **argv)
 			steel = true;
 			++arg_pointer;
 			break;
+		}
+		else if ((cur_opt == "--serial" || cur_opt == "-s") && arg_pointer + 1 < argc)
+		{
+			serial = argv[++arg_pointer];
 		}
 		else if ((cur_opt == "--filter" || cur_opt == "-f") && arg_pointer + 1 < argc)
 		{
@@ -1324,7 +1339,7 @@ int main (int argc, char **argv)
 
 	logger.set_level(DEBUG, debug);
 
-	mondev_t usb(logger, 0x1462, 0x3fa4, "MSI Gaming Controller");
+	mondev_t usb(logger, 0x1462, 0x3fa4, "MSI Gaming Controller", serial);
 
 	if (usb)
 	{

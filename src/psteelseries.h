@@ -415,8 +415,9 @@ static_assert(sizeof(steel_data_0b) == 525, "steel_data size mismatch");
 class steeldev_t : public usbdev_t
 {
 public:
-	steeldev_t(logger_t &logger, unsigned idVendor, unsigned idProduct, const std::string &sProduct)
-	: usbdev_t(logger, idVendor, idProduct, sProduct)
+	steeldev_t(logger_t &logger, unsigned idVendor, unsigned idProduct,
+		const std::string &sProduct, const std::string &sSerial)
+	: usbdev_t(logger, idVendor, idProduct, sProduct, sSerial)
 	{
 		// no endpoints on steel device ?
 	#if 0

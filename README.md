@@ -264,6 +264,10 @@ Options:
   -q, --query                display all monitor settings. This will also
                                list readonly settings and settings whose
                                function is currently unknown.
+  -s, --serial               serial number of the monitor to control.
+                               Use the serial number to identify the target
+                               monitor in a multi-monitor environment
+                               If omitted, the first monitor found is used
       --info                 display device information. This can be used
                                with --query
   -f, --filter               limits query result to comma separated list
@@ -276,6 +280,13 @@ Options:
                                blinds, meteor, rainbow, random,
                                0xRRGGBB, RRR,GGG,BBB
                                Only on MAG series monitors.
+
+Multi monitor support:
+    On libHid systems use 'lsusb -v' to get the serial number
+    of attached monitors.
+    On libUSB systems use 'msgid --debug -s unknown` to get a list
+    of attached monitors.
+
 
 All monitors:
     These options apply to all monitors:
@@ -319,6 +330,27 @@ MAG series monitors:
       --sound_enable         RW values: off on 
       --rgb_led              RW values: off on 
 
+MAG321CQR:
+    These options apply to the MAG321CQR:
+
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
+      --free_sync            RW values: off on 
+      --zero_latency         RW values: off on 
+      --screen_size          RW values: 19 24 4:3 16:9 
+      --pro_mode             RW values: user reader cinema designer 
+      --input                RW values: hdmi1 hdmi2 dp 
+      --pip                  RW values: off pip pbp 
+      --pip_input            RW values: hdmi1 hdmi2 dp 
+      --pbp_input            RW values: hdmi1 hdmi2 dp 
+      --pip_size             RW values: small medium large 
+      --pip_position         RW values: left_top right_top left_bottom right_bottom 
+      --toggle_display        W values: on 
+      --toggle_sound          W values: on 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+
 MAG32 Series:
     These options apply to the MAG32 Series:
 
@@ -355,8 +387,20 @@ MAG241 Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
 
-MAG271 Series:
-    These options apply to the MAG271 Series:
+MAG241 Series:
+    These options apply to the MAG241 Series:
+
+      --black_tuner          RW values: 0 to 20
+      --free_sync            RW values: off on 
+      --pro_mode             RW values: user reader cinema designer 
+      --input                RW values: hdmi1 hdmi2 dp 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+
+MAG271CQ Series:
+    These options apply to the MAG271CQ Series:
 
       --black_tuner          RW values: 0 to 20
       --free_sync            RW values: off on 
@@ -388,7 +432,6 @@ MAG272 Series:
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer HDR 
       --input                RW values: hdmi1 hdmi2 dp usbc 
-      --screen_info          RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -406,7 +449,23 @@ MAG272 Series:
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer HDR 
       --input                RW values: hdmi1 hdmi2 dp usbc 
-      --screen_info          RW values: off on 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+
+MAG272 Series:
+    These options apply to the MAG272 Series:
+
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --unknown210            W values: 0 to 10
+      --unknown210            R values: 0 to 10
+      --free_sync            RW values: off on 
+      --zero_latency         RW values: off on 
+      --screen_size          RW values: auto 4:3 16:9 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema designer HDR 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
