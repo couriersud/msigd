@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Tue Aug 18 17:04:23 2020 -->
+<!-- CreationDate: Sat May  1 22:26:48 2021 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -88,6 +88,14 @@ Write, RW: Read/Write</p>
 This will also list readonly settings and settings whose
 function is currently unknown.</p>
 
+<p style="margin-left:11%;"><b>&minus;s</b>,
+<b>&minus;&minus;serial</b></p>
+
+<p style="margin-left:22%;">serial number of the monitor to
+control. Use the serial number to identify the target
+monitor in a multi&minus;monitor environment If omitted, the
+first monitor found is used</p>
+
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
@@ -129,6 +137,15 @@ as numeric settings</p>
 <p style="margin-left:22%;">off, static, breathing,
 blinking, flashing, blinds, meteor, rainbow, random,
 0xRRGGBB, RRR,GGG,BBB Only on MAG series monitors.</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>Multi
+monitor support:</b></p>
+
+<p style="margin-left:22%;">On libHid systems use
+&rsquo;lsusb <b>&minus;v</b>&rsquo; to get the serial number
+of attached monitors. On libUSB systems use &rsquo;msgid
+<b>&minus;&minus;debug &minus;s</b> unknown&rsquo; to get a
+list of attached monitors.</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>All
 monitors:</b></p>
@@ -652,11 +669,65 @@ refresh_rate</p>
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>MAG271
+<p style="margin-left:11%; margin-top: 1em"><b>MAG241
 Series:</b></p>
 
 <p style="margin-left:22%;">These options apply to the
-MAG271 Series:</p>
+MAG241 Series:</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+
+<p style="margin-left:22%;">RW values: 0 to 20</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;free_sync</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+
+<p style="margin-left:22%;">RW values: user reader cinema
+designer</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>MAG271CQ
+Series:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MAG271CQ Series:</p>
 
 
 <p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
