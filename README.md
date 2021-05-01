@@ -65,7 +65,7 @@ information by opening an issue.
 |:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
 | MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              |
 | MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
+| MPG341CQRV    | ?        | Work in Progress | "V09" | "00>"| ?              |
 | MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
 | MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |
 | MAG241CR      | ?        | Yes           | "V18" | "004"| ?              |
@@ -702,3 +702,5 @@ virtual guests booting up.
 [andaag](https://github.com/andaag) - MAG272CQR support
 
 [usrErr0r](https://github.com/usrErr0r) - MAG272QR support
+
+[glaon](https://github.com/glaon) - MPG341CQR support
