@@ -48,11 +48,12 @@ enum series_t
 	MAG241    = 0x0004,
 	MAG271CQ  = 0x0008,
 	MAG272    = 0x0010,
-	PS        = 0x0020,
-	MPG341    = 0x0040,
+	MAG274R   = 0x0020,
+	PS        = 0x0040,
+	MPG341    = 0x0080,
 	QUERYONLY = 0x1000,
 
-	MAG     = MAG32 | MAG321 | MAG272 | MAG271CQ | MAG241,
+	MAG     = MAG32 | MAG321 | MAG272 | MAG271CQ | MAG241 | MAG274R,
 	ALL     = MAG | PS | MPG341 | QUERYONLY,
 };
 
@@ -104,6 +105,7 @@ static std::vector<identity_t> known_models =
 	{ MAG271CQ,  "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
 	{ MPG341,    "00>", "V09", "MPG341 Series", LT_STEEL },    // MPG27CQR
 	{ MAG272,    "00e", "V43", "MAG274 Series", LT_MYSTIC },  // MAG274QRF-QD
+    { MAG274R, "00Z", "V41", "MAG274R Series", LT_MYSTIC  }, // MAG274R
 	{ PS,        "00?", "V06", "PS Series", LT_NONE }
 };
 
