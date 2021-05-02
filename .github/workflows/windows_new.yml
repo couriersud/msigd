@@ -20,7 +20,7 @@ jobs:
     #- name: Create symbolic link for MSYS2
     #  shell: cmd
     #  run: mklink /D c:\msys64 d:\a\_temp\msys\msys64
-    # - uses: actions/checkout@v1
+    - uses: actions/checkout@v1
     - name: Install dependencies
       run: | 
         pacman -S --noconfirm make
