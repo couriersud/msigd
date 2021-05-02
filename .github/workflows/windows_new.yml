@@ -21,21 +21,21 @@ jobs:
     #  run: mklink /D c:\msys64 d:\a\_temp\msys\msys64
     # - uses: actions/checkout@v1
     - name: Install dependencies
-      shell: msys2 {0}
+      # shell: msys2 {0}
 
       run: | 
-        pacman -S --noconfirm make
+        msys2 -c 'pacman -S --noconfirm make'
     - run: | 
-        pacman -S --noconfirm mingw-w64-x86_64-gcc
+        msys2 -c 'pacman -S --noconfirm mingw-w64-x86_64-gcc'
     - run: |
-        pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
+        msys2 -c 'pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git'
     - run: |
-         msys2 pacman -S --noconfirm mingw-w64-x86_64-hidapi
+        msys2 -c 'msys2 pacman -S --noconfirm mingw-w64-x86_64-hidapi'
       
     #- name: configure
     #  run: ./configure
     - name: make
-      run: msys2 make TARGETOS=windows
+      run: msys2 -c 'make TARGETOS=windows'
     #- name: make check
     #  run: make check
     #- name: make distcheck
