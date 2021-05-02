@@ -89,6 +89,7 @@ information by opening an issue.
 | MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
 | MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |
 | MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
+| MAG274QRF-QD  | FW.011   | Work in Progress | "V43" | "00e"| AUO_M270DAN08_2|
 | MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              |
 | MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
 | MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
@@ -704,3 +705,6 @@ virtual guests booting up.
 [usrErr0r](https://github.com/usrErr0r) - MAG272QR support
 
 [glaon](https://github.com/glaon) - MPG341CQR support
+
+[Marco Rodolfi](https://github.com/RodoMa92) - MAG274QRF-QD support
+
