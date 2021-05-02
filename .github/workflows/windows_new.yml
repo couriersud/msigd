@@ -21,7 +21,7 @@ jobs:
     #  run: mklink /D c:\msys64 d:\a\_temp\msys\msys64
     # - uses: actions/checkout@v1
     - name: Install dependencies
-    #- shell: msys2 {0}
+      shell: msys2 {0}
 
       run: | 
         pacman -S --noconfirm make
