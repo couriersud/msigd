@@ -13,15 +13,17 @@ jobs:
     
     steps:  
     - uses: msys2/setup-msys2@v2
+    - shell: msys2 {0}
+
     #  with:
     #    update: true
     #- name: Create symbolic link for MSYS2
     #  shell: cmd
     #  run: mklink /D c:\msys64 d:\a\_temp\msys\msys64
-    - uses: actions/checkout@v1
+    # - uses: actions/checkout@v1
     - name: Install dependencies
-      run: msys2 pacman -S --noconfirm make
-    - run: msys2 pacman -S --noconfirm mingw-w64-x86_64-gcc
+      run: | pacman -S --noconfirm make
+    - run: | pacman -S --noconfirm mingw-w64-x86_64-gcc
     - run: msys2 pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
     - run: msys2 pacman -S --noconfirm mingw-w64-x86_64-hidapi
       
