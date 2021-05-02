@@ -1,0 +1,35 @@
+name: Windows latest new
+
+on: [push]
+
+jobs:
+
+  build-windows:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, windows-2016]
+    
+    steps:  
+    - uses: msys2/setup-msys2@v2
+    #  with:
+    #    update: true
+    #- name: Create symbolic link for MSYS2
+    #  shell: cmd
+    #  run: mklink /D c:\msys64 d:\a\_temp\msys\msys64
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: msys2do pacman -S --noconfirm make
+    - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-gcc
+    - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git
+    - run: msys2do pacman -S --noconfirm mingw-w64-x86_64-hidapi
+      
+    #- name: configure
+    #  run: ./configure
+    - name: make
+      run: msys2do make TARGETOS=windows
+    #- name: make check
+    #  run: make check
+    #- name: make distcheck
+    #  run: make distcheck
