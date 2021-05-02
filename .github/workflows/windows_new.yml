@@ -30,12 +30,13 @@ jobs:
     - run: |
         msys2 -c 'pacman -S --noconfirm mingw-w64-x86_64-libusb-compat-git'
     - run: |
-        msys2 -c 'msys2 pacman -S --noconfirm mingw-w64-x86_64-hidapi'
+        msys2 -c 'pacman -S --noconfirm mingw-w64-x86_64-hidapi'
       
     #- name: configure
     #  run: ./configure
     - name: make
-      run: msys2 -c 'make TARGETOS=windows'
+      run: |
+        msys2 -c 'make TARGETOS=windows'
     #- name: make check
     #  run: make check
     #- name: make distcheck
