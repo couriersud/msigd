@@ -2,7 +2,7 @@
 
 The `msigd` command line tools allows you to change all settings for MSI monitors which can be set in the monitor's OSD menu. 
 
-Update 01.05.2021: In October 2020 my partner, wife and mother of my daughter passed away. This is the reason why there has not been any activity on the msgid project. The project is not abandoned and it will slowly get more attention again.
+Update 01.05.2021: In October 2020 my partner, wife and mother of my daughter passed away. This is the reason why there has not been any activity on the msigd project. The project is not abandoned and it will slowly get more attention again.
 
 <!-- TOC depthFrom:2 depthTo:3 orderedList:false -->
 
@@ -240,7 +240,7 @@ pursue this further here.
 
 ## 5. Usage
 
-[`msgid --help`](https://htmlpreview.github.io/?https://raw.githubusercontent.com/couriersud/msigd/master/html/msigd.html)
+[`msigd --help`](https://htmlpreview.github.io/?https://raw.githubusercontent.com/couriersud/msigd/master/html/msigd.html)
 
 ```sh
 Usage: msigd [OPTION]... 
@@ -287,7 +287,7 @@ Options:
 Multi monitor support:
     On libHid systems use 'lsusb -v' to get the serial number
     of attached monitors.
-    On libUSB systems use 'msgid --debug -s unknown` to get a list
+    On libUSB systems use 'msigd --debug -s unknown` to get a list
     of attached monitors.
 
 

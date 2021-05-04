@@ -916,7 +916,7 @@ static int help()
 	pprintf("%s", "\nMulti monitor support:\n");
 	pprintf("%s", "    On libHid systems use 'lsusb -v' to get the serial number\n"
 		    "    of attached monitors.\n"
-		    "    On libUSB systems use 'msgid --debug -s unknown` to get a list\n"
+		    "    On libUSB systems use 'msigd --debug -s unknown` to get a list\n"
 		    "    of attached monitors.\n\n");
 	pprintf("%s", "\nAll monitors:\n");
 	pprintf("%s", "    These options apply to all monitors:\n\n");
