@@ -91,7 +91,7 @@ static std::vector<identity_t> known_models =
 	{ MAG32,  "00;", "V18", "MAG32 Series", LT_MYSTIC },
 	{ MAG241, "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting - above not
-	{ MAG241, "004", "V18", "MAG241 Series", LT_MYSTIC }, // MAG241CR, MAG271CR
+	{ MAG241, "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR, MAG271CR
 	{ MAG271CQ, "006", "V19", "MAG271CQ Series", LT_MYSTIC }, // MAG271CQR, MAG271CQP
 	{ MAG272, "00O", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272QP
 	{ MAG272, "00L", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272
@@ -1303,6 +1303,19 @@ int main (int argc, char **argv)
 		else if ((cur_opt == "--serial" || cur_opt == "-s") && arg_pointer + 1 < argc)
 		{
 			serial = argv[++arg_pointer];
+		}
+		else if (cur_opt == "--list" || cur_opt == "-l")
+		{
+			device_info_list list;
+
+			if (usbdev_t::get_device_list(logger, 0x1462, 0x3fa4, list) == 0)
+			{
+				for (auto &e : list)
+					pprintf("<%s> <%s> <%d> <%s> <%s>\n", e.path, e.serial_number, e.release_number, e.manufacturer, e.product);
+				return E_OK;
+			}
+			else
+				return error(E_IDENTIFY, "No msigd target monitors found\n");
 		}
 		else if ((cur_opt == "--filter" || cur_opt == "-f") && arg_pointer + 1 < argc)
 		{

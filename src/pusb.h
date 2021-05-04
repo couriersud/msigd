@@ -29,7 +29,7 @@
 
 #include <string.h> // strerror
 
-
+#include "pcommon.h"
 #include "plogger.h"
 
 class usbdev_t
@@ -73,6 +73,73 @@ public:
 	void log(log_level level, const char *fmt, Args&&... args)
 	{
 		m_log(level, fmt, std::forward<Args>(args)...);
+	}
+
+	static int get_device_list(logger_t &logger, unsigned idVendor, unsigned idProduct,
+		device_info_list &list)
+	{
+		usb_init();
+		// Enumerate the USB device tree
+		usb_find_busses();
+		usb_find_devices();
+		struct usb_bus *bus = nullptr;
+		struct usb_device *device = nullptr;
+
+		logger(DEBUG, "Scanning USB devices...");
+
+		// Iterate through attached busses and devices
+		for (bus = usb_get_busses(); bus != nullptr; bus = bus->next)
+		{
+			for (device = bus->devices; device != nullptr; device = device->next)
+			{
+				// Check to see if each USB device matches the Vendor and Product ID
+				if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
+				{
+					device_info entry;
+					entry.path = device->filename;
+					usb_dev_handle * handle = nullptr;
+					/* we need to open the device in order to query strings */
+					if (!(handle = usb_open(device)))
+					{
+						logger(DEBUG, "cannot open USB device: %s", usb_strerror());
+						continue;
+					}
+					/* get product name */
+
+					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, entry.product))
+					{
+						logger(DEBUG, "cannot query product for device: %s", usb_strerror());
+						continue;
+					}
+
+					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, entry.serial_number))
+					{
+						logger(DEBUG, "cannot query serial for device: %s", usb_strerror());
+				 	}
+
+					if (usbGetDescriptorString(handle, device->descriptor.iManufacturer, 0x0409, entry.manufacturer))
+					{
+						logger(DEBUG, "cannot query manufacturer for device: %s", usb_strerror());
+				 	}
+
+					logger(DEBUG, "Found device <%s> with serial <%s> \n", entry.product, entry.serial_number);
+
+					usb_close(handle);
+
+					entry.release_number = 0;
+					list.push_back(entry);
+				}
+			}
+		}
+
+		if (!list.empty())
+		{
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
 	}
 
 protected:
@@ -403,7 +470,7 @@ private:
 	}
 
 	/* https://stackoverflow.com/questions/31119014/open-a-device-by-name-using-libftdi-or-libusb */
-	int usbGetDescriptorString(usb_dev_handle *dev, int index, int langid, std::string &ret) {
+	static int usbGetDescriptorString(usb_dev_handle *dev, int index, int langid, std::string &ret) {
 		// make standard request GET_DESCRIPTOR, type string and given index
 		// (e.g. dev->iProduct)
 		int rval;

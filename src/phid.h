@@ -9,6 +9,8 @@
 #include <string>
 #include <array>
 
+#include "pcommon.h"
+
 #if defined(_WIN32)
   //#include <usb0_usb.h>    // this is libusb, see http://libusb.sourceforge.net/
 	#include <windows.h>
@@ -44,7 +46,6 @@ public:
 		}
 	}
 
-public:
 	operator bool() { return (m_devHandle != nullptr); }
 
 	std::string product() { return m_product; }
@@ -56,6 +57,35 @@ public:
 	void log(log_level level, const char *fmt, Args&&... args)
 	{
 		m_log(level, fmt, std::forward<Args>(args)...);
+	}
+
+	static int get_device_list(logger_t &logger, unsigned idVendor, unsigned idProduct,
+		device_info_list &list)
+	{
+		hid_init();
+		hid_device_info *dil_list = hid_enumerate(idVendor, idProduct);
+		hid_device_info *dil = dil_list;
+		if (dil != NULL)
+		{
+			do {
+				device_info entry;
+				entry.path = dil->path;
+				entry.serial_number = w_to_s(dil->serial_number);
+				entry.release_number = dil->release_number;
+				entry.manufacturer = w_to_s(dil->manufacturer_string);
+				entry.product = w_to_s(dil->product_string);
+				list.push_back(entry);
+				dil = dil->next;
+			} while (dil != NULL);
+			hid_free_enumeration(dil_list);
+			hid_exit();
+			return 0;
+		}
+		else
+		{
+			hid_exit();
+			return 1;
+		}
 	}
 
 protected:
@@ -175,12 +205,14 @@ private:
 	int init(unsigned idVendor, unsigned idProduct, const std::string &sProduct,
 		const std::string &sSerial)
 	{
+
 		if (reference()++ == 0)
 		{
 			m_log(DEBUG, "Initializing HID lib");
 			// Initialize the USB library
 			hid_init();
 		}
+
 		m_devHandle = hid_open(idVendor, idProduct, sSerial.empty() ? nullptr : s_to_ws(sSerial).c_str());
 		if(m_devHandle != nullptr)
 		{
@@ -221,7 +253,7 @@ private:
 		return 0;
 	}
 
-	std::string w_to_s(wchar_t *s)
+	static std::string w_to_s(wchar_t *s)
 	{
 		// FIXME: dead wrong
 		std::string ret = "";
@@ -239,7 +271,7 @@ private:
 		return ret;
 	}
 
-	std::wstring s_to_ws(const std::string &s)
+	static std::wstring s_to_ws(const std::string &s)
 	{
 		return std::wstring(s.begin(), s.end());
 	}
