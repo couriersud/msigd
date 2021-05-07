@@ -267,10 +267,20 @@ Options:
   -q, --query                display all monitor settings. This will also
                                list readonly settings and settings whose
                                function is currently unknown.
+  -l, --list                 list all available monitors.
+                               Obtains a comma separated list of all
+                               MSI monitors connected. The first element
+                               in the list is the monitor number to be used
+                               as the argument to the --monitor option
+  -m, --monitor              logical monitor number.
+                               The argument to this option is the monitor
+                               number as provided by the --list option
+                               If omitted, the first monitor found is used
   -s, --serial               serial number of the monitor to control.
                                Use the serial number to identify the target
                                monitor in a multi-monitor environment
-                               If omitted, the first monitor found is used
+                               If omitted and --monitor is omitted as well
+                               the first monitor found is used
       --info                 display device information. This can be used
                                with --query
   -f, --filter               limits query result to comma separated list
@@ -278,17 +288,20 @@ Options:
   -w, --wait                 SETTING=VALUE. Wait for SETTING to become
                                VALUE, e.g. macro_key=pressed
   -n, --numeric              monitor settings are displayed as numeric
-                                settings
+                               settings
        --mystic              off, static, breathing, blinking, flashing,
                                blinds, meteor, rainbow, random,
                                0xRRGGBB, RRR,GGG,BBB
                                Only on MAG series monitors.
 
 Multi monitor support:
-    On libHid systems use 'lsusb -v' to get the serial number
-    of attached monitors.
-    On libUSB systems use 'msigd --debug -s unknown` to get a list
-    of attached monitors.
+    Use --list to get a list of all attached monitors.
+    If the serial numbers provided by this list are unique,
+    you can use the serial numbers to identify monitors using
+    the --serial option. If you have multiple monitors of the
+    same type this is most likely not the case. This is an MSI
+    issue. In this case use the --monitor option to specify the
+    logical monitor number provided by the --list option
 
 
 All monitors:
@@ -390,8 +403,8 @@ MAG241 Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
 
-MAG241 Series:
-    These options apply to the MAG241 Series:
+MAG241CR Series:
+    These options apply to the MAG241CR Series:
 
       --black_tuner          RW values: 0 to 20
       --free_sync            RW values: off on 
@@ -474,6 +487,23 @@ MAG272 Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
 
+MAG272 Series:
+    These options apply to the MAG272 Series:
+
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --unknown210            W values: 0 to 10
+      --unknown210            R values: 0 to 10
+      --free_sync            RW values: off on 
+      --zero_latency         RW values: off on 
+      --screen_size          RW values: auto 4:3 16:9 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema designer HDR 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+
 MPG27 Series:
     These options apply to the MPG27 Series:
 
@@ -494,6 +524,64 @@ MPG27 Series:
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
+
+MPG341 Series:
+    These options apply to the MPG341 Series:
+
+      --mode                 RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --quick_charge          R values: off on 
+      --unknown190            R values: 0 to 100
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom custom 
+      --screen_assistance    RW values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
+      --screen_size          RW values: auto 4:3 16:9 21:9 1:1 
+      --pro_mode             RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
+      --color_preset         RW values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
+      --gray_level           RW values: 0 to 20
+      --low_blue_light       RW values: off on 
+      --local_dimming        RW values: off on 
+      --hue_rgb              RW tripple: v1,v2,v3 where v<=100
+      --hue_cmy              RW tripple: v1,v2,v3 where v<=100
+      --zoom                 RW values: off on 
+      --zoom_location        RW values: center left_top right_top left_bottom right_bottom 
+      --saturation_rgb       RW tripple: v1,v2,v3 where v<=100
+      --saturation_cmy       RW tripple: v1,v2,v3 where v<=100
+      --gamma                RW values: 1.8 2 2.2 2.4 2.6 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --pip                  RW values: off pip pbp_x2 pbp_x3 pbp_x4 
+      --pip_input            RW values: hdmi1 hdmi2 dp usbc 
+      --pip_size             RW values: small medium large 
+      --pip_position         RW values: left_top right_top left_bottom right_bottom 
+      --toggle_display        W values: on 
+      --pip_sound_source     RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input1           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input2           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input3           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_input4           RW values: hdmi1 hdmi2 dp usbc 
+      --pbp_sound_source     RW values: hdmi1 hdmi2 dp usbc 
+      --osd_language         RW values: 0 to 28
+      --screen_info          RW values: off on 
+      --audio_source         RW values: analog digital 
+      --navi_up              RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_down            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_left            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --navi_right           RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+
+MAG274 Series:
+    These options apply to the MAG274 Series:
+
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --unknown210            W values: 0 to 10
+      --unknown210            R values: 0 to 10
+      --free_sync            RW values: off on 
+      --zero_latency         RW values: off on 
+      --screen_size          RW values: auto 4:3 16:9 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema designer HDR 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
 
 PS Series:
     These options apply to the PS Series:
@@ -707,4 +795,8 @@ virtual guests booting up.
 [glaon](https://github.com/glaon) - MPG341CQR support
 
 [Marco Rodolfi](https://github.com/RodoMa92) - MAG274QRF-QD support
+
+[Preston](https://github.com/PChild) - Multi-Monitor support
+[
+[Michael J Brancato](https://github.com/sgtcoder) - Multi-Monitor support
 
