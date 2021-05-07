@@ -30,7 +30,7 @@ static const char *appversion = "0.9";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
-static const auto cQUERY_DELAY = std::chrono::milliseconds(25);
+static const auto cQUERY_DELAY = std::chrono::milliseconds(25); // FIXME: do we still need this - tests here say no
 static const auto cWAIT_DELAY = std::chrono::milliseconds(250);
 
 enum access_t
@@ -730,9 +730,9 @@ static int mystic_opt(std::string opt, led_data &leds)
 class mondev_t : public usbdev_t
 {
 public:
-	mondev_t(logger_t &logger, unsigned idVendor, unsigned idProduct,
+	mondev_t(logger_t &logger, const device_info &info,
 		const std::string &sProduct, const std::string &sSerial)
-	: usbdev_t(logger, idVendor, idProduct, sProduct, sSerial)
+	: usbdev_t(logger, info, sProduct, sSerial)
 	{
 #if !(USE_HID)
 		if (!checkep(1, false) && !checkep(2, true))
@@ -895,10 +895,20 @@ static int help()
 		"  -q, --query                display all monitor settings. This will also\n"
 		"                               list readonly settings and settings whose\n"
 		"                               function is currently unknown.\n"
+		"  -l, --list                 list all available monitors.\n"
+		"                               Obtains a comma separated list of all\ņ"
+		"                               MSI monitors connected. The first element\n"
+		"                               in the list is the monitor number to be used\n"
+		"                               as the argument to the --monitor option\n"
+		"  -m, --monitor              logical monitor number.\n"
+		"                               The argument to this option is the monitor\n"
+		"                               number as provided by the --list option\n"
+		"                               If omitted, the first monitor found is used\n"
 		"  -s, --serial               serial number of the monitor to control.\n"
 		"                               Use the serial number to identify the target\n"
 		"                               monitor in a multi-monitor environment\n"
-		"                               If omitted, the first monitor found is used\n"
+		"                               If omitted and --monitor is omitted as well\n"
+		"                               the first monitor found is used\n"
 		"      --info                 display device information. This can be used\n"
 		"                               with --query\n"
 		"  -f, --filter               limits query result to comma separated list\n"
@@ -914,10 +924,13 @@ static int help()
 		"                               0xRRGGBB, RRR,GGG,BBB\n"
 		"                               Only on MAG series monitors.\n");
 	pprintf("%s", "\nMulti monitor support:\n");
-	pprintf("%s", "    On libHid systems use 'lsusb -v' to get the serial number\n"
-		    "    of attached monitors.\n"
-		    "    On libUSB systems use 'msigd --debug -s unknown` to get a list\n"
-		    "    of attached monitors.\n\n");
+	pprintf("%s", "    Use --list to get a list of all attached monitors.\n"
+		    "    If the serial numbers provided by this list are unique,\n"
+		    "    you can use the serial numbers to identify monitors using\n"
+		    "    the --serial option. If you have multiple monitors of the\n"
+		    "    same type this is most likely not the case. This is an MSI\n"
+		    "    issue. In this case use the --monitor option to specify the\n"
+		    "    logical monitor number provided by the --list option\n\n");
 	pprintf("%s", "\nAll monitors:\n");
 	pprintf("%s", "    These options apply to all monitors:\n\n");
 	help_set(ALL, UNKNOWN, UNKNOWN);
@@ -1265,6 +1278,8 @@ int main (int argc, char **argv)
 	bool debug = false;
 	bool info = false;
 	bool steel = false;
+	bool list = false;
+	int monitor = 0;
 	led_data leds;
 	bool mystic = false;
 	bool numeric = false;
@@ -1304,19 +1319,23 @@ int main (int argc, char **argv)
 		{
 			serial = argv[++arg_pointer];
 		}
-		else if (cur_opt == "--list" || cur_opt == "-l")
+		else if ((cur_opt == "--monitor" || cur_opt == "-m") && arg_pointer + 1 < argc)
 		{
-			device_info_list list;
-
-			if (usbdev_t::get_device_list(logger, 0x1462, 0x3fa4, list) == 0)
-			{
-				for (auto &e : list)
-					pprintf("<%s> <%s> <%d> <%s> <%s>\n", e.path, e.serial_number, e.release_number, e.manufacturer, e.product);
-				return E_OK;
+			++arg_pointer;
+			std::size_t idx = 0;
+			std::string arg = argv[arg_pointer];
+			try {
+				monitor = std::stoul(arg, &idx, 10);
 			}
-			else
-				return error(E_IDENTIFY, "No msigd target monitors found\n");
+			catch (...)
+			{
+			}
+			if (idx != arg.size())
+				return error(E_SYNTAX, "Error decoding monitor number: %s", arg);
 		}
+
+		else if (cur_opt == "--list" || cur_opt == "-l")
+			list = true;
 		else if ((cur_opt == "--filter" || cur_opt == "-f") && arg_pointer + 1 < argc)
 		{
 			filters = splitstr(argv[++arg_pointer], ',');
@@ -1355,7 +1374,27 @@ int main (int argc, char **argv)
 
 	logger.set_level(DEBUG, debug);
 
-	mondev_t usb(logger, 0x1462, 0x3fa4, "MSI Gaming Controller", serial);
+	device_info_list monitor_list;
+
+	if (usbdev_t::get_device_list(logger, 0x1462, 0x3fa4, monitor_list) != 0)
+		return error(E_SYNTAX, "No msigd target monitors found\n");
+
+	if (monitor > monitor_list.size())
+		return error(E_SYNTAX, "Invalid monitor number: %d", monitor);
+
+	if (list)
+	{
+		int idx = 1;
+		for (auto &e : monitor_list)
+		{
+			mondev_t mon(logger, e, "MSI Gaming Controller", "");
+			pprintf("%d,%s,%s,%s,%s\n", idx, mon.serial(), mon.manufacturer(), mon.product(), e.path);
+			idx ++;
+		}
+		//return E_OK;
+	}
+
+	mondev_t usb(logger, monitor_list[monitor ? monitor - 1 : 0], "MSI Gaming Controller", serial);
 
 	if (usb)
 	{
@@ -1367,6 +1406,11 @@ int main (int argc, char **argv)
 
 		setting_t sp140(ALL, "00140", "sp140");
 		setting_t sp150(ALL, "00150", "sp150");
+
+		// improve stability and avoid errors by issuing this command here
+		usb.debug_cmd("\x01\xb4");
+		//usb.debug_cmd("\x01\xb0");
+
 
 		if (!usb.get_setting(sp140, s140) && !usb.get_setting(sp150, s150))
 		{

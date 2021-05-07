@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Sat May  1 22:26:48 2021 -->
+<!-- CreationDate: Fri May  7 18:54:19 2021 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -88,13 +88,31 @@ Write, RW: Read/Write</p>
 This will also list readonly settings and settings whose
 function is currently unknown.</p>
 
+<p style="margin-left:11%;"><b>&minus;l</b>,
+<b>&minus;&minus;list</b></p>
+
+<p style="margin-left:22%;">list all available monitors.
+Obtains a comma separated list of all?? MSI monitors
+connected. The first element in the list is the monitor
+number to be used as the argument to the
+<b>&minus;&minus;monitor</b> option</p>
+
+<p style="margin-left:11%;"><b>&minus;m</b>,
+<b>&minus;&minus;monitor</b></p>
+
+<p style="margin-left:22%;">logical monitor number. The
+argument to this option is the monitor number as provided by
+the <b>&minus;&minus;list</b> option If omitted, the first
+monitor found is used</p>
+
 <p style="margin-left:11%;"><b>&minus;s</b>,
 <b>&minus;&minus;serial</b></p>
 
 <p style="margin-left:22%;">serial number of the monitor to
 control. Use the serial number to identify the target
-monitor in a multi&minus;monitor environment If omitted, the
-first monitor found is used</p>
+monitor in a multi&minus;monitor environment If omitted and
+<b>&minus;&minus;monitor</b> is omitted as well the first
+monitor found is used</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -141,11 +159,16 @@ blinking, flashing, blinds, meteor, rainbow, random,
 <p style="margin-left:11%; margin-top: 1em"><b>Multi
 monitor support:</b></p>
 
-<p style="margin-left:22%;">On libHid systems use
-&rsquo;lsusb <b>&minus;v</b>&rsquo; to get the serial number
-of attached monitors. On libUSB systems use &rsquo;msgid
-<b>&minus;&minus;debug &minus;s</b> unknown&rsquo; to get a
-list of attached monitors.</p>
+<p style="margin-left:22%;">Use <b>&minus;&minus;list</b>
+to get a list of all attached monitors. If the serial
+numbers provided by this list are unique, you can use the
+serial numbers to identify monitors using the
+<b>&minus;&minus;serial</b> option. If you have multiple
+monitors of the same type this is most likely not the case.
+This is an MSI issue. In this case use the
+<b>&minus;&minus;monitor</b> option to specify the logical
+monitor number provided by the <b>&minus;&minus;list</b>
+option</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>All
 monitors:</b></p>
@@ -669,11 +692,11 @@ refresh_rate</p>
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>MAG241
+<p style="margin-left:11%; margin-top: 1em"><b>MAG241CR
 Series:</b></p>
 
 <p style="margin-left:22%;">These options apply to the
-MAG241 Series:</p>
+MAG241CR Series:</p>
 
 
 <p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
@@ -1112,6 +1135,98 @@ info</p>
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
+<p style="margin-left:11%; margin-top: 1em"><b>MAG272
+Series:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MAG272 Series:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;mode</b></p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>RW values: user fps racing rts rpg mode5 mode6 mode7
+mode8 mode9 user reader cinema designer HDR</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
+
+<p style="margin-left:22%;">W values: 0 to 10</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
+
+<p style="margin-left:22%;">R values: 0 to 10</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;free_sync</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+
+<p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+
+<p style="margin-left:22%;">RW values: off normal strong
+strongest ai</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+
+<p style="margin-left:22%;">RW values: user reader cinema
+designer HDR</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
 <p style="margin-left:11%; margin-top: 1em"><b>MPG27
 Series:</b></p>
 
@@ -1224,6 +1339,352 @@ refresh_rate</p>
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>MPG341
+Series:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MPG341 Series:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;mode</b></p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>RW values: user adobe_rgb dci_p3 srgb hdr cinema reader
+bw dicom eyecare cal1 cal2 cal3</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;quick_charge</b></p>
+
+<p style="margin-left:22%;">R values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown190</b></p>
+
+<p style="margin-left:22%;">R values: 0 to 100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+
+<p style="margin-left:22%;">RW values: left_top right_top
+left_bottom right_bottom custom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_assistance</b></p>
+
+<p style="margin-left:22%;">RW values: off center edge
+scale_v scale_h line_v line_h grid thirds 3D_assistance</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+
+<p style="margin-left:22%;">RW values: auto 4:3 16:9 21:9
+1:1</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+
+<p style="margin-left:22%;">RW values: user adobe_rgb
+dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2
+cal3</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;color_preset</b></p>
+
+<p style="margin-left:22%;">RW values: 5000K 5500K 6500K
+7500K 9300K 10000K custom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;gray_level</b></p>
+
+<p style="margin-left:22%;">RW values: 0 to 20</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;low_blue_light</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;local_dimming</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;hue_rgb</b></p>
+
+<p style="margin-left:22%;">RW tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;hue_cmy</b></p>
+
+<p style="margin-left:22%;">RW tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;zoom</b></p></td>
+<td width="2%"></td>
+<td width="26%">
+
+
+<p>RW values: off on</p></td>
+<td width="52%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;zoom_location</b></p>
+
+<p style="margin-left:22%;">RW values: center left_top
+right_top left_bottom right_bottom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;saturation_rgb</b></p>
+
+<p style="margin-left:22%;">RW tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;saturation_cmy</b></p>
+
+<p style="margin-left:22%;">RW tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;gamma</b></p>
+
+<p style="margin-left:22%;">RW values: 1.8 2 2.2 2.4
+2.6</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>&minus;&minus;pip</b></p></td>
+<td width="4%"></td>
+<td width="60%">
+
+
+<p>RW values: off pip pbp_x2 pbp_x3 pbp_x4</p></td>
+<td width="18%">
+</td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+
+<p style="margin-left:22%;">RW values: small medium
+large</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+
+<p style="margin-left:22%;">RW values: left_top right_top
+left_bottom right_bottom</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
+
+<p style="margin-left:22%;">W values: on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pip_sound_source</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input1</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input2</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input3</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_input4</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pbp_sound_source</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;osd_language</b></p>
+
+<p style="margin-left:22%;">RW values: 0 to 28</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;audio_source</b></p>
+
+<p style="margin-left:22%;">RW values: analog digital</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+pro_mode screen_assistance alarm_clock input pip zoom_in
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+pro_mode screen_assistance alarm_clock input pip zoom_in
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+pro_mode screen_assistance alarm_clock input pip zoom_in
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+pro_mode screen_assistance alarm_clock input pip zoom_in
+info</p>
+
+<p style="margin-left:11%; margin-top: 1em"><b>MAG274
+Series:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MAG274 Series:</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>&minus;&minus;mode</b></p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>RW values: user fps racing rts rpg mode5 mode6 mode7
+mode8 mode9 user reader cinema designer HDR</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
+
+<p style="margin-left:22%;">W values: 0 to 10</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;unknown210</b></p>
+
+<p style="margin-left:22%;">R values: 0 to 10</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;free_sync</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+
+<p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+
+<p style="margin-left:22%;">RW values: off normal strong
+strongest ai</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+
+<p style="margin-left:22%;">RW values: user reader cinema
+designer HDR</p>
+
+<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+
+<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>PS
 Series:</b></p>

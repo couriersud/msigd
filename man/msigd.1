@@ -29,11 +29,24 @@ display all monitor settings. This will also
 list readonly settings and settings whose
 function is currently unknown.
 .TP
+\fB\-l\fR, \fB\-\-list\fR
+list all available monitors.
+Obtains a comma separated list of all??                               MSI monitors connected. The first element
+in the list is the monitor number to be used
+as the argument to the \fB\-\-monitor\fR option
+.TP
+\fB\-m\fR, \fB\-\-monitor\fR
+logical monitor number.
+The argument to this option is the monitor
+number as provided by the \fB\-\-list\fR option
+If omitted, the first monitor found is used
+.TP
 \fB\-s\fR, \fB\-\-serial\fR
 serial number of the monitor to control.
 Use the serial number to identify the target
 monitor in a multi\-monitor environment
-If omitted, the first monitor found is used
+If omitted and \fB\-\-monitor\fR is omitted as well
+the first monitor found is used
 .TP
 \fB\-\-info\fR
 display device information. This can be used
@@ -58,10 +71,13 @@ blinds, meteor, rainbow, random,
 Only on MAG series monitors.
 .SS "Multi monitor support:"
 .IP
-On libHid systems use 'lsusb \fB\-v\fR' to get the serial number
-of attached monitors.
-On libUSB systems use 'msgid \fB\-\-debug\fR \fB\-s\fR unknown` to get a list
-of attached monitors.
+Use \fB\-\-list\fR to get a list of all attached monitors.
+If the serial numbers provided by this list are unique,
+you can use the serial numbers to identify monitors using
+the \fB\-\-serial\fR option. If you have multiple monitors of the
+same type this is most likely not the case. This is an MSI
+issue. In this case use the \fB\-\-monitor\fR option to specify the
+logical monitor number provided by the \fB\-\-list\fR option
 .SS "All monitors:"
 .IP
 These options apply to all monitors:
@@ -314,9 +330,9 @@ RW values: off brightness game_mode screen_assistance alarm_clock input refresh_
 .TP
 \fB\-\-navi_right\fR
 RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate
-.SS "MAG241 Series:"
+.SS "MAG241CR Series:"
 .IP
-These options apply to the MAG241 Series:
+These options apply to the MAG241CR Series:
 .TP
 \fB\-\-black_tuner\fR
 RW values: 0 to 20
@@ -521,6 +537,48 @@ RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate i
 .TP
 \fB\-\-navi_right\fR
 RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
+.SS "MAG272 Series:"
+.IP
+These options apply to the MAG272 Series:
+.TP
+\fB\-\-mode\fR
+RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR
+.TP
+\fB\-\-unknown210\fR
+W values: 0 to 10
+.TP
+\fB\-\-unknown210\fR
+R values: 0 to 10
+.TP
+\fB\-\-free_sync\fR
+RW values: off on
+.TP
+\fB\-\-zero_latency\fR
+RW values: off on
+.TP
+\fB\-\-screen_size\fR
+RW values: auto 4:3 16:9
+.TP
+\fB\-\-night_vision\fR
+RW values: off normal strong strongest ai
+.TP
+\fB\-\-pro_mode\fR
+RW values: user reader cinema designer HDR
+.TP
+\fB\-\-input\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-navi_up\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
+.TP
+\fB\-\-navi_down\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
+.TP
+\fB\-\-navi_left\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
+.TP
+\fB\-\-navi_right\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
 .SS "MPG27 Series:"
 .IP
 These options apply to the MPG27 Series:
@@ -575,6 +633,162 @@ RW values: off brightness game_mode screen_assistance alarm_clock input pip refr
 .TP
 \fB\-\-navi_right\fR
 RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate
+.SS "MPG341 Series:"
+.IP
+These options apply to the MPG341 Series:
+.TP
+\fB\-\-mode\fR
+RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3
+.TP
+\fB\-\-quick_charge\fR
+R values: off on
+.TP
+\fB\-\-unknown190\fR
+R values: 0 to 100
+.TP
+\fB\-\-alarm_position\fR
+RW values: left_top right_top left_bottom right_bottom custom
+.TP
+\fB\-\-screen_assistance\fR
+RW values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance
+.TP
+\fB\-\-screen_size\fR
+RW values: auto 4:3 16:9 21:9 1:1
+.TP
+\fB\-\-pro_mode\fR
+RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3
+.TP
+\fB\-\-color_preset\fR
+RW values: 5000K 5500K 6500K 7500K 9300K 10000K custom
+.TP
+\fB\-\-gray_level\fR
+RW values: 0 to 20
+.TP
+\fB\-\-low_blue_light\fR
+RW values: off on
+.TP
+\fB\-\-local_dimming\fR
+RW values: off on
+.TP
+\fB\-\-hue_rgb\fR
+RW tripple: v1,v2,v3 where v<=100
+.TP
+\fB\-\-hue_cmy\fR
+RW tripple: v1,v2,v3 where v<=100
+.TP
+\fB\-\-zoom\fR
+RW values: off on
+.TP
+\fB\-\-zoom_location\fR
+RW values: center left_top right_top left_bottom right_bottom
+.TP
+\fB\-\-saturation_rgb\fR
+RW tripple: v1,v2,v3 where v<=100
+.TP
+\fB\-\-saturation_cmy\fR
+RW tripple: v1,v2,v3 where v<=100
+.TP
+\fB\-\-gamma\fR
+RW values: 1.8 2 2.2 2.4 2.6
+.TP
+\fB\-\-input\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-pip\fR
+RW values: off pip pbp_x2 pbp_x3 pbp_x4
+.TP
+\fB\-\-pip_input\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-pip_size\fR
+RW values: small medium large
+.TP
+\fB\-\-pip_position\fR
+RW values: left_top right_top left_bottom right_bottom
+.TP
+\fB\-\-toggle_display\fR
+W values: on
+.TP
+\fB\-\-pip_sound_source\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-pbp_input1\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-pbp_input2\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-pbp_input3\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-pbp_input4\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-pbp_sound_source\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-osd_language\fR
+RW values: 0 to 28
+.TP
+\fB\-\-screen_info\fR
+RW values: off on
+.TP
+\fB\-\-audio_source\fR
+RW values: analog digital
+.TP
+\fB\-\-navi_up\fR
+RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info
+.TP
+\fB\-\-navi_down\fR
+RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info
+.TP
+\fB\-\-navi_left\fR
+RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info
+.TP
+\fB\-\-navi_right\fR
+RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info
+.SS "MAG274 Series:"
+.IP
+These options apply to the MAG274 Series:
+.TP
+\fB\-\-mode\fR
+RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR
+.TP
+\fB\-\-unknown210\fR
+W values: 0 to 10
+.TP
+\fB\-\-unknown210\fR
+R values: 0 to 10
+.TP
+\fB\-\-free_sync\fR
+RW values: off on
+.TP
+\fB\-\-zero_latency\fR
+RW values: off on
+.TP
+\fB\-\-screen_size\fR
+RW values: auto 4:3 16:9
+.TP
+\fB\-\-night_vision\fR
+RW values: off normal strong strongest ai
+.TP
+\fB\-\-pro_mode\fR
+RW values: user reader cinema designer HDR
+.TP
+\fB\-\-input\fR
+RW values: hdmi1 hdmi2 dp usbc
+.TP
+\fB\-\-navi_up\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
+.TP
+\fB\-\-navi_down\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
+.TP
+\fB\-\-navi_left\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
+.TP
+\fB\-\-navi_right\fR
+RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info
 .SS "PS Series:"
 .IP
 These options apply to the PS Series:

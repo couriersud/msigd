@@ -38,11 +38,11 @@ public:
 
 	static constexpr const unsigned DEFAULT_TIMEOUT = 1000;
 
-	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct,
+	usbdev_t(logger_t &logger, const device_info &info,
 		const std::string &sProduct, const std::string &sSerial)
 	: m_log(logger)
 	, m_device(nullptr)
-	, m_devHandle(nullptr)
+	, m_handle(nullptr)
 	, m_interface(nullptr)
 	, m_ep{nullptr}
 	, m_buf{nullptr}
@@ -50,21 +50,18 @@ public:
 	, m_ep_in(0)
 	, m_detached(false)
 	{
-		if (init(idVendor, idProduct, sProduct, sSerial) > 0)
+		if (init(info, sProduct, sSerial) > 0)
 			cleanup();
 	}
 	~usbdev_t()
 	{
 		cleanup();
-		if (--reference() == 0)
-		{
-
-		}
 	}
 
-	operator bool() { return (m_device != nullptr) && (m_devHandle != nullptr); }
+	operator bool() { return (m_device != nullptr) && (m_handle != nullptr); }
 
 	std::string product() { return m_product; }
+	std::string manufacturer() { return m_manufacturer; }
 	std::string serial() { return m_serial; }
 	unsigned vendor_id() { return m_vendor_id; }
 	unsigned product_id() { return m_product_id; }
@@ -78,60 +75,10 @@ public:
 	static int get_device_list(logger_t &logger, unsigned idVendor, unsigned idProduct,
 		device_info_list &list)
 	{
-		usb_init();
-		// Enumerate the USB device tree
-		usb_find_busses();
-		usb_find_devices();
-		struct usb_bus *bus = nullptr;
-		struct usb_device *device = nullptr;
+		build_device_list(logger, idVendor, idProduct);
+		list = m_list;
 
-		logger(DEBUG, "Scanning USB devices...");
-
-		// Iterate through attached busses and devices
-		for (bus = usb_get_busses(); bus != nullptr; bus = bus->next)
-		{
-			for (device = bus->devices; device != nullptr; device = device->next)
-			{
-				// Check to see if each USB device matches the Vendor and Product ID
-				if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
-				{
-					device_info entry;
-					entry.path = device->filename;
-					usb_dev_handle * handle = nullptr;
-					/* we need to open the device in order to query strings */
-					if (!(handle = usb_open(device)))
-					{
-						logger(DEBUG, "cannot open USB device: %s", usb_strerror());
-						continue;
-					}
-					/* get product name */
-
-					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, entry.product))
-					{
-						logger(DEBUG, "cannot query product for device: %s", usb_strerror());
-						continue;
-					}
-
-					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, entry.serial_number))
-					{
-						logger(DEBUG, "cannot query serial for device: %s", usb_strerror());
-				 	}
-
-					if (usbGetDescriptorString(handle, device->descriptor.iManufacturer, 0x0409, entry.manufacturer))
-					{
-						logger(DEBUG, "cannot query manufacturer for device: %s", usb_strerror());
-				 	}
-
-					logger(DEBUG, "Found device <%s> with serial <%s> \n", entry.product, entry.serial_number);
-
-					usb_close(handle);
-
-					entry.release_number = 0;
-					list.push_back(entry);
-				}
-			}
-		}
-
+		// FIXME: let caller handle this
 		if (!list.empty())
 		{
 			return 0;
@@ -151,7 +98,7 @@ protected:
 		unsigned hidreport0 = ((value & 0xff00) == 0x0300 && (value & 0x00ff) == p[0]
 			&& p[0] == 0 && requesttype == 0x21 && request == 0x09 && index == 0);
 
-		if (int result = usb_control_msg(m_devHandle, requesttype | USB_ENDPOINT_OUT,
+		if (int result = usb_control_msg(m_handle, requesttype | USB_ENDPOINT_OUT,
 			request, value, index, p + hidreport0, size - hidreport0, timeout) < 0)
 		{
 			m_log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
@@ -163,7 +110,7 @@ protected:
 	int control_msg_read(int requesttype, int request, int value, int index,
 		void *bytes, int size, int timeout)
 	{
-		if (int result = usb_control_msg(m_devHandle, requesttype | USB_ENDPOINT_IN,
+		if (int result = usb_control_msg(m_handle, requesttype | USB_ENDPOINT_IN,
 			request, value, index, static_cast<char *>(bytes), size, timeout) < 0)
 		{
 			m_log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
@@ -197,12 +144,12 @@ protected:
 					m_buf[ep][i++] = 0;
 				len = bs;
 			}
-			result = usb_interrupt_write(m_devHandle,
+			result = usb_interrupt_write(m_handle,
 				static_cast<int>(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
 				m_buf[ep], static_cast<int>(len), static_cast<int>(timeout));
 		}
 		else if (ep_is_type(ep, USB_ENDPOINT_TYPE_BULK))
-			result = usb_bulk_write(m_devHandle,
+			result = usb_bulk_write(m_handle,
 				static_cast<int>(USB_ENDPOINT_OUT | USB_TYPE_STANDARD | ep),
 				static_cast<const char *>(data), static_cast<int>(len),
 				static_cast<int>(timeout));
@@ -250,7 +197,7 @@ protected:
 			auto rlen(is_class(USB_CLASS_HID) ? bs : len);
 			for (std::size_t i = 0; i < rlen; i++)
 				m_buf[ep][i] = 0;
-			result = usb_interrupt_read(m_devHandle,
+			result = usb_interrupt_read(m_handle,
 				static_cast<int>(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
 				m_buf[ep], static_cast<int>(rlen), static_cast<int>(timeout));
 			unsigned i=0;
@@ -261,7 +208,7 @@ protected:
 			}
 		}
 		else if (ep_is_type(ep, USB_ENDPOINT_TYPE_BULK))
-			result = usb_bulk_read(m_devHandle,
+			result = usb_bulk_read(m_handle,
 				static_cast<int>(USB_ENDPOINT_IN | USB_TYPE_STANDARD | ep),
 				static_cast<char *>(data), static_cast<int>(len),
 				static_cast<int>(timeout));
@@ -306,7 +253,7 @@ protected:
 
 	void cleanup()
 	{
-		if (m_devHandle != nullptr)
+		if (m_handle != nullptr)
 		{
 			for (std::size_t i=0; i <= USB_ENDPOINT_ADDRESS_MASK; i++)
 				if (m_buf[i])
@@ -314,14 +261,14 @@ protected:
 
 			m_log(DEBUG, "Releasing interface %d\n", m_interface->bInterfaceNumber);
 
-			if (int err = usb_release_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
+			if (int err = usb_release_interface(m_handle, m_interface->bInterfaceNumber) < 0)
 				m_log(DEBUG, "Error %d releasing Interface \n", err);
 
 #if !defined(__APPLE__) && !defined(_WIN32) && defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
 			if (m_detached)
 			{
 				// FIXME: BIG HACK - this assumes the dev handle has the file descriptor as first member
-				int fd = *reinterpret_cast<int *>(m_devHandle);
+				int fd = *reinterpret_cast<int *>(m_handle);
 				struct usbdevfs_ioctl command;
 				command.ifno = m_interface->bInterfaceNumber;
 				command.ioctl_code = USBDEVFS_CONNECT;
@@ -330,8 +277,8 @@ protected:
 					m_log(DEBUG, "reattach kernel driver failed: %s", strerror(errno));
 			}
 #endif
-			usb_close(m_devHandle);
-			m_devHandle = nullptr;
+			usb_close(m_handle);
+			m_handle = nullptr;
 		}
 #if 0
 #if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
@@ -360,92 +307,116 @@ protected:
 
 private:
 
-	int init(unsigned idVendor, unsigned idProduct, const std::string &sProduct,
-		const std::string &sSerial, int interface_class = USB_CLASS_HID)
+	static void build_device_list(logger_t &logger, unsigned idVendor, unsigned idProduct)
 	{
-		if (reference()++ == 0)
+		if (!m_initialized)
 		{
-			m_log(DEBUG, "Initializing usb_lib");
-			// Initialize the USB library
 			usb_init();
 			// Enumerate the USB device tree
 			usb_find_busses();
 			usb_find_devices();
+			m_initialized = 1;
+			// FIXME: use atexit to regist usb_exit
+			struct usb_bus *bus = nullptr;
+			struct usb_device *device = nullptr;
+
+			logger(DEBUG, "Scanning USB devices...");
+
+			// Iterate through attached busses and devices
+			for (bus = usb_get_busses(); bus != nullptr; bus = bus->next)
+			{
+				for (device = bus->devices; device != nullptr; device = device->next)
+				{
+					// Check to see if each USB device matches the Vendor and Product ID
+					if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
+					{
+						//printf("bus port %s %d\n", bus->dirname, device->devnum);
+						device_info entry;
+						entry.path = device->filename;
+						entry.idVendor = idVendor;
+						entry.idProduct = idProduct;
+
+						entry.dev = static_cast<void *>(device);
+
+						entry.release_number = 0;
+						m_list.push_back(entry);
+					}
+				}
+			}
 		}
-		m_device = find_device(idVendor, idProduct, sProduct, sSerial);
+	}
+
+
+	int init(const device_info &info, const std::string &sProduct,
+		const std::string &sSerial, int interface_class = USB_CLASS_HID)
+	{
+		m_device = find_device(info, sProduct, sSerial);
 		if (m_device != nullptr)
 		{
-			m_devHandle = usb_open(m_device);
-
-			if(m_devHandle != nullptr)
+			int numInterfaces = m_device->config->bNumInterfaces;
+			// Iterate over interfaces
+			m_interface = nullptr;
+			for (int i=0; i < numInterfaces; i++)
 			{
-				int numInterfaces = m_device->config->bNumInterfaces;
-				// Iterate over interfaces
-				m_interface = nullptr;
-				for (int i=0; i < numInterfaces; i++)
+				for (int j=0; j < m_device->config->interface[i].num_altsetting; j++)
 				{
-					for (int j=0; j < m_device->config->interface[i].num_altsetting; j++)
+					m_log(DEBUG,"Interface %d alt %d class %d", i, j,
+						m_device->config->interface[i].altsetting[j].bInterfaceClass);
+					if (m_device->config->interface[i].altsetting[j].bInterfaceClass == interface_class)
 					{
-						m_log(DEBUG,"Interface %d alt %d class %d", i, j,
-							m_device->config->interface[i].altsetting[j].bInterfaceClass);
-						if (m_device->config->interface[i].altsetting[j].bInterfaceClass == interface_class)
+						m_interface = &(m_device->config->interface[i].altsetting[j]);
+						for (int k = 0; k< m_interface->bNumEndpoints; k++)
 						{
-							m_interface = &(m_device->config->interface[i].altsetting[j]);
-							for (int k = 0; k< m_interface->bNumEndpoints; k++)
-							{
-								auto ep(m_interface->endpoint[k].bEndpointAddress  & USB_ENDPOINT_ADDRESS_MASK);
-								auto mps(m_interface->endpoint[k].wMaxPacketSize);
-								m_log(DEBUG,"Endpoint %02x %04x", ep, mps);
-								m_ep[ep] = &m_interface->endpoint[k];
-								m_buf[ep] = new char[mps];
-								if (!checkep(ep, true) && !m_ep_out)
-									m_ep_out = ep;
-								if (!checkep(ep, false) && !m_ep_in)
-									m_ep_in = ep;
+							auto ep(m_interface->endpoint[k].bEndpointAddress  & USB_ENDPOINT_ADDRESS_MASK);
+							auto mps(m_interface->endpoint[k].wMaxPacketSize);
+							m_log(DEBUG,"Endpoint %02x %04x", ep, mps);
+							m_ep[ep] = &m_interface->endpoint[k];
+							m_buf[ep] = new char[mps];
+							if (!checkep(ep, true) && !m_ep_out)
+								m_ep_out = ep;
+							if (!checkep(ep, false) && !m_ep_in)
+								m_ep_in = ep;
 
-							}
-							break;
 						}
-					}
-					if (m_interface)
 						break;
+					}
 				}
 				if (m_interface)
+					break;
+			}
+			if (m_interface)
+			{
+				m_log(DEBUG, "Found %i interfaces, using interface %d", numInterfaces, m_interface->bInterfaceNumber);
+				m_log(DEBUG, "Setting Configuration");
+				if (int err = usb_set_configuration(m_handle, m_device->config->bConfigurationValue) < 0)
 				{
-					m_log(DEBUG, "Found %i interfaces, using interface %d", numInterfaces, m_interface->bInterfaceNumber);
-					m_log(DEBUG, "Setting Configuration");
-					if (int err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue) < 0)
-					{
-	#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
-						char buf[1024];
-						if (usb_get_driver_np( m_devHandle, m_interface->bInterfaceNumber, buf, sizeof(buf))==0)
-							m_log(DEBUG, "Driver is %s", buf);
+#if defined(LIBUSB_HAS_GET_DRIVER_NP) && defined(LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP)
+					char buf[1024];
+					if (usb_get_driver_np( m_handle, m_interface->bInterfaceNumber, buf, sizeof(buf))==0)
+						m_log(DEBUG, "Driver is %s", buf);
 
-						if ((err=usb_detach_kernel_driver_np( m_devHandle, m_interface->bInterfaceNumber)) < 0)
-						{
-							m_log(DEBUG, "failed to detach kernel driver from USB device: %d", err);
-							return 1;
-						}
-						m_detached = true;
-						if ((err = usb_set_configuration(m_devHandle, m_device->config->bConfigurationValue)) < 0)
-						{
-							m_log(DEBUG, "Error %i setting configuration to %i", err, m_device->config->bConfigurationValue);
-							return 1;
-						}
-	#else
+					if ((err=usb_detach_kernel_driver_np( m_handle, m_interface->bInterfaceNumber)) < 0)
+					{
+						m_log(DEBUG, "failed to detach kernel driver from USB device: %d", err);
+						return 1;
+					}
+					m_detached = true;
+					if ((err = usb_set_configuration(m_handle, m_device->config->bConfigurationValue)) < 0)
+					{
 						m_log(DEBUG, "Error %i setting configuration to %i", err, m_device->config->bConfigurationValue);
 						return 1;
-	#endif
 					}
-					if (int err = usb_claim_interface(m_devHandle, m_interface->bInterfaceNumber) < 0)
-					{
-						m_log(DEBUG, "Error %i claiming Interface %i: %s", err, m_interface->bInterfaceNumber, usb_strerror());
-						return 1;
-					}
-					return 0;
-				}
-				else
+#else
+					m_log(DEBUG, "Error %i setting configuration to %i", err, m_device->config->bConfigurationValue);
 					return 1;
+#endif
+				}
+				if (int err = usb_claim_interface(m_handle, m_interface->bInterfaceNumber) < 0)
+				{
+					m_log(DEBUG, "Error %i claiming Interface %i: %s", err, m_interface->bInterfaceNumber, usb_strerror());
+					return 1;
+				}
+				return 0;
 			}
 			else
 				return 1;
@@ -517,69 +488,76 @@ private:
 #endif
 	}
 
-	struct usb_device *find_device(unsigned idVendor, unsigned idProduct,
+	struct usb_device *find_device(const device_info &info,
 		const std::string &sProduct, const std::string &sSerial)
 	{
-		struct usb_bus *bus = nullptr;
-		struct usb_device *device = nullptr;
+		//struct usb_bus *bus = nullptr;
+		//struct usb_device *device = nullptr;
 
-		m_log(DEBUG, "Scanning USB devices...");
+		build_device_list(m_log, info.idVendor, info.idProduct);
 
-		// Iterate through attached busses and devices
-		for (bus = usb_get_busses(); bus != nullptr; bus = bus->next)
+		for (auto &d : m_list)
 		{
-			for (device = bus->devices; device != nullptr; device = device->next)
+			// Check to see if each USB device matches the Vendor and Product ID
+			if((d.idVendor == info.idVendor) && (d.idProduct == info.idProduct))
 			{
-				// Check to see if each USB device matches the Vendor and Product ID
-				if((device->descriptor.idVendor == idVendor) && (device->descriptor.idProduct == idProduct))
+				auto *device = static_cast<struct usb_device *>(d.dev);
+				// check the path
+				if (!info.path.empty() && info.path != device->filename)
+					continue;
+
+				/* we need to open the device in order to query strings */
+				if (!(m_handle = usb_open(device)))
 				{
-					usb_dev_handle * handle = nullptr;
-					/* we need to open the device in order to query strings */
-					if (!(handle = usb_open(device)))
-					{
-						m_log(DEBUG, "cannot open USB device: %s", usb_strerror());
-						continue;
-					}
-					/* get product name */
-
-					if (usbGetDescriptorString(handle, device->descriptor.iProduct, 0x0409, m_product))
-					{
-						m_log(DEBUG, "cannot query product for device: %s", usb_strerror());
-						continue;
-					}
-
-					if (usbGetDescriptorString(handle, device->descriptor.iSerialNumber, 0x0409, m_serial))
-					{
-						m_log(DEBUG, "cannot query serial for device: %s", usb_strerror());
-				 	}
-
-					m_log(DEBUG, "Found device <%s> with serial <%s> \n", m_product, m_serial);
-
-					usb_close(handle);
-					m_vendor_id = idVendor;
-					m_product_id = idProduct;
-
-					if (m_product == sProduct && (!sSerial.empty() && sSerial == m_serial))
-						return device;
+					m_log(DEBUG, "cannot open USB device: %s", usb_strerror());
+					continue;
 				}
+				/* get product name */
+
+				if (usbGetDescriptorString(m_handle, device->descriptor.iProduct, 0x0409, m_product))
+				{
+					m_log(DEBUG, "cannot query product for device: %s", usb_strerror());
+					continue;
+				}
+
+				if (usbGetDescriptorString(m_handle, device->descriptor.iSerialNumber, 0x0409, m_serial))
+				{
+					m_log(DEBUG, "cannot query serial for device: %s", usb_strerror());
+			 	}
+
+				if (usbGetDescriptorString(m_handle, device->descriptor.iManufacturer, 0x0409, m_manufacturer))
+				{
+					m_log(DEBUG, "cannot query manufacturer for device: %s", usb_strerror());
+			 	}
+
+				m_log(DEBUG, "Found device <%s> with serial <%s> \n", m_product, m_serial);
+
+				if (m_product == sProduct && (sSerial.empty() || sSerial == m_serial))
+				{
+
+					/* get product name */
+					m_vendor_id = d.idVendor;
+					m_product_id = d.idProduct;
+					return device;
+				}
+				usb_close(m_handle);
+				m_handle = nullptr;
 			}
 		}
 		return nullptr;
 	}
 
-	static int &reference()
-	{
-		static int m_ref = 0;
-		return m_ref;
-	}
+	static int m_initialized;
+	static device_info_list m_list;
 
 	logger_t &m_log;
 	std::string m_product;
 	std::string m_serial;
+	std::string m_manufacturer;
 	unsigned m_vendor_id;
 	unsigned m_product_id;
 	struct usb_device *m_device;
-	struct usb_dev_handle *m_devHandle;
+	struct usb_dev_handle *m_handle;
 	struct usb_interface_descriptor *m_interface;
 	std::array <struct usb_endpoint_descriptor *, USB_ENDPOINT_ADDRESS_MASK+1> m_ep;
 	std::array <char *, USB_ENDPOINT_ADDRESS_MASK+1> m_buf;
@@ -587,5 +565,8 @@ private:
 	unsigned m_ep_in;
 	bool m_detached;
 };
+
+int usbdev_t::m_initialized = 0;
+device_info_list usbdev_t::m_list = {};
 
 #endif /* PUSB_H_ */

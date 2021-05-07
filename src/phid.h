@@ -29,12 +29,12 @@ public:
 	static constexpr const unsigned PACKETSIZE = 64;
 	static constexpr const unsigned DEFAULT_TIMEOUT = 1000;
 
-	usbdev_t(logger_t &logger, unsigned idVendor, unsigned idProduct,
+	usbdev_t(logger_t &logger, const device_info &info,
 		const std::string &sProduct, const std::string &sSerial)
 	: m_log(logger)
 	, m_devHandle(nullptr)
 	{
-		if (init(idVendor, idProduct, sProduct, sSerial) > 0)
+		if (init(info, sProduct, sSerial) > 0)
 			cleanup();
 	}
 	~usbdev_t()
@@ -49,6 +49,7 @@ public:
 	operator bool() { return (m_devHandle != nullptr); }
 
 	std::string product() { return m_product; }
+	std::string manufacturer() { return m_manufacturer; }
 	std::string serial() { return m_serial; }
 	unsigned vendor_id() { return m_vendor_id; }
 	unsigned product_id() { return m_product_id; }
@@ -68,12 +69,9 @@ public:
 		if (dil != NULL)
 		{
 			do {
-				device_info entry;
+				device_info entry(idVendor, idProduct);
 				entry.path = dil->path;
-				entry.serial_number = w_to_s(dil->serial_number);
 				entry.release_number = dil->release_number;
-				entry.manufacturer = w_to_s(dil->manufacturer_string);
-				entry.product = w_to_s(dil->product_string);
 				list.push_back(entry);
 				dil = dil->next;
 			} while (dil != NULL);
@@ -202,7 +200,7 @@ protected:
 
 private:
 
-	int init(unsigned idVendor, unsigned idProduct, const std::string &sProduct,
+	int init(const device_info &info, const std::string &sProduct,
 		const std::string &sSerial)
 	{
 
@@ -213,7 +211,10 @@ private:
 			hid_init();
 		}
 
-		m_devHandle = hid_open(idVendor, idProduct, sSerial.empty() ? nullptr : s_to_ws(sSerial).c_str());
+		if (info.path.empty())
+			m_devHandle = hid_open(info.idVendor, info.idProduct, sSerial.empty() ? nullptr : s_to_ws(sSerial).c_str());
+		else
+			m_devHandle = hid_open_path(info.path.c_str());
 		if(m_devHandle != nullptr)
 		{
 			static const std::size_t BUFSIZE = 256;
@@ -225,6 +226,12 @@ private:
 				return 1;
 			}
 			m_product = w_to_s(buf);
+			if (hid_get_manufacturer_string(m_devHandle, buf, BUFSIZE) < 0)
+			{
+				m_log(DEBUG, "unable to get manufacturer string");
+				return 1;
+			}
+			m_manufacturer = w_to_s(buf);
 			if (hid_get_serial_number_string(m_devHandle, buf, BUFSIZE) < 0)
 			{
 				m_log(DEBUG, "unable to get serial string");
@@ -234,8 +241,8 @@ private:
 
 			m_log(DEBUG, "Found <%s> with serial <%s>", m_product, m_serial);
 
-			m_vendor_id = idVendor;
-			m_product_id = idProduct;
+			m_vendor_id = info.idVendor;
+			m_product_id = info.idProduct;
 			if (sProduct != m_product)
 			{
 				m_log(DEBUG, "Product Id <%s> does not match requested <%s>", m_product, sProduct);
@@ -284,6 +291,7 @@ private:
 
 	logger_t &m_log;
 	std::string m_product;
+	std::string m_manufacturer;
 	std::string m_serial;
 	unsigned m_vendor_id;
 	unsigned m_product_id;
