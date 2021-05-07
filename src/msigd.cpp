@@ -896,7 +896,7 @@ static int help()
 		"                               list readonly settings and settings whose\n"
 		"                               function is currently unknown.\n"
 		"  -l, --list                 list all available monitors.\n"
-		"                               Obtains a comma separated list of all\ņ"
+		"                               Obtains a comma separated list of all\n"
 		"                               MSI monitors connected. The first element\n"
 		"                               in the list is the monitor number to be used\n"
 		"                               as the argument to the --monitor option\n"
@@ -916,7 +916,7 @@ static int help()
 		"  -w, --wait                 SETTING=VALUE. Wait for SETTING to become\n"
 		"                               VALUE, e.g. macro_key=pressed\n"
 		"  -n, --numeric              monitor settings are displayed as numeric\n"
-	    "                                settings\n"
+		"                               settings\n"
 		, appname);
 	pprintf("%s",
 		"       --mystic              off, static, breathing, blinking, flashing,\n"
