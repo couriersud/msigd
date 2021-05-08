@@ -578,7 +578,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS | MPG341,             "00670", "pbp_input1", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "00680", "pbp_input2", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "00690", "pbp_input3", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(PS | MPG341,             "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS,                      "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "006;0", "pbp_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(MAG | MPG341,            "00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(PS,                      "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
@@ -794,10 +794,16 @@ public:
 			auto ret = read_return();
 			// 260 (alarm clock) does not properly set the return buffer
 			// Same applies for PS341 monitor, pos 5,6,7 are 0 bytes.
+			// For MPG341, game mode (00200) always returns 5b00000
+			//    language (00800) pos 5,6 are 0 bytes
 			// FIXME: looks like the return starts at pos 8
 			if (ret.size() > cmd.size()
 				&& (ret.substr(0, cmd.size()) == std::string("5b") + setting.m_cmd
-				    || cmd == "5800260" || ret.substr(0, cmd.size()) == "5b00___" ))
+					|| cmd == "5800260"                           // alarm clock
+					|| ret.substr(0, cmd.size()) == "5b00___"     // PS341
+					|| ret.substr(0, cmd.size()) == "5b00__0"     // MPG341 osd_language
+					|| ret.substr(0, cmd.size()) == "5b00000"     // MPG341 game_mode
+				))
 			{
 				s = ret.substr(cmd.size());
 				return 0;

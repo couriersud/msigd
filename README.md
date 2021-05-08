@@ -734,7 +734,6 @@ MPG341 Series:
       --pbp_input1           RW values: hdmi1 hdmi2 dp usbc 
       --pbp_input2           RW values: hdmi1 hdmi2 dp usbc 
       --pbp_input3           RW values: hdmi1 hdmi2 dp usbc 
-      --pbp_input4           RW values: hdmi1 hdmi2 dp usbc 
       --pbp_sound_source     RW values: hdmi1 hdmi2 dp usbc 
       --osd_language         RW values: 0 to 19
       --audio_source         RW values: analog digital 
