@@ -1454,11 +1454,18 @@ int main (int argc, char **argv)
 
 		if (info)
 		{
+			std::string leds = (series.leds == LT_NONE ? "None"
+				: (series.leds == LT_MYSTIC ? "Mystic"
+				: (series.leds == LT_STEEL ? "Steel"
+				: "Error")));
+
+
 			pprintf("Vendor Id:      0x%04x\n", usb.vendor_id());
 			pprintf("Product Id:     0x%04x\n", usb.product_id());
 			pprintf("Product:        %s\n",     usb.product());
 			pprintf("Serial:         %s\n",     usb.serial());
 			pprintf("Monitor Series: %s\n",     series.name);
+			pprintf("LED support:    %s\n",     leds);
 			if (debug)
 			{
 				pprintf("s140:           <%s>\n", s140);
