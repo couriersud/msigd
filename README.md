@@ -64,8 +64,8 @@ information by opening an issue.
 | ID            | Firmware | Supported     | Version | Special | Panel |
 |:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
 | MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              |
-| MPG341CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MPG341CQRV    | ?        | Work in Progress | "V09" | "00>"| ?              |
+| MPG341CQR     | ?        | WIP           | "V09" | "00>"| ?              |
+| MPG341CQRV    | ?        | WIP           | "V09" | "00>"| ?              |
 | MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
 | MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |
 | MAG241CR      | ?        | Yes           | "V18" | "004"| ?              |
@@ -73,7 +73,7 @@ information by opening an issue.
 | MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271C       | ?        | ?             | "V18" | "002"| ?              |
-| MAG271CR      | ?        | Work in Progress| "V18" | "005"| ?              |
+| MAG271CR      | ?        | WIP           | "V18" | "005"| ?              |
 | MAG271CP      | ?        | ?             | "V18" | "002"| ?              |
 | MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 
 | MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 |
@@ -89,7 +89,7 @@ information by opening an issue.
 | MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
 | MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |
 | MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
-| MAG274QRF-QD  | FW.011   | Work in Progress | "V43" | "00e"| AUO_M270DAN08_2|
+| MAG274QRF-QD  | FW.011   | WIP           | "V43" | "00e"| AUO_M270DAN08_2|
 | MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              |
 | MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
 | MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
@@ -350,10 +350,23 @@ MAG321CQR:
     These options apply to the MAG321CQR:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
+      --game_mode            RW values: user fps racing rts rpg 
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: 19 24 4:3 16:9 
       --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp 
       --pip                  RW values: off pip pbp 
       --pip_input            RW values: hdmi1 hdmi2 dp 
@@ -362,6 +375,8 @@ MAG321CQR:
       --pip_position         RW values: left_top right_top left_bottom right_bottom 
       --toggle_display        W values: on 
       --toggle_sound          W values: on 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
@@ -371,13 +386,26 @@ MAG32 Series:
     These options apply to the MAG32 Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer 
+      --game_mode            RW values: user fps racing rts rpg 
       --unknown210            W values: 0 to 10
       --unknown210            R values: 0 to 10
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --unknown280            R values: 0 to 100
       --zero_latency         RW values: off on 
       --screen_size          RW values: 19 24 4:3 16:9 
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp usbc 
       --pip                  RW values: off pip pbp 
       --pip_input            RW values: hdmi1 hdmi2 dp usbc 
@@ -386,6 +414,8 @@ MAG32 Series:
       --pip_position         RW values: left_top right_top left_bottom right_bottom 
       --toggle_display        W values: on 
       --toggle_sound          W values: on 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
@@ -394,10 +424,25 @@ MAG32 Series:
 MAG241 Series:
     These options apply to the MAG241 Series:
 
+      --game_mode            RW values: user fps racing rts rpg 
       --black_tuner          RW values: 0 to 20
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
@@ -406,10 +451,25 @@ MAG241 Series:
 MAG241CR Series:
     These options apply to the MAG241CR Series:
 
+      --game_mode            RW values: user fps racing rts rpg 
       --black_tuner          RW values: 0 to 20
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
@@ -418,10 +478,25 @@ MAG241CR Series:
 MAG271CR Series:
     These options apply to the MAG271CR Series:
 
+      --game_mode            RW values: user fps racing rts rpg 
       --black_tuner          RW values: 0 to 20
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
@@ -430,11 +505,24 @@ MAG271CR Series:
 MAG271CQ Series:
     These options apply to the MAG271CQ Series:
 
+      --game_mode            RW values: user fps racing rts rpg 
       --black_tuner          RW values: 0 to 20
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: 19 24 4:3 16:9 
       --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp 
       --pip                  RW values: off pip pbp 
       --pip_input            RW values: hdmi1 hdmi2 dp 
@@ -443,6 +531,8 @@ MAG271CQ Series:
       --pip_position         RW values: left_top right_top left_bottom right_bottom 
       --toggle_display        W values: on 
       --toggle_sound          W values: on 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
@@ -452,14 +542,29 @@ MAG272QP Series:
     These options apply to the MAG272QP Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --game_mode            RW values: user fps racing rts rpg 
       --unknown210            W values: 0 to 10
       --unknown210            R values: 0 to 10
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: auto 4:3 16:9 
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer HDR 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp usbc 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -469,14 +574,29 @@ MAG272 Series:
     These options apply to the MAG272 Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --game_mode            RW values: user fps racing rts rpg 
       --unknown210            W values: 0 to 10
       --unknown210            R values: 0 to 10
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: auto 4:3 16:9 
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer HDR 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp usbc 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -486,14 +606,29 @@ MAG272CQR Series:
     These options apply to the MAG272CQR Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --game_mode            RW values: user fps racing rts rpg 
       --unknown210            W values: 0 to 10
       --unknown210            R values: 0 to 10
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: auto 4:3 16:9 
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer HDR 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp usbc 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -503,14 +638,29 @@ MAG272QR Series:
     These options apply to the MAG272QR Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --game_mode            RW values: user fps racing rts rpg 
       --unknown210            W values: 0 to 10
       --unknown210            R values: 0 to 10
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: auto 4:3 16:9 
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer HDR 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp usbc 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -519,11 +669,24 @@ MAG272QR Series:
 MPG27 Series:
     These options apply to the MPG27 Series:
 
+      --game_mode            RW values: user fps racing rts rpg 
       --black_tuner          RW values: 0 to 20
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: 19 24 4:3 16:9 
       --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp 
       --pip                  RW values: off pip pbp 
       --pip_input            RW values: hdmi1 hdmi2 dp 
@@ -532,6 +695,8 @@ MPG27 Series:
       --pip_position         RW values: left_top right_top left_bottom right_bottom 
       --toggle_display        W values: on 
       --toggle_sound          W values: on 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
@@ -540,24 +705,25 @@ MPG27 Series:
 MPG341 Series:
     These options apply to the MPG341 Series:
 
-      --mode                 RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
       --quick_charge          R values: off on 
-      --unknown190            R values: 0 to 100
-      --alarm_position       RW values: left_top right_top left_bottom right_bottom custom 
-      --screen_assistance    RW values: off center edge scale_v scale_h line_v line_h grid thirds 3D_assistance 
+      --game_mode            RW values: user fps racing rts rpg 
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
+      --free_sync            RW values: off on 
+      --zero_latency         RW values: off on 
       --screen_size          RW values: auto 4:3 16:9 21:9 1:1 
-      --pro_mode             RW values: user adobe_rgb dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2 cal3 
-      --color_preset         RW values: 5000K 5500K 6500K 7500K 9300K 10000K custom 
-      --gray_level           RW values: 0 to 20
-      --low_blue_light       RW values: off on 
-      --local_dimming        RW values: off on 
-      --hue_rgb              RW tripple: v1,v2,v3 where v<=100
-      --hue_cmy              RW tripple: v1,v2,v3 where v<=100
-      --zoom                 RW values: off on 
-      --zoom_location        RW values: center left_top right_top left_bottom right_bottom 
-      --saturation_rgb       RW tripple: v1,v2,v3 where v<=100
-      --saturation_cmy       RW tripple: v1,v2,v3 where v<=100
-      --gamma                RW values: 1.8 2 2.2 2.4 2.6 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema designer 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp usbc 
       --pip                  RW values: off pip pbp_x2 pbp_x3 pbp_x4 
       --pip_input            RW values: hdmi1 hdmi2 dp usbc 
@@ -570,26 +736,41 @@ MPG341 Series:
       --pbp_input3           RW values: hdmi1 hdmi2 dp usbc 
       --pbp_input4           RW values: hdmi1 hdmi2 dp usbc 
       --pbp_sound_source     RW values: hdmi1 hdmi2 dp usbc 
-      --osd_language         RW values: 0 to 28
-      --screen_info          RW values: off on 
+      --osd_language         RW values: 0 to 19
       --audio_source         RW values: analog digital 
-      --navi_up              RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
-      --navi_down            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
-      --navi_left            RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
-      --navi_right           RW values: off brightness pro_mode screen_assistance alarm_clock input pip zoom_in info 
+      --rgb_led              RW values: off on 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate audio_volume 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate audio_volume 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate audio_volume 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate audio_volume 
 
 MAG274 Series:
     These options apply to the MAG274 Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
+      --game_mode            RW values: user fps racing rts rpg 
       --unknown210            W values: 0 to 10
       --unknown210            R values: 0 to 10
+      --enable_dynamic       RW values: on off 
+      --hdcr                 RW values: off on 
+      --refresh_display      RW values: off on 
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
+      --alarm_clock_index    RW values: 1 to 4
+      --alarm_clock_time     RW values: 0 to 5999
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom 
+      --screen_assistance    RW values: off red1 red2 red3 red4 red5 red6 white1 white2 white3 white4 white5 white6 
       --free_sync            RW values: off on 
       --zero_latency         RW values: off on 
       --screen_size          RW values: auto 4:3 16:9 
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema designer HDR 
+      --color_preset         RW values: cool normal warm custom 
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
       --input                RW values: hdmi1 hdmi2 dp usbc 
+      --osd_language         RW values: 0 to 19
+      --rgb_led              RW values: off on 
       --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
@@ -653,12 +834,6 @@ Exit status:
 
 Report bugs on <https://github.com/couriersud/msigd/issues>
 msigd home page: <https://github.com/couriersud/msigd>
-```
-
-You may also use the following to display man style help
-
-```sh
-help2man --include=msigd.help2man --no-info ./msigd | nroff -man |less
 ```
 ## 6. Settings not supported
 
