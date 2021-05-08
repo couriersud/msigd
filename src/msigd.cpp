@@ -91,7 +91,7 @@ static std::vector<identity_t> known_models =
 	{ MAG321, "00:", "V18", "MAG321CQR", LT_MYSTIC }, // doesn't have USBC
 	{ MAG32,  "00;", "V18", "MAG32 Series", LT_MYSTIC },
 	{ MAG241, "002", "V18", "MAG241 Series", LT_NONE },
-	// FIXME: Needs separate series (has RGB backlight OSD setting - above not
+	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241, "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR
 	{ MAG241, "005", "V18", "MAG271CR Series", LT_MYSTIC }, // MAG271CR
 	{ MAG271CQ, "006", "V19", "MAG271CQ Series", LT_MYSTIC }, // MAG271CQR, MAG271CQP
@@ -490,10 +490,10 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG | MPG341,            "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
 	(new setting_t(MAG32 | MAG272,         "00210", "unknown210", 0, 10))->set_access(WRITE),  // returns "00:" but can only be set to 000 to 009 - no visible effect
 	(new setting_t(MAG32 | MAG272,         "00210", "unknown210", 0, 10, -100))->set_access(READ),  // returns "00:" but can only be set to 000 to 009 - no visible effect
-	new setting_t(MAG271CQ | MAG241,         "00210", "black_tuner", 0, 20, -100),
+	new setting_t(MAG271CQ | MAG241,       "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241
-	// FIXME: MAG321 manual says only supported for For Optix MAG322CQRV
+	// FIXME: MAG321 manual says only supported for Optix MAG322CQRV
 	new setting_t(MAG | MPG341,            "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	new setting_t(MAG | MPG341,            "00240", "hdcr", {"off", "on"}),
 	new setting_t(MAG | MPG341,            "00250", "refresh_display", {"off", "on"}),
@@ -578,7 +578,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS | MPG341,             "00670", "pbp_input1", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "00680", "pbp_input2", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "00690", "pbp_input3", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(PS,                      "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS | MPG341,             "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "006;0", "pbp_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(MAG | MPG341,            "00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	new setting_t(PS,                      "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"

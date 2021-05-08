@@ -200,7 +200,7 @@ struct steel_data_0b
 			dur[i] = d;
 			printf("dur %d %d\n", i, d);
 		}
-		printf("final speed is %d\n", final_speed, d);
+		printf("final speed is %d %d\n", final_speed, d);
 
 		numrec = colors.size();
 		for (uint8_t i=0; i < colors.size(); i++)
