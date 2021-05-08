@@ -73,7 +73,7 @@ information by opening an issue.
 | MAG251RX      | ?        | ?             | ?     |   ?  | ?              |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
 | MAG271C       | ?        | ?             | "V18" | "002"| ?              |
-| MAG271CR      | ?        | ?             | "V18" | "004"| ?              |
+| MAG271CR      | ?        | Work in Progress| "V18" | "005"| ?              |
 | MAG271CP      | ?        | ?             | "V18" | "002"| ?              |
 | MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | 
 | MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 |
@@ -326,7 +326,7 @@ All monitors:
       --reset                 W values: on 
 
 MAG series monitors:
-    These options apply to MAG272 and MAG32 monitors:
+    These options apply to all MAG monitors:
 
       --game_mode            RW values: user fps racing rts rpg 
       --enable_dynamic       RW values: on off 
@@ -415,6 +415,18 @@ MAG241CR Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
 
+MAG271CR Series:
+    These options apply to the MAG271CR Series:
+
+      --black_tuner          RW values: 0 to 20
+      --free_sync            RW values: off on 
+      --pro_mode             RW values: user reader cinema designer 
+      --input                RW values: hdmi1 hdmi2 dp 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate 
+
 MAG271CQ Series:
     These options apply to the MAG271CQ Series:
 
@@ -436,8 +448,8 @@ MAG271CQ Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input pip refresh_rate 
 
-MAG272 Series:
-    These options apply to the MAG272 Series:
+MAG272QP Series:
+    These options apply to the MAG272QP Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
       --unknown210            W values: 0 to 10
@@ -470,8 +482,8 @@ MAG272 Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
 
-MAG272 Series:
-    These options apply to the MAG272 Series:
+MAG272CQR Series:
+    These options apply to the MAG272CQR Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
       --unknown210            W values: 0 to 10
@@ -487,8 +499,8 @@ MAG272 Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
 
-MAG272 Series:
-    These options apply to the MAG272 Series:
+MAG272QR Series:
+    These options apply to the MAG272QR Series:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
       --unknown210            W values: 0 to 10

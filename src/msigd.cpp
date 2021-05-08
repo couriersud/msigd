@@ -91,12 +91,13 @@ static std::vector<identity_t> known_models =
 	{ MAG32,  "00;", "V18", "MAG32 Series", LT_MYSTIC },
 	{ MAG241, "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting - above not
-	{ MAG241, "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR, MAG271CR
+	{ MAG241, "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR
+	{ MAG241, "005", "V18", "MAG271CR Series", LT_MYSTIC }, // MAG271CR
 	{ MAG271CQ, "006", "V19", "MAG271CQ Series", LT_MYSTIC }, // MAG271CQR, MAG271CQP
-	{ MAG272, "00O", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272QP
+	{ MAG272, "00O", "V18", "MAG272QP Series", LT_MYSTIC }, // MAG272QP
 	{ MAG272, "00L", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272
-	{ MAG272, "00E", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272CQR
-	{ MAG272, "00G", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272QR
+	{ MAG272, "00E", "V18", "MAG272CQR Series", LT_MYSTIC }, // MAG272CQR
+	{ MAG272, "00G", "V18", "MAG272QR Series", LT_MYSTIC }, // MAG272QR
 	{ MAG271CQ, "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
 	{ PS,       "00>", "V09", "MPG341 Series", LT_STEEL },    // MPG27CQR
 	{ MAG272, "00e", "V43", "MAG274 Series", LT_MYSTIC },  // MAG274QRF-QD
@@ -935,7 +936,7 @@ static int help()
 	pprintf("%s", "    These options apply to all monitors:\n\n");
 	help_set(ALL, UNKNOWN, UNKNOWN);
 	pprintf("%s", "\nMAG series monitors:\n");
-	pprintf("%s", "    These options apply to MAG272 and MAG32 monitors:\n\n");
+	pprintf("%s", "    These options apply to all MAG monitors:\n\n");
 	help_set(MAG, ALL, UNKNOWN);
 	for (std::size_t i=1; i<known_models.size(); i++)
 	{
