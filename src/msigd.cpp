@@ -26,7 +26,7 @@
 #include <string.h>
 
 static const char *appname = "msigd";
-static const char *appversion = "0.9";
+static const char *appversion = "0.10";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -42,18 +42,24 @@ enum access_t
 
 enum series_t
 {
-	UNKNOWN = 0x0000,
-	MAG32   = 0x0001,
-	MAG321  = 0x0002,
-	MAG241  = 0x0004,
+	UNKNOWN   = 0x0000,
+	MAG32     = 0x0001,
+	MAG321    = 0x0002,
+	MAG241    = 0x0004,
 	MAG271CQ  = 0x0008,
-	MAG272  = 0x0010,
-	PS      = 0x0020,
-	MPG341  = 0x0040,
+	MAG272    = 0x0010,
+	PS        = 0x0020,
+	MPG341    = 0x0040,
+	QUERYONLY = 0x1000,
 
 	MAG     = MAG32 | MAG321 | MAG272 | MAG271CQ | MAG241,
-	ALL     = MAG | PS | MPG341,
+	ALL     = MAG | PS | MPG341 | QUERYONLY,
 };
+
+static series_t operator | (series_t a, series_t b)
+{
+	return static_cast<series_t>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 enum led_type_t
 {
@@ -61,11 +67,6 @@ enum led_type_t
 	LT_MYSTIC,
 	LT_STEEL
 };
-
-static series_t operator | (series_t a, series_t b)
-{
-	return static_cast<series_t>(static_cast<int>(a) | static_cast<int>(b));
-}
 
 enum error_e
 {
@@ -87,22 +88,23 @@ struct identity_t
 
 static std::vector<identity_t> known_models =
 {
-	{ UNKNOWN, "", "", "Unknown", LT_NONE },
-	{ MAG321, "00:", "V18", "MAG321CQR", LT_MYSTIC }, // doesn't have USBC
-	{ MAG32,  "00;", "V18", "MAG32 Series", LT_MYSTIC },
-	{ MAG241, "002", "V18", "MAG241 Series", LT_NONE },
+	{ UNKNOWN,   "",     "", "Unknown", LT_NONE },
+	{ QUERYONLY, "",     "", "Unknown Series", LT_NONE },
+	{ MAG32,     "00;", "V18", "MAG32 Series", LT_MYSTIC },
+	{ MAG321,    "00:", "V18", "MAG321CQR", LT_MYSTIC }, // doesn't have USBC
+	{ MAG241,    "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
-	{ MAG241, "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR
-	{ MAG241, "005", "V18", "MAG271CR Series", LT_MYSTIC }, // MAG271CR
-	{ MAG271CQ, "006", "V19", "MAG271CQ Series", LT_MYSTIC }, // MAG271CQR, MAG271CQP
-	{ MAG272, "00O", "V18", "MAG272QP Series", LT_MYSTIC }, // MAG272QP
-	{ MAG272, "00L", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272
-	{ MAG272, "00E", "V18", "MAG272CQR Series", LT_MYSTIC }, // MAG272CQR
-	{ MAG272, "00G", "V18", "MAG272QR Series", LT_MYSTIC }, // MAG272QR
-	{ MAG271CQ, "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
-	{ MPG341, "00>", "V09", "MPG341 Series", LT_STEEL },    // MPG27CQR
-	{ MAG272, "00e", "V43", "MAG274 Series", LT_MYSTIC },  // MAG274QRF-QD
-	{ PS,     "00?", "V06", "PS Series", LT_NONE }
+	{ MAG241,    "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR
+	{ MAG241,    "005", "V18", "MAG271CR Series", LT_MYSTIC }, // MAG271CR
+	{ MAG271CQ,  "006", "V19", "MAG271CQ Series", LT_MYSTIC }, // MAG271CQR, MAG271CQP
+	{ MAG272,    "00O", "V18", "MAG272QP Series", LT_MYSTIC }, // MAG272QP
+	{ MAG272,    "00L", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272
+	{ MAG272,    "00E", "V18", "MAG272CQR Series", LT_MYSTIC }, // MAG272CQR
+	{ MAG272,    "00G", "V18", "MAG272QR Series", LT_MYSTIC }, // MAG272QR
+	{ MAG271CQ,  "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
+	{ MPG341,    "00>", "V09", "MPG341 Series", LT_STEEL },    // MPG27CQR
+	{ MAG272,    "00e", "V43", "MAG274 Series", LT_MYSTIC },  // MAG274QRF-QD
+	{ PS,        "00?", "V06", "PS Series", LT_NONE }
 };
 
 enum encoding_t
@@ -484,12 +486,19 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL,                     "00130", "serial"), // returns 13 blanks
 	new setting_t(UNKNOWN,                 "00160", "unknown160"),  // query kills monitor side on MAG
 	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
-	new setting_t(PS | MPG341, READ,       "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS
-	new setting_t(PS,                      "00190", "unknown190"),  // returns 56006 on MAG, 000 on PS
+	new setting_t(PS, READ,                "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS
+
+	// returns 56006 on MAG, 000 on PS, disabled now
+	new setting_t(UNKNOWN,                 "00190", "unknown190"),
+
+	// disabled
 	new setting_t(UNKNOWN,                 "001@0", "unknown1@0"),
 	new setting_t(MAG | MPG341,            "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
-	(new setting_t(MAG32 | MAG272,         "00210", "unknown210", 0, 10))->set_access(WRITE),  // returns "00:" but can only be set to 000 to 009 - no visible effect
-	(new setting_t(MAG32 | MAG272,         "00210", "unknown210", 0, 10, -100))->set_access(READ),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+
+	// disabled for security reasons
+	(new setting_t(UNKNOWN /* MAG32 | MAG272*/, "00210", "unknown210", 0, 10))->set_access(WRITE),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	(new setting_t(UNKNOWN /* MAG32 | MAG272*/, "00210", "unknown210", 0, 10, -100))->set_access(READ),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+
 	new setting_t(MAG271CQ | MAG241,       "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241
@@ -498,20 +507,30 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG | MPG341,            "00240", "hdcr", {"off", "on"}),
 	new setting_t(MAG | MPG341,            "00250", "refresh_display", {"off", "on"}),
 	new setting_t(MAG | MPG341,            "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	new setting_t(ALL,                     "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
-	new setting_t(MAG | MPG341,            "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
-	new setting_t(MAG | MPG341,            "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
-	new setting_t(MAG | MPG341,            "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+
+	// MPG341: Alarm settings seem to be broken.
+	//         alarm_clock_time returns an invalid response.
+	//
+	new setting_t(MAG | PS,                "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
+	new setting_t(MAG,                     "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
+	new setting_t(MAG,                     "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
+	new setting_t(MAG,                     "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(PS,                      "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
-	new alarm4x_t(ALL,                     "001f",  "alarm4x"),
-	// FIXME:
-	new setting_t(MAG | MPG341,            "00270", "screen_assistance", 100, {"off", "red1", "red2", "red3", "red4", "red5", "red6",
+
+	// alarm4x is only verified on MAG32
+	new alarm4x_t(MAG32,                   "001f",  "alarm4x"),
+
+	// MPG341: screen_assistance returns invalid results
+	new setting_t(MAG,                     "00270", "screen_assistance", 100, {"off", "red1", "red2", "red3", "red4", "red5", "red6",
 		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS,                      "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
 	new setting_t(UNKNOWN,                 "00271", "unknown271", 0, 100),  // returns 000, read only?
-	// FIXME: adaptive sync ? game-mode only
-	new setting_t(MAG32,                   "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
+
+	// FIXME: This is working in game mode only - adaptive sync
+	// Disabled for security reasons
+	new setting_t(UNKNOWN /*MAG32*/,       "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
+
 	new setting_t(MAG321 | MAG272 | MAG271CQ | MAG241 | MPG341,
 		                                   "00280", "free_sync", {"off", "on"}),
 	new setting_t(MAG32 | MAG321 | MAG272 | MAG271CQ | MPG341,
@@ -542,8 +561,11 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG | MPG341,            "00432", "color_green", 0, 100),
 	new setting_t(MAG | MPG341,            "00433", "color_blue", 0, 100),
 	new tripple_t(ALL,                     "00434", "color_rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
-	new setting_t(MAG,                     "00435", "unknown435"),  // returns 000, read only
-	new setting_t(ALL, WRITE,              "00440", "unknown440", {"off", "on"}),
+
+	// Disabled for security reasons
+	new setting_t(UNKNOWN /*MAG*/,         "00435", "unknown435"),  // returns 000, read only
+	new setting_t(UNKNOWN /*ALL, WRITE*/,  "00440", "unknown440", {"off", "on"}),
+
 	new setting_t(UNKNOWN,                 "00450", "unknown450",0, 100),
 	new setting_t(PS,                      "00460", "gray_level", 0, 20),
 	new setting_t(UNKNOWN,                 "00470", "unknown470", 0, 100),
@@ -580,12 +602,22 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS | MPG341,             "00690", "pbp_input3", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "006;0", "pbp_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(MAG | MPG341,            "00800", "osd_language", 0, 19, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
-	new setting_t(PS,                      "00800", "osd_language", 0, 28, -100),  // returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
+
+	// OSD Language is dangerous and at least on the MPG341 it is broken and
+	// writing a wrong value can harm the monitor. Therefore it is completely disabled for the MPG341 series
+	// and read-only on the MAG and PS
+	// On MAG Series:
+	// returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
+	// On PS Series:
+	// returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "K"
+	(new setting_t(MAG,                    "00800", "osd_language", 0, 19, -100))->set_access(READ),
+	(new setting_t(PS,                     "00800", "osd_language", 0, 28, -100))->set_access(READ),
 	new setting_t(ALL,                     "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL,                     "00820", "osd_timeout",0, 30),  // returns 020
 	new setting_t(PS,                      "00830", "screen_info", {"off", "on"}),
-	new setting_t(ALL, WRITE,              "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
+	// Reset is considered dangerous as well
+	// Completely disable
+	// new setting_t(ALL, WRITE,              "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS | MPG341,             "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(MAG | MPG341,            "00860", "rgb_led", {"off", "on"}),
@@ -794,14 +826,13 @@ public:
 			auto ret = read_return();
 			// 260 (alarm clock) does not properly set the return buffer
 			// Same applies for PS341 monitor, pos 5,6,7 are 0 bytes.
+			//    Game mode not support on PS341 - thus not covered here
 			// For MPG341, game mode (00200) always returns 5b00000
 			//    language (00800) pos 5,6 are 0 bytes
 			// FIXME: looks like the return starts at pos 8
 			if (ret.size() > cmd.size()
 				&& (ret.substr(0, cmd.size()) == std::string("5b") + setting.m_cmd
 					|| cmd == "5800260"                           // alarm clock
-					|| ret.substr(0, cmd.size()) == "5b00___"     // PS341
-					|| ret.substr(0, cmd.size()) == "5b00__0"     // MPG341 osd_language
 					|| ret.substr(0, cmd.size()) == "5b00000"     // MPG341 game_mode
 				))
 			{
@@ -896,20 +927,19 @@ static int help()
 		"specify an option more than once with identical or different\n"
 		"values. After processing, mystic led settings are sent first\n"
 		"to the device. Afterwards all setting changes are sent to\n"
-		"the device. Once completed settings specified are queried.\n"
-		"The --wait option which will be executed last\n"
-		"\n"
-		"In addition to preset modes the --mystic option also accepts numeric\n"
-		"values. 0xff0000 will set all leds to red. '0,255,0' will set all leds\n"
-		"to green.\n"
+		"the device. Once completed query settings are queried.\n"
+		"The --wait option which will be executed last.\n"
 		"\n"
 		"All device settings provide which operations are possible:\n"
 		"R: Read, W: Write, RW: Read/Write\n"
 		"\n"
+		"\nWarning:\n"
+		"    Use msigd only if you are sure what you are doing.\n"
+		"    The monitor firmware seems to have no protection against unsupported accesses.\n"
+		"    Using msigd may make your monitor permantently unusable.\n"
 		"\nOptions:\n\n"
 		"  -q, --query                display all monitor settings. This will also\n"
-		"                               list readonly settings and settings whose\n"
-		"                               function is currently unknown.\n"
+		"                               list readonly settings.\n"
 		"  -l, --list                 list all available monitors.\n"
 		"                               Obtains a comma separated list of all\n"
 		"                               MSI monitors connected. The first element\n"
@@ -1421,10 +1451,10 @@ int main (int argc, char **argv)
 		setting_t sp140(ALL, "00140", "sp140");
 		setting_t sp150(ALL, "00150", "sp150");
 
-		// improve stability and avoid errors by issuing this command here
+#if (!USE_HID)
+		// improve stability with usb api and avoid errors by issuing this command here
 		usb.debug_cmd("\x01\xb4");
-		//usb.debug_cmd("\x01\xb0");
-
+#endif
 
 		if (!usb.get_setting(sp140, s140) && !usb.get_setting(sp150, s150))
 		{
@@ -1507,6 +1537,9 @@ int main (int argc, char **argv)
 			if (!found)
 				return error(E_SYNTAX, "Unknown option: %s", opt.first);
 		}
+
+		if (series.series == QUERYONLY && set_encoded.size() > 0)
+			return error(E_SYNTAX, "Unknown monitor - write access disabled");
 
 		// Check filters
 		if (query)
