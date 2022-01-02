@@ -107,7 +107,7 @@ static std::vector<identity_t> known_models =
 	{ MAG271CQ,          "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
 	{ MPG341,            "00>", "V09", "MPG341 Series", LT_STEEL },    // MPG27CQR
 	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC },  // MAG274QRF-QD FW.011
-	{ MAG274QRFQDNEW,    "00e", "V48", "MAG274QRF-QD FW.015", LT_MYSTIC },  // MAG274QRF-QD FW.015
+	{ MAG274QRFQDNEW,    "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC },  // MAG274QRF-QD FW.015/FW.016
 	{ PS,                "00?", "V06", "PS Series", LT_NONE }
 };
 
