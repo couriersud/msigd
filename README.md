@@ -20,8 +20,9 @@ Update 01.05.2021: In October 2020 my partner, wife and mother of my daughter pa
     - [2.3. USB manufacturer and product id](#23-usb-manufacturer-and-product-id)
 - [3. Compile](#3-compile)
     - [3.1. Linux](#31-linux)
-    - [3.2. Windows](#32-windows)
-    - [3.3. OSX](#33-osx)
+    - [3.2. WSL](#32-wsl)
+    - [3.3. Windows](#33-windows)
+    - [3.4. OSX](#34-osx)
 - [4. Security](#4-security)
     - [4.1. Linux](#41-linux)
     - [4.2. Windows](#42-windows)
@@ -158,7 +159,31 @@ make TARGETOS=arch
 
 to install dependencies and compile.
 
-### 3.2. Windows
+### 3.2. WSL
+
+Warning: you need Windows Subsystem for Linux 2 with a kernel version of at least 5.10.60.1
+
+Make sure you have libusb installed. On debian based systems
+
+```sh
+sudo apt install libusb-dev libhidapi-dev
+```
+
+Compile with libusb
+
+```sh
+make USE_HIDAPI=0
+```
+
+On Windows, install usbipd-win as described [here](https://devblogs.microsoft.com/commandline/connecting-usb-devices-to-wsl/).
+
+You need to attach two usb devices to WSL. You can either find them in Device Manager or by checking `usbpid wsl list` before and after pluggin in the monitor.
+
+**Drawback:** Attached usb devices are not saved and need to be reattached every time the monitor is turned on.
+
+Perform the steps of [4.1. Linux](#41-linux).
+
+### 3.3. Windows
 
 To compile on windows you need a working mingw environment.
 
@@ -175,7 +200,7 @@ Compile
 make  TARGETOS=windows
 ```
 
-### 3.3. OSX
+### 3.4. OSX
 
 Make sure you have [homebrew](https://brew.sh/) installed. 
 
