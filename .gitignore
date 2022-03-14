@@ -31,3 +31,5 @@
 *.out
 *.app
 /msigd
+/.idea
+/.depend

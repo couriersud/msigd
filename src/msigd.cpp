@@ -50,9 +50,10 @@ enum series_t
 	MAG272    = 0x0010,
 	PS        = 0x0020,
 	MPG341    = 0x0040,
+    MAG321CURV= 0x0080,
 	QUERYONLY = 0x1000,
 
-	MAG     = MAG32 | MAG321 | MAG272 | MAG271CQ | MAG241,
+	MAG     = MAG32 | MAG321 | MAG272 | MAG271CQ | MAG241 | MAG321CURV,
 	ALL     = MAG | PS | MPG341 | QUERYONLY,
 };
 
@@ -91,7 +92,8 @@ static std::vector<identity_t> known_models =
 	{ UNKNOWN,   "",     "", "Unknown", LT_NONE },
 	{ QUERYONLY, "",     "", "Unknown Series", LT_NONE },
 	{ MAG32,     "00;", "V18", "MAG32 Series", LT_MYSTIC },
-	{ MAG321,    "00:", "V18", "MAG321CQR", LT_MYSTIC }, // doesn't have USBC
+    { MAG321,    "00:", "V18", "MAG321CQR", LT_MYSTIC }, // doesn't have USBC
+    { MAG321,    "00;", "V43", "MAG321CURV", LT_MYSTIC }, // doesn't have USBC
 	{ MAG241,    "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241,    "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR
@@ -487,6 +489,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(UNKNOWN,                 "00160", "unknown160"),  // query kills monitor side on MAG
 	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
 	new setting_t(PS, READ,                "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS
+    new setting_t(MAG321CURV, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "office"}), //Supported modes in FW.011
 
 	// returns 56006 on MAG, 000 on PS, disabled now
 	new setting_t(UNKNOWN,                 "00190", "unknown190"),
