@@ -93,7 +93,7 @@ static std::vector<identity_t> known_models =
 	{ QUERYONLY, "",     "", "Unknown Series", LT_NONE },
 	{ MAG32,     "00;", "V18", "MAG32 Series", LT_MYSTIC },
     { MAG321,    "00:", "V18", "MAG321CQR", LT_MYSTIC }, // doesn't have USBC
-    { MAG321,    "00;", "V43", "MAG321CURV", LT_MYSTIC }, // doesn't have USBC
+    { MAG321CURV,    "00;", "V43", "MAG321CURV", LT_MYSTIC }, // doesn't have USBC
 	{ MAG241,    "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241,    "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR
@@ -489,7 +489,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(UNKNOWN,                 "00160", "unknown160"),  // query kills monitor side on MAG
 	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
 	new setting_t(PS, READ,                "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS
-    new setting_t(MAG321CURV, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "office"}), //Supported modes in FW.011
+    new setting_t(MAG321CURV, "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}), //Supported modes in FW.011
 
 	// returns 56006 on MAG, 000 on PS, disabled now
 	new setting_t(UNKNOWN,                 "00190", "unknown190"),
@@ -534,20 +534,20 @@ static std::vector<setting_t *> settings(
 	// Disabled for security reasons
 	new setting_t(UNKNOWN /*MAG32*/,       "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 
-	new setting_t(MAG321 | MAG272 | MAG271CQ | MAG241 | MPG341,
+	new setting_t(MAG321 | MAG272 | MAG271CQ | MAG241 | MPG341 | MAG321CURV,
 		                                   "00280", "free_sync", {"off", "on"}),
-	new setting_t(MAG32 | MAG321 | MAG272 | MAG271CQ | MPG341,
+	new setting_t(MAG32 | MAG321 | MAG272 | MAG271CQ | MPG341 | MAG321CURV,
 		                                   "00290", "zero_latency", {"off", "on"}),  // returns 001
 	// FIXME: MAG241 manual says it is supported but constantly produces time out error
 	//        https://github.com/couriersud/msigd/issues/11
 	// new setting_t(MAG241,                  "002:0", "screen_size", {"4:3", "16:9"}),
 	new setting_t(MAG272,                  "002:0", "screen_size", {"auto", "4:3", "16:9"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ,
+	new setting_t(MAG32 | MAG321 | MAG271CQ | MAG321CURV,
 		                                   "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
 	new setting_t(PS | MPG341,             "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
 	new setting_t(MAG32 | MAG272 | MPG341, "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
 	new setting_t(MAG272,                  "00300", "pro_mode", {"user", "reader", "cinema", "designer", "HDR"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ | MAG241 | MPG341,
+	new setting_t(MAG32 | MAG321 | MAG271CQ | MAG241 | MPG341 | MAG321CURV,
 		                                   "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS,                      "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(MAG | PS | MPG341,       "00310", "eye_saver", {"off", "on"}),  // returns 000
@@ -581,23 +581,23 @@ static std::vector<setting_t *> settings(
 	new tripple_t(PS,                      "004;0", "saturation_rgb"),
 	new tripple_t(PS,                      "004;1", "saturation_cmy"),
 	new setting_t(PS,                      "004:0", "gamma", {"1.8", "2", "2.2", "2.4", "2.6"}),
-	new setting_t(MAG32 | MAG272 | PS | MPG341,
+	new setting_t(MAG32 | MAG272 | PS | MPG341 | MAG321CURV,
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG321| MAG271CQ | MAG241, "00500", "input",  {"hdmi1", "hdmi2", "dp"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
+	new setting_t(MAG32 | MAG321 | MAG271CQ | MAG321CURV, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(PS | MPG341,             "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
-	new setting_t(MAG32,                   "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(MAG32,                   "00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(MAG32 | MAG321CURV,                   "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(MAG32 | MAG321CURV,                   "00620", "pbp_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(MAG271CQ | MAG321,       "00610", "pip_input", {"hdmi1", "hdmi2", "dp"}),
 	new setting_t(MAG271CQ | MAG321,       "00620", "pbp_input", {"hdmi1", "hdmi2", "dp"}),
 	new setting_t(PS | MPG341,             "00620", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(PS | MAG32 | MAG321 | MAG271CQ | MPG341,
+	new setting_t(PS | MAG32 | MAG321 | MAG271CQ | MPG341 | MAG321CURV,
 		                                   "00630", "pip_size", {"small", "medium", "large"}),
-	new setting_t(PS | MAG32 | MAG321 | MAG271CQ | MPG341,
+	new setting_t(PS | MAG32 | MAG321 | MAG271CQ | MPG341 | MAG321CURV,
 		                                   "00640", "pip_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 	new setting_t(PS | MAG32 | MAG321 | MAG271CQ | MPG341, WRITE,
 		                                   "00650", "toggle_display", {"-off", "on"}),  // returns 56006
-	new setting_t(MAG32 | MAG321 | MAG271CQ, WRITE,
+	new setting_t(MAG32 | MAG321CURV | MAG321 | MAG271CQ, WRITE,
 		                                   "00660", "toggle_sound", {"-off", "on"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
 	new setting_t(PS | MPG341,             "00660", "pip_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 56006, but used to toggle audio in app, no response packet - only works with "1"
 	new setting_t(PS | MPG341,             "00670", "pbp_input1", {"hdmi1", "hdmi2", "dp", "usbc"}),
@@ -651,10 +651,10 @@ static std::vector<setting_t *> settings(
 	new setting_t(MPG341,                  "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
 	new setting_t(MPG341,                  "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
 
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321CURV | MAG321 | MAG271CQ, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321CURV | MAG321 | MAG271CQ, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321CURV | MAG321 | MAG271CQ, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321CURV | MAG321 | MAG271CQ, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
 
 	new setting_t(PS,                      "00900", "navi_up", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS,                      "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
@@ -1342,7 +1342,7 @@ int main (int argc, char **argv)
 	while (arg_pointer < argc)
 	{
 		std::string cur_opt(argv[arg_pointer]);
-
+        pprintf("arg_pointer %d - argc %d = %s \n",arg_pointer, argc, cur_opt );
 		if (cur_opt == "--help" || cur_opt == "-h")
 			return help();
 		else if (cur_opt == "--version")
