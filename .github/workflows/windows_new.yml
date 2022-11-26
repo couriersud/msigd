@@ -1,4 +1,4 @@
-name: Windows latest new
+name: Windows latest
 
 on: [push]
 
