@@ -1085,10 +1085,15 @@ static int help()
 		"                               settings\n"
 		, appname);
 	pprintf("%s",
-		"       --mystic              off, static, breathing, blinking, flashing,\n"
+		"       --mystic              Expects ledgroup:mode:colors\n"
+		"                               ledgroup is 0 or 1, colors is a comma\n"
+		"                               separated list of colors to be written to\n"
+		"                               leds in ledgroup. The last element is used\n"
+		"                               to set remaining leds. mode is one of:\n"
+		"                               off, static, breathing, blinking, flashing,\n"
 		"                               blinds, meteor, rainbow, random,\n"
-		"                               0xRRGGBB, RRR,GGG,BBB\n"
-		"                               Only on MAG series monitors.\n");
+		"                               Color format is 0xRRGGBB\n"
+		"                               Only available on supported monitors.\n");
 	pprintf("%s", "\nMulti monitor support:\n");
 	pprintf("%s", "    Use --list to get a list of all attached monitors.\n"
 		    "    If the serial numbers provided by this list are unique,\n"
