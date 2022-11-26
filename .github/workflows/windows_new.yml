@@ -1,4 +1,4 @@
-name: Windows latest new
+name: Windows latest
 
 on: [push]
 
@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, windows-2016]
+        os: [windows-latest]
     
     steps:  
     - uses: msys2/setup-msys2@v2
