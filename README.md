@@ -7,9 +7,7 @@ The `msigd` command line tool allows you to change most settings for MSI monitor
 
 **Using `msigd` may make your monitor permantently unusable.**
 
-**Please make sure you use at least msigd version 0.10**
-
-Update 01.05.2021: In October 2020 my partner, wife and mother of my daughter passed away. This is the reason why there has not been any activity on the msigd project. The project is not abandoned and it will slowly get more attention again.
+**Please make sure you use at least msigd version 0.12**
 
 <!-- TOC depthFrom:2 depthTo:3 orderedList:false -->
 
@@ -20,8 +18,9 @@ Update 01.05.2021: In October 2020 my partner, wife and mother of my daughter pa
     - [2.3. USB manufacturer and product id](#23-usb-manufacturer-and-product-id)
 - [3. Compile](#3-compile)
     - [3.1. Linux](#31-linux)
-    - [3.2. Windows](#32-windows)
-    - [3.3. OSX](#33-osx)
+    - [3.2. WSL](#32-wsl)
+    - [3.3. Windows](#33-windows)
+    - [3.4. OSX](#34-osx)
 - [4. Security](#4-security)
     - [4.1. Linux](#41-linux)
     - [4.2. Windows](#42-windows)
@@ -71,6 +70,7 @@ information by opening an issue.
 | ID            | Firmware | Supported     | Version | Special | Panel |
 |:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
 | MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              |
+| MPG273CQR     | FW.022   | Yes           | "V51" | "00["| ?              |
 | MPG341CQR     | ?        | WIP           | "V09" | "00>"| ?              |
 | MPG341CQRV    | ?        | WIP           | "V09" | "00>"| ?              |
 | MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
@@ -97,6 +97,7 @@ information by opening an issue.
 | MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |
 | MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
 | MAG274QRF-QD  | FW.011   | WIP           | "V43" | "00e"| AUO_M270DAN08_2|
+| MAG274QRF-QD  | FW.015   | WIP           | "V48" | "00e"| AUO_M270DAN08_2|
 | MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              |
 | MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
 | MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
@@ -158,7 +159,31 @@ make TARGETOS=arch
 
 to install dependencies and compile.
 
-### 3.2. Windows
+### 3.2. WSL
+
+Warning: you need Windows Subsystem for Linux 2 with a kernel version of at least 5.10.60.1
+
+Make sure you have libusb installed. On debian based systems
+
+```sh
+sudo apt install libusb-dev libhidapi-dev
+```
+
+Compile with libusb
+
+```sh
+make USE_HIDAPI=0
+```
+
+On Windows, install usbipd-win as described [here](https://devblogs.microsoft.com/commandline/connecting-usb-devices-to-wsl/).
+
+You need to attach two usb devices to WSL. You can either find them in Device Manager or by checking `usbpid wsl list` before and after pluggin in the monitor.
+
+**Drawback:** Attached usb devices are not saved and need to be reattached every time the monitor is turned on.
+
+Perform the steps of [4.1. Linux](#41-linux).
+
+### 3.3. Windows
 
 To compile on windows you need a working mingw environment.
 
@@ -175,7 +200,7 @@ Compile
 make  TARGETOS=windows
 ```
 
-### 3.3. OSX
+### 3.4. OSX
 
 Make sure you have [homebrew](https://brew.sh/) installed. 
 
@@ -703,32 +728,57 @@ MPG341 Series:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate audio_volume 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate audio_volume 
 
-MAG274 Series:
-    These options apply to the MAG274 Series:
+MAG274QRF-QD FW.011:
+    These options apply to the MAG274QRF-QD FW.011:
 
-      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema designer HDR 
-      --game_mode            RW values: user fps racing rts rpg 
-      --enable_dynamic       RW values: on off 
-      --hdcr                 RW values: off on 
-      --refresh_display      RW values: off on 
-      --refresh_position     RW values: left_top right_top left_bottom right_bottom 
-      --alarm_clock          RW values: off 1 2 3 4 
-      --free_sync            RW values: off on 
-      --zero_latency         RW values: off on 
-      --screen_size          RW values: auto 4:3 16:9 
-      --night_vision         RW values: off normal strong strongest ai 
-      --pro_mode             RW values: user reader cinema designer HDR 
-      --eye_saver            RW values: off on 
-      --color_preset         RW values: cool normal warm custom 
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema office
+      --game_mode            RW values: user fps racing rts rpg
+      --enable_dynamic       RW values: on off
+      --hdcr                 RW values: off on
+      --refresh_display      RW values: off on
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom
+      --alarm_clock          RW values: off 1 2 3 4
+      --free_sync            RW values: off on
+      --night_vision         RW values: off normal strong strongest ai
+      --pro_mode             RW values: user reader cinema office
+      --eye_saver            RW values: off on
+      --color_preset         RW values: cool normal warm custom
       --color_red            RW values: 0 to 100
       --color_green          RW values: 0 to 100
       --color_blue           RW values: 0 to 100
-      --input                RW values: hdmi1 hdmi2 dp usbc 
-      --rgb_led              RW values: off on 
-      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
-      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock refresh_rate info 
+      --input                RW values: hdmi1 hdmi2 dp usbc
+      --screen_info          RW values: off on
+      --rgb_led              RW values: off on
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
+
+MAG274QRF-QD FW.015:
+    These options apply to the MAG274QRF-QD FW.015:
+
+      --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema office srgb adobe_rgb dci_p3
+      --game_mode            RW values: user fps racing rts rpg
+      --enable_dynamic       RW values: on off
+      --hdcr                 RW values: off on
+      --refresh_display      RW values: off on
+      --refresh_position     RW values: left_top right_top left_bottom right_bottom
+      --alarm_clock          RW values: off 1 2 3 4
+      --free_sync            RW values: off on
+      --night_vision         RW values: off normal strong strongest ai
+      --pro_mode             RW values: user reader cinema office srgb adobe_rgb dci_p3
+      --eye_saver            RW values: off on
+      --color_preset         RW values: cool normal warm custom
+      --color_red            RW values: 0 to 100
+      --color_green          RW values: 0 to 100
+      --color_blue           RW values: 0 to 100
+      --input                RW values: hdmi1 hdmi2 dp usbc
+      --screen_info          RW values: off on
+      --rgb_led              RW values: off on
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info
 
 PS Series:
     These options apply to the PS Series:
@@ -939,6 +989,8 @@ virtual guests booting up.
 [Marco Rodolfi](https://github.com/RodoMa92) - MAG274QRF-QD support
 
 [Preston](https://github.com/PChild) - Multi-Monitor support
-[
+
 [Michael J Brancato](https://github.com/sgtcoder) - Multi-Monitor support
+
+[Dominik Helfenstein](https://github.com/dippa-1) - WSL compile instructions
 

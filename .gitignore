@@ -31,3 +31,11 @@
 *.out
 *.app
 /msigd
+
+# others
+.settings
+.cproject
+.depend
+.project
+.pydevproject
+private/*
