@@ -135,7 +135,7 @@ struct steel_data_0b
 		std::fill(f02.begin(), f02.end(), 0);
 	}
 
-	steel_data_0b(uint8_t led, bool)
+	steel_data_0b(bool)
 #if 0
 	//                  r     g     b
 	: e00(0x01, 0x00, 0xc5, 0x00, 0x41, 0x00, 0x21, 0x00)
@@ -170,7 +170,7 @@ struct steel_data_0b
 
 		int total_dur = 0;
 
-		for (int i=0; i<colors_in.size(); i++)
+		for (std::size_t i=0; i<colors_in.size(); i++)
 		{
 			colors.push_back(colors_in[i]);
 			dur.push_back(dur_in[i]);
@@ -190,7 +190,7 @@ struct steel_data_0b
 
 		int last_p = 0;
 		int d = 0;
-		for (int i=0; i<colors.size(); i++)
+		for (std::size_t i=0; i<colors.size(); i++)
 		{
 			d += dur[i];
 			int p = target_speed * d / total_dur;
@@ -198,7 +198,7 @@ struct steel_data_0b
 			final_speed += d;
 			last_p += d;
 			dur[i] = d;
-			printf("dur %d %d\n", i, d);
+			printf("dur %ld %d\n", i, d);
 		}
 		printf("final speed is %d %d\n", final_speed, d);
 

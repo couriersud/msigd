@@ -181,7 +181,7 @@ protected:
 			p[i] = buf[i];
 			i++;
 		}
-		if (result  < bs)
+		if (result  < static_cast<int>(bs))
 		{
 			m_log(DEBUG, "Error %i reading from HID device", result);
 			return 1;
@@ -253,7 +253,18 @@ private:
 				m_log(DEBUG, "Serial Id <%s> does not match requested <%s>", m_serial, sProduct);
 				return 1;
 			}
-
+//FIXME: Remove
+#if 0
+			unsigned char temp_buffer[200] = {0};
+			temp_buffer[0] = 0x72;
+			std::size_t packet_length = hid_get_feature_report(m_devHandle, temp_buffer, 200);
+			printf("packet length %li\n", packet_length);
+			for (int i=0; i<packet_length; i++)
+			{
+				if (i% 8 == 0) printf("\n");
+				printf("%02x ", temp_buffer[i]);
+			}
+#endif
 		}
 		else
 			return 1;

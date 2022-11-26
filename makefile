@@ -11,7 +11,7 @@ SOURCES = $(SRC)/msigd.cpp
 TARGETS = msigd
 
 CXX = g++
-CXXFLAGS = -O2 -g -Wall -Wextra -std=c++14 $(CXXEXTRAFLAGS)
+CXXFLAGS = -O2 -g -Wall -Wextra -Wno-format-security -std=c++14 $(CXXEXTRAFLAGS)
 #CC = clang++
 #CFLAGS = -O2 -g -Wall -Wextra -std=c++14 -Weverything -Wno-c++98-compat -Wno-weak-vtables
 

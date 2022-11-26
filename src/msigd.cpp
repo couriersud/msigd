@@ -26,7 +26,7 @@
 #include <string.h>
 
 static const char *appname = "msigd";
-static const char *appversion = "0.10";
+static const char *appversion = "0.11";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -50,10 +50,11 @@ enum series_t
 	MAG272    = 0x0010,
 	PS        = 0x0020,
 	MPG341    = 0x0040,
+	MPG273    = 0x0080,
 	QUERYONLY = 0x1000,
 
 	MAG     = MAG32 | MAG321 | MAG272 | MAG271CQ | MAG241,
-	ALL     = MAG | PS | MPG341 | QUERYONLY,
+	ALL     = MAG | PS | MPG341 | MPG273 | QUERYONLY,
 };
 
 static series_t operator | (series_t a, series_t b)
@@ -65,6 +66,7 @@ enum led_type_t
 {
 	LT_NONE,
 	LT_MYSTIC,
+	LT_MYSTIC_OPTIX,
 	LT_STEEL
 };
 
@@ -100,10 +102,11 @@ static std::vector<identity_t> known_models =
 	{ MAG272,    "00O", "V18", "MAG272QP Series", LT_MYSTIC }, // MAG272QP
 	{ MAG272,    "00L", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272
 	{ MAG272,    "00E", "V18", "MAG272CQR Series", LT_MYSTIC }, // MAG272CQR
-	{ MAG272,    "00G", "V18", "MAG272QR Series", LT_MYSTIC }, // MAG272QR
+	{ MAG272,    "00G", "V18", "MAG272QR Series", LT_NONE }, // MAG272QR - Mystic with 12 leds?
 	{ MAG271CQ,  "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
-	{ MPG341,    "00>", "V09", "MPG341 Series", LT_STEEL },    // MPG27CQR
-	{ MAG272,    "00e", "V43", "MAG274 Series", LT_MYSTIC },  // MAG274QRF-QD
+	{ MPG273,    "00[", "V51", "MPG273 Series", LT_MYSTIC_OPTIX },   // MPG273CQR 9 Leds in group 1 (logo) and 15 leds in group 2 (arrow)
+	{ MPG341,    "00>", "V09", "MPG341 Series", LT_STEEL },  // MPG27CQR
+	{ MAG272,    "00e", "V43", "MAG274 Series", LT_NONE },   // MAG274QRF-QD
 	{ PS,        "00?", "V06", "PS Series", LT_NONE }
 };
 
@@ -137,7 +140,7 @@ static string_list splitstr(const std::string &s, char sc)
 }
 
 template <typename T>
-std::vector<T> number_list(const string_list &sl, int base = 10)
+std::vector<T> number_list(const string_list &sl, int base)
 {
 	std::vector<T> ret;
 
@@ -237,6 +240,57 @@ static void eprintf(const char *fmt, Args&&... args)
 {
 	fprintf(stderr, fmt, log_helper(args)...);
 }
+
+template<typename... Args>
+static int error(error_e err, const char *fmt, Args&&... args)
+{
+	fprintf(stderr, "%s: ", appname);
+	fprintf(stderr, fmt, log_helper(args)...);
+	fprintf(stderr, "\n");
+	fprintf(stderr, "Try '%s --help' for more information.\n", appname);
+	return err;
+}
+
+template <typename U>
+int string_to_unsigned(std::string s, U &val, U minv, U maxv)
+{
+	unsigned long v = 0;
+	std::size_t idx = 0;
+	try {
+		v = std::stoul(s, &idx, 10);
+	}
+	catch (...)
+	{
+	}
+	if (idx != s.size())
+		return error(E_SYNTAX, "Error decoding number: %s", s);
+	val = static_cast<U>(v);
+	if (val < minv || val > maxv)
+		return error(E_SYNTAX, "Number outside bounds: %s [%d .. %d]", s, minv, maxv);
+	return 0;
+}
+
+
+template <typename T>
+int number_list(const string_list &sl, std::vector<T> &ret)
+{
+	for (auto &s : sl)
+	{
+		std::size_t idx(0);
+		int base = 10;
+		std::string sv = s;
+		if (s.substr(0,2) == "0x")
+		{
+			sv = s.substr(2);
+			base = 16;
+		}
+		auto v = std::stoul(sv, &idx, base);
+		if (idx != sv.size())
+			return error(E_SYNTAX, "Error decoding number list element: %s", sv);
+		ret.push_back(static_cast<T>(v));
+	}
+	return 0;
+ }
 
 struct setting_t
 {
@@ -394,7 +448,7 @@ struct tripple_t : public setting_t
 
 	std::string encode(std::string val) override
 	{
-		auto vals = number_list<unsigned>(splitstr(val,','));
+		auto vals = number_list<unsigned>(splitstr(val,','), 10);
 		if (vals.size() != 3)
 			return "";
 
@@ -440,7 +494,7 @@ struct alarm4x_t : public setting_t
 
 	std::string encode(std::string val) override
 	{
-		auto vals = number_list<unsigned>(splitstr(val,','));
+		auto vals = number_list<unsigned>(splitstr(val,','), 10);
 		if (vals.size() != 5)
 			return "";
 
@@ -451,13 +505,13 @@ struct alarm4x_t : public setting_t
 				return "";
 			r = r + msi_utos(vals[i], -60, 2);
 		}
-		if (vals[4] > 4)
+		if (vals[4] < 1 || vals[4] > 4)
 			return "";
 		r = r + msi_utos(vals[4], 10, 1) + "0000000000";
 		return r;
 	}
 
-	std::string decode(std::string val) override
+	std::string decode([[maybe_unused]] std::string val) override
 	{
 		fprintf(stderr, "should never be called");
 		return "";
@@ -465,7 +519,7 @@ struct alarm4x_t : public setting_t
 
 	std::string help() override
 	{
-		return "a1,a2,a3,a4,n where a<"+ std::to_string(cMAX_ALARM) + " and n<=4";
+		return "a1,a2,a3,a4,n where a<"+ std::to_string(cMAX_ALARM) + " and 1=<n<=4";
 	}
 };
 
@@ -477,47 +531,43 @@ struct alarm4x_t : public setting_t
 
 static std::vector<setting_t *> settings(
 {
-	new setting_t(ALL, WRITE,              "00100", "power", {"off", "-on"}),
+	// MPG273:
+	//   - MPRT missing
+	// only verified on MAG32
+	new setting_t(MAG32, WRITE,            "00100", "power", {"off", "-on"}),
+
 	new setting_t(ALL, READ,               "00110", "macro_key", {"off", "pressed"}),  // returns 000 called frequently by OSD app, readonly
 	new setting_t(MAG272,                  "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer", "HDR"}),
 	new setting_t(MAG32 | MAG321,          "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
 	new setting_t(PS,                      "00120", "mode", {"-m0","-m1","-m2","-m3","-m4""-m5","-m6","-m7","-m8","-m9",
 		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(ALL,                     "00130", "serial"), // returns 13 blanks
-	new setting_t(UNKNOWN,                 "00160", "unknown160"),  // query kills monitor side on MAG
 	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
 	new setting_t(PS, READ,                "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS
 
-	// returns 56006 on MAG, 000 on PS, disabled now
-	new setting_t(UNKNOWN,                 "00190", "unknown190"),
-
-	// disabled
-	new setting_t(UNKNOWN,                 "001@0", "unknown1@0"),
-	new setting_t(MAG | MPG341,            "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
-
-	// disabled for security reasons
-	(new setting_t(UNKNOWN /* MAG32 | MAG272*/, "00210", "unknown210", 0, 10))->set_access(WRITE),  // returns "00:" but can only be set to 000 to 009 - no visible effect
-	(new setting_t(UNKNOWN /* MAG32 | MAG272*/, "00210", "unknown210", 0, 10, -100))->set_access(READ),  // returns "00:" but can only be set to 000 to 009 - no visible effect
+	new setting_t(MAG | MPG341 | MPG273,   "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
 
 	new setting_t(MAG271CQ | MAG241,       "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241
 	// FIXME: MAG321 manual says only supported for Optix MAG322CQRV
 	new setting_t(MAG | MPG341,            "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
-	new setting_t(MAG | MPG341,            "00240", "hdcr", {"off", "on"}),
-	new setting_t(MAG | MPG341,            "00250", "refresh_display", {"off", "on"}),
-	new setting_t(MAG | MPG341,            "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(MAG | MPG341 | MPG273,   "00240", "hdcr", {"off", "on"}),
+	new setting_t(MAG | MPG341 | MPG273,   "00250", "refresh_display", {"off", "on"}),
+	new setting_t(MAG | MPG341 | MPG273,   "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 
 	// MPG341: Alarm settings seem to be broken.
 	//         alarm_clock_time returns an invalid response.
 	//
-	new setting_t(MAG | PS,                "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
-	new setting_t(MAG,                     "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
-	new setting_t(MAG,                     "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
-	new setting_t(MAG,                     "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	new setting_t(PS,                      "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
+	new setting_t(MAG | PS | MPG273,       "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
 
-	// alarm4x is only verified on MAG32
+	// The following have been verified only on MAG32, not used in Gaming OSD
+	new setting_t(MAG32,                   "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS
+	new setting_t(MAG32 | MPG273,          "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS
+	new setting_t(MAG,                     "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(PS | MPG273,             "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
+
+	// alarm4x is only verified on MAG32, used in Gaming OSD
 	new alarm4x_t(MAG32,                   "001f",  "alarm4x"),
 
 	// MPG341: screen_assistance returns invalid results
@@ -525,50 +575,42 @@ static std::vector<setting_t *> settings(
 		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS,                      "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
+	new setting_t(MPG273,                  "00270", "smart_crosshair_icon", {"off", "icon1", "icon2", "icon3", "icon4", "icon5", "icon6"}),
+	new setting_t(MPG273,                  "00271", "smart_crosshair_color", {"white", "red", "auto"}),
 	new setting_t(UNKNOWN,                 "00271", "unknown271", 0, 100),  // returns 000, read only?
 
-	// FIXME: This is working in game mode only - adaptive sync
-	// Disabled for security reasons
-	new setting_t(UNKNOWN /*MAG32*/,       "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
-
-	new setting_t(MAG321 | MAG272 | MAG271CQ | MAG241 | MPG341,
+	new setting_t(MAG321 | MAG272 | MAG271CQ | MAG241 | MPG341 | MPG273,
 		                                   "00280", "free_sync", {"off", "on"}),
 	new setting_t(MAG32 | MAG321 | MAG272 | MAG271CQ | MPG341,
 		                                   "00290", "zero_latency", {"off", "on"}),  // returns 001
-	// FIXME: MAG241 manual says it is supported but constantly produces time out error
-	//        https://github.com/couriersud/msigd/issues/11
-	// new setting_t(MAG241,                  "002:0", "screen_size", {"4:3", "16:9"}),
-	new setting_t(MAG272,                  "002:0", "screen_size", {"auto", "4:3", "16:9"}),
+
+	new setting_t(MAG272 | MPG273,         "002:0", "screen_size", {"auto", "4:3", "16:9"}),
 	new setting_t(MAG32 | MAG321 | MAG271CQ,
 		                                   "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
 	new setting_t(PS | MPG341,             "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
-	new setting_t(MAG32 | MAG272 | MPG341, "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
+	new setting_t(MAG32 | MAG272 | MPG341 | MPG273, 
+										   "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
 	new setting_t(MAG272,                  "00300", "pro_mode", {"user", "reader", "cinema", "designer", "HDR"}),
 	new setting_t(MAG32 | MAG321 | MAG271CQ | MAG241 | MPG341,
 		                                   "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS,                      "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
-	new setting_t(MAG | PS | MPG341,       "00310", "eye_saver", {"off", "on"}),  // returns 000
-	new setting_t(UNKNOWN,                 "00320", "unknown320", 0, 100),
-	new setting_t(UNKNOWN,                 "00330", "unknown330",0 , 100),
+	new setting_t(MPG273,                  "00300", "pro_mode", {"user", "anti_blue", "movie", "office", "srgb", "eco"}),
+	// low blue light on MPG273
+	new setting_t(MAG | PS | MPG341 | MPG273, 
+										   "00310", "eye_saver", {"off", "on"}),  // returns 000
 	new setting_t(ALL,                     "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
-	new setting_t(UNKNOWN,                 "00350", "unknown350", 0, 100),
+
 	new setting_t(ALL,                     "00400", "brightness", 0, 100),  // returns 048
 	new setting_t(ALL,                     "00410", "contrast", 0, 100),  // returns 050
 	new setting_t(ALL,                     "00420", "sharpness", 0, 5),  // returns 000
-	new setting_t(MAG | MPG341,            "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
+	new setting_t(MAG | MPG341 | MPG273,   "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
 	new setting_t(PS,                      "00430", "color_preset", {"5000K", "5500K", "6500K", "7500K", "9300K", "10000K", "custom"}),
-	new setting_t(MAG | MPG341,            "00431", "color_red", 0, 100),
-	new setting_t(MAG | MPG341,            "00432", "color_green", 0, 100),
-	new setting_t(MAG | MPG341,            "00433", "color_blue", 0, 100),
+	new setting_t(MAG | MPG341 | MPG273,   "00431", "color_red", 0, 100),
+	new setting_t(MAG | MPG341 | MPG273,   "00432", "color_green", 0, 100),
+	new setting_t(MAG | MPG341 | MPG273,   "00433", "color_blue", 0, 100),
 	new tripple_t(ALL,                     "00434", "color_rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
 
-	// Disabled for security reasons
-	new setting_t(UNKNOWN /*MAG*/,         "00435", "unknown435"),  // returns 000, read only
-	new setting_t(UNKNOWN /*ALL, WRITE*/,  "00440", "unknown440", {"off", "on"}),
-
-	new setting_t(UNKNOWN,                 "00450", "unknown450",0, 100),
 	new setting_t(PS,                      "00460", "gray_level", 0, 20),
-	new setting_t(UNKNOWN,                 "00470", "unknown470", 0, 100),
 	new setting_t(PS,                      "00480", "low_blue_light", {"off", "on"}),
 	new setting_t(PS,                      "00490", "local_dimming", {"off", "on"}),
 	new tripple_t(PS,                      "004<0", "hue_rgb"),
@@ -578,9 +620,10 @@ static std::vector<setting_t *> settings(
 	new tripple_t(PS,                      "004;0", "saturation_rgb"),
 	new tripple_t(PS,                      "004;1", "saturation_cmy"),
 	new setting_t(PS,                      "004:0", "gamma", {"1.8", "2", "2.2", "2.4", "2.6"}),
-	new setting_t(MAG32 | MAG272 | PS | MPG341,
+	new setting_t(MAG32 | MAG272 | PS | MPG341 | MPG273,
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG321| MAG271CQ | MAG241, "00500", "input",  {"hdmi1", "hdmi2", "dp"}),
+	new setting_t(MPG273,                   "00510", "auto_scan", {"off", "on"}),
 	new setting_t(MAG32 | MAG321 | MAG271CQ, "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(PS | MPG341,             "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(MAG32,                   "00610", "pip_input", {"hdmi1", "hdmi2", "dp", "usbc"}),
@@ -600,12 +643,13 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS | MPG341,             "00670", "pbp_input1", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "00680", "pbp_input2", {"hdmi1", "hdmi2", "dp", "usbc"}),
 	new setting_t(PS | MPG341,             "00690", "pbp_input3", {"hdmi1", "hdmi2", "dp", "usbc"}),
-	new setting_t(PS | MPG341,             "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}),
+	new setting_t(PS,                      "006:0", "pbp_input4", {"hdmi1", "hdmi2", "dp", "usbc"}), // see issue #22
 	new setting_t(PS | MPG341,             "006;0", "pbp_sound_source", {"hdmi1", "hdmi2", "dp", "usbc"}),
 
 	// OSD Language is dangerous and at least on the MPG341 it is broken and
 	// writing a wrong value can harm the monitor. Therefore it is completely disabled for the MPG341 series
-	// and read-only on the MAG and PS
+	// and read-only on the MAG and PS.
+	// It is also not supported by the GamingOSD app as of version 2.49
 	// On MAG Series:
 	// returns 001 -> value = '0' + language, 0 chinese, 1 English, 2 French, 3 German, ... maximum value "C"
 	// On PS Series:
@@ -614,49 +658,50 @@ static std::vector<setting_t *> settings(
 	(new setting_t(PS,                     "00800", "osd_language", 0, 28, -100))->set_access(READ),
 	new setting_t(ALL,                     "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL,                     "00820", "osd_timeout",0, 30),  // returns 020
-	new setting_t(PS,                      "00830", "screen_info", {"off", "on"}),
-	// Reset is considered dangerous as well
-	// Completely disable
-	// new setting_t(ALL, WRITE,              "00840", "reset", {"-off", "on"}),  // returns 56006 - reset monitors
+	new setting_t(PS | MPG273,             "00830", "screen_info", {"off", "on"}),
+
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS | MPG341,             "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(MAG | MPG341,            "00860", "rgb_led", {"off", "on"}),
+	new setting_t(MAG | MPG341 | MPG273,   "00860", "rgb_led", {"off", "on"}),
 
-	// The following are for experimental purposes
-	new setting_t(UNKNOWN,	               "00700", "unknown700", 0, 100),
-	new setting_t(UNKNOWN,	               "00710", "unknown710", 0, 100),
-	new setting_t(UNKNOWN,	               "00720", "unknown720", 0, 100),
-	new setting_t(UNKNOWN,	               "00730", "unknown730", 0, 100),
-	new setting_t(UNKNOWN,	               "00740", "unknown740", 0, 100),
-	new setting_t(UNKNOWN,	               "00870", "unknown870", 0, 100),
-	new setting_t(UNKNOWN,	               "00880", "unknown880", 0, 100),
-	new setting_t(UNKNOWN,	               "00890", "unknown890", 0, 100),
-	new setting_t(UNKNOWN,	               "008:0", "unknown8:0", 0, 100),
+	new setting_t(MPG273,             	   "00880", "power_button", {"off", "standby"}),
+	new setting_t(MPG273,                  "008:0", "hdmi_cec", {"off", "on"}),
+	new setting_t(MPG273,                  "008<0", "ambient_brightness", {"off", "auto", "custom"}),
+	//new setting_t(MPG273,                  "008<1", "test1"), // auto-brightness copy?
+	new setting_t(MPG273,                  "008<2", "ambient_rgb", {"off", "on"}),
+	new setting_t(MPG273,                  "008<3", "ambient_brightness_custom", 0, 100),
+	new setting_t(MPG273,                  "008>0", "kvm", {"auto", "upstream", "type_c"}),
+	new setting_t(MPG273,                  "008=0", "sound_tune", {"off", "on"}),
 
-	new setting_t(MAG272,                  "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
-	new setting_t(MAG272,                  "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
-	new setting_t(MAG272,                  "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+	new setting_t(MPG273,                  "00900", "navi_up",    {"off", "brightness", "game_mode", "smart_crosshair", "alarm_clock", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
+	new setting_t(MPG273,                  "00910", "navi_down",  {"off", "brightness", "game_mode", "smart_crosshair", "alarm_clock", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
+	new setting_t(MPG273,                  "00920", "navi_left",  {"off", "brightness", "game_mode", "smart_crosshair", "alarm_clock", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
+	new setting_t(MPG273,                  "00930", "navi_right", {"off", "brightness", "game_mode", "smart_crosshair", "alarm_clock", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
+
+	new setting_t(MAG272,                  "00900", "navi_up",    {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+	new setting_t(MAG272,                  "00910", "navi_down",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+	new setting_t(MAG272,                  "00920", "navi_left",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 	new setting_t(MAG272,                  "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 
-	new setting_t(MAG241,                  "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
-	new setting_t(MAG241,                  "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
-	new setting_t(MAG241,                  "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
+	new setting_t(MAG241,                  "00900", "navi_up",    {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
+	new setting_t(MAG241,                  "00910", "navi_down",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
+	new setting_t(MAG241,                  "00920", "navi_left",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
 	new setting_t(MAG241,                  "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
 
-	new setting_t(MPG341,                  "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
-	new setting_t(MPG341,                  "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
-	new setting_t(MPG341,                  "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
+	new setting_t(MPG341,                  "00900", "navi_up",    {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
+	new setting_t(MPG341,                  "00910", "navi_down",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
+	new setting_t(MPG341,                  "00920", "navi_left",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
 	new setting_t(MPG341,                  "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "audio_volume"}),
 
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG32 | MAG321 | MAG271CQ, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321 | MAG271CQ, "00900", "navi_up",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321 | MAG271CQ, "00910", "navi_down",{"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321 | MAG271CQ, "00920", "navi_left",{"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG32 | MAG321 | MAG271CQ, "00930", "navi_right",{"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
 
-	new setting_t(PS,                      "00900", "navi_up", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
+	new setting_t(PS,                      "00900", "navi_up",   {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS,                      "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS,                      "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
-	new setting_t(PS,                      "00930", "navi_right", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
+	new setting_t(PS,                      "00930", "navi_right",{"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 });
 
 static setting_t *get_read_setting(series_t series, std::string opt)
@@ -668,50 +713,90 @@ static setting_t *get_read_setting(series_t series, std::string opt)
 	return nullptr;
 }
 
-struct led_data
+struct led_group_data
 {
-	led_data()
-	{
-		for (int i=0; i<9; i++)
-		{
-			f12[i*3 + 0] = 0xff;
-			f12[i*3 + 1] = 0x00;
-			f12[i*3 + 2] = 0x00;
-
-			rgb[i*3 + 0] = 0xff;  // red
-			rgb[i*3 + 1] = 0xff;  // green
-			rgb[i*3 + 2] = 0xff;  // blue
-		}
-	}
-
-	void set_rgb(uint8_t r, uint8_t g, uint8_t b)
-	{
-		for (int i=0; i<9; i++)
-		{
-			rgb[i*3 + 0] = r;
-			rgb[i*3 + 1] = g;
-			rgb[i*3 + 2] = b;
-		}
-	}
-	// total size should be 78
-	//0040   71 01 00 00 00 01 64 00 00 00 00 00 01 00 00 00   q.....d.........
-	uint16_t f00 = 0x0171;
-	uint16_t f01 = 0x0000;
-	uint16_t f02 = 0x0100;
-	uint16_t f03 = 0x0064;
-	uint16_t f04 = 0x0000;
-	uint16_t f05 = 0x0000;
-	uint16_t mode = 0x0001; // Mode
-	uint16_t f07 = 0x0000;
-	//0050   01 64 00 00 00 00 00 ff 00 00 ff 00 00 ff 00 00   .d.....ÿ..ÿ..ÿ..
-	uint16_t f08 = 0x6401;
-	uint16_t f09 = 0x0000;
-	uint16_t f10 = 0x0000;
-	uint8_t  f11 = 0x00;
-	uint8_t  f12[9*3];
-	uint8_t  rgb[9*3];
-	uint8_t  f13 = 0x00;
+	uint8_t mode       = 0x00;    // off
+	uint8_t r          = 0xff;
+	uint8_t g          = 0xff;
+	uint8_t b          = 0xff;
+	uint8_t speed      = 0x01;
+	uint8_t brightness = 0x64;
+	uint8_t c6         = 0x00;
+	uint8_t c7         = 0xff;
+	uint8_t c8         = 0x00;
+	uint8_t mode_flag  = 0x80; // seems to depend on mode : https://gitlab.com/CalcProgrammer1/OpenRGB/-/blob/master/Controllers/MSIOptixController/MSIOptixController.cpp
+	uint8_t c10        = 0x00;
 };
+
+template <std::uint8_t REQUEST, std::size_t GROUPS, std::size_t MAX_LEDS>
+struct led_data_generic
+{
+	led_data_generic()
+	{
+		for (std::size_t i=0; i<MAX_LEDS; i++)
+		{
+			rgb[0][i*3 + 0] = 0xff;
+			rgb[0][i*3 + 1] = 0x00;
+			rgb[0][i*3 + 2] = 0x00;
+
+			rgb[1][i*3 + 0] = 0xff;  // red
+			rgb[1][i*3 + 1] = 0xff;  // green
+			rgb[1][i*3 + 2] = 0xff;  // blue
+		}
+	}
+
+	void set_rgb(uint8_t group, uint8_t r, uint8_t g, uint8_t b)
+	{
+		for (int i=0; i<MAX_LEDS; i++)
+		{
+			rgb[group][i*3 + 0] = r;
+			rgb[group][i*3 + 1] = g;
+			rgb[group][i*3 + 2] = b;
+		}
+	}
+
+	void set_rgb(uint8_t group, std::vector<unsigned> colors)
+	{
+		std::size_t i = 0;
+		std::size_t m = colors.size();
+		unsigned v = 0;
+		if (m > MAX_LEDS)
+			m = MAX_LEDS;
+			
+		while (i < m)
+		{
+			v = colors[i];
+			rgb[group][i*3 + 0] = (v >> 16) & 0xff;
+			rgb[group][i*3 + 1] = (v >>  8) & 0xff;
+			rgb[group][i*3 + 2] = (v >>  0) & 0xff;
+			i++;
+		}
+		while (i < 24)
+		{
+			rgb[group][i*3 + 0] = (v >> 16) & 0xff;
+			rgb[group][i*3 + 1] = (v >>  8) & 0xff;
+			rgb[group][i*3 + 2] = (v >>  0) & 0xff;
+			i++;
+		}
+	}
+
+	void set_mode(uint8_t group, uint8_t m)
+	{
+		h[group].mode = m;
+	}
+
+	uint8_t request_id = REQUEST;
+	led_group_data h[GROUPS];
+	uint8_t rgb[GROUPS][MAX_LEDS * 3];
+	uint8_t fill = 0x00;
+};
+
+// total size should be 78
+//0040   71 01 00 00 00 01 64 00 00 00 00 00 01 00 00 00   q.....d.........
+//0050   01 64 00 00 00 00 00 ff 00 00 ff 00 00 ff 00 00   .d.....ÿ..ÿ..ÿ..
+static_assert(sizeof(led_data_generic<0x71, 2, 9>) == 78, "size mismatch 2!");
+
+static_assert(sizeof(led_data_generic<0x72, 2, 24>) == 168, "size mismatch 1!");
 
 // Mode:
 // Off: 0
@@ -726,44 +811,55 @@ struct led_data
 // Random : 0x1f
 // Synched: 0x01
 
-static int mystic_opt(std::string opt, led_data &leds)
+static int str_to_mode(std::string opt, uint8_t &mode)
 {
 	if (opt == "off")
-		leds.mode = 0;
+		{ mode = 0; return 0; }
 	else if (opt == "static")
-		leds.mode = 1;
+		{ mode = 1; return 0; }
 	else if (opt == "breathing")
-		leds.mode = 2;
+		{ mode = 2; return 0; }
 	else if (opt == "blinking")
-		leds.mode = 3;
+		{ mode = 3; return 0; }
 	else if (opt == "flashing")
-		leds.mode = 5;
+		{ mode = 5; return 0; }
 	else if (opt == "blinds")
-		leds.mode = 6;
+		{ mode = 6; return 0; }
 	else if (opt == "meteor")
-		leds.mode = 8;
+		{ mode = 8; return 0; }
 	else if (opt == "rainbow")
-		leds.mode = 0x1a;
+		{ mode = 0x1a; return 0; }
 	else if (opt == "random")
-		leds.mode = 0x1f;
-	else if (opt.size() == 8 && opt.substr(0, 2) == "0x")
+		{ mode = 0x1f; return 0; }
+	
+	return error(E_SYNTAX, "Error decoding mystic mode: %s", opt);;
+}
+
+template <std::uint8_t REQUEST, std::size_t GROUPS, std::size_t MAX_LEDS>
+static int mystic_opt(std::string opt, std::size_t supported_group_mask, led_data_generic<REQUEST, GROUPS, MAX_LEDS> &leds)
+{
+	uint8_t group = 0;
+	uint8_t mode = 0;
+
+	auto p = splitstr(opt, ':');
+	if (p.size() < 2 || p.size() > 3)
+		return error(E_SYNTAX, "Error decoding mystic options: %s", opt);
+	if (auto e = string_to_unsigned(p[0], group, static_cast<uint8_t>(0), static_cast<uint8_t>(1)) > 0)
+		return e;
+	if (auto e = str_to_mode(p[1], mode) > 0)
+		return e;
+
+	if (((1 << group) & supported_group_mask) == 0)
+		return error(E_SYNTAX, "Error mystic group not supported: %d", group);
+
+	leds.set_mode(group, mode);
+	
+	if (p.size() == 3)
 	{
-		leds.mode = 1;
-		std::size_t idx(0);
-		auto v = std::stoul(opt.substr(2), &idx, 16);
-		if (idx != opt.size() - 2)
-			return 1;
-		leds.set_rgb(v >> 4, (v >> 2) & 0xff, v & 0xff);
-	}
-	else
-	{
-		leds.mode = 1;
-		unsigned r,g,b;
-		if (3 != sscanf(opt.c_str(),"%d,%d,%d", &r, &g, &b))
-			return 1;
-		if (r>255 || g>255 || b>255)
-			return 1;
-		leds.set_rgb(r, g, b);
+		std::vector<unsigned> colors;
+		if (auto e = number_list(splitstr(p[2], ','), colors) > 0)
+			return e;
+		leds.set_rgb(group, colors);
 	}
 	return 0;
 }
@@ -787,10 +883,11 @@ public:
 	{
 	}
 
-	int write_led(led_data &data)
+	template <typename T>
+	int write_led(uint16_t val, T &data)
 	{
-		return control_msg_write(0x21, 0x09, 0x371, 0,
-			&data, static_cast<int>(sizeof(led_data)), 1000);
+		return control_msg_write(0x21, 0x09, val, 0,
+			&data, static_cast<int>(sizeof(T)), 1000);
 	}
 
 	int write_string(const std::string &s)
@@ -1021,16 +1118,6 @@ static int version()
 	return 0;
 }
 
-template<typename... Args>
-static int error(error_e err, const char *fmt, Args&&... args)
-{
-	fprintf(stderr, "%s: ", appname);
-	fprintf(stderr, fmt, log_helper(args)...);
-	fprintf(stderr, "\n");
-	fprintf(stderr, "Try '%s --help' for more information.\n", appname);
-	return err;
-}
-
 static int test_steel_device(steeldev_t &steeldev, std_logger_t &logger)
 {
 	logger(DEBUG, "Testing group color");
@@ -1067,7 +1154,7 @@ static int test_steel_device(steeldev_t &steeldev, std_logger_t &logger)
 	steeldev.flush();
 	std::this_thread::sleep_for(cSTEEL_DELAY * 5);
 	logger(DEBUG, "Sending b record ... Waiting 5 seconds");
-	steel_data_0b data_0b(0, true);
+	steel_data_0b data_0b(true);
 	steeldev.write_0b(data_0b);
 	steeldev.flush();
 	std::this_thread::sleep_for(cSTEEL_DELAY * 5);
@@ -1323,9 +1410,8 @@ int main (int argc, char **argv)
 	bool info = false;
 	bool steel = false;
 	bool list = false;
-	int monitor = 0;
-	led_data leds;
-	bool mystic = false;
+	unsigned long monitor = 0;
+	string_list mystic_opts;
 	bool numeric = false;
 	string_list filters;
 	std::string waitfor;
@@ -1391,9 +1477,8 @@ int main (int argc, char **argv)
 		}
 		else if (cur_opt == "--mystic" && arg_pointer + 1 < argc)
 		{
-			if (mystic_opt(argv[++arg_pointer], leds) != 0)
-				return error(E_SYNTAX, "Mystic light parameter error: %s", argv[arg_pointer]);
-			mystic = true;
+			++arg_pointer;
+			mystic_opts.push_back(argv[arg_pointer]);
 		}
 		else
 		{
@@ -1486,8 +1571,9 @@ int main (int argc, char **argv)
 		{
 			std::string leds = (series.leds == LT_NONE ? "None"
 				: (series.leds == LT_MYSTIC ? "Mystic"
+				: (series.leds == LT_MYSTIC_OPTIX ? "MysticOptix"
 				: (series.leds == LT_STEEL ? "Steel"
-				: "Error")));
+				: "Error"))));
 
 
 			pprintf("Vendor Id:      0x%04x\n", usb.vendor_id());
@@ -1510,9 +1596,6 @@ int main (int argc, char **argv)
 				//usb.debug_cmd("\x01""5800130\r");
 			}
 		}
-
-		if (mystic && !(series.leds == led_type_t::LT_MYSTIC))
-			return error(E_SYNTAX, "--mystic only supported on MAG series monitors");
 
 		// Check parameters to be set
 		std::vector<std::pair<setting_t *, std::string>> set_encoded;
@@ -1572,8 +1655,32 @@ int main (int argc, char **argv)
 		}
 
 		// Set mystic leds
-		if (mystic)
-			usb.write_led(leds);
+		if (mystic_opts.size() > 0)
+		{
+			if (series.leds == led_type_t::LT_MYSTIC)
+			{
+				//led_data leds;
+				led_data_generic<0x71, 2, 9> leds;
+				for (auto &s : mystic_opts)
+				{
+					if (auto err = mystic_opt(s, 0x02, leds) != 0)
+						return err;
+				}
+				usb.write_led(0x0371, leds);
+			}
+			else if (series.leds == led_type_t::LT_MYSTIC_OPTIX)
+			{
+				led_data_generic<0x72, 2, 24> leds_optix;
+				for (auto &s : mystic_opts)
+				{
+					if (auto err = mystic_opt(s, 0x03, leds_optix) != 0)
+						return err;
+				}
+				usb.write_led(0x0372, leds_optix);
+			}
+			else
+				return error(E_SYNTAX, "--mystic not supported");
+		}
 
 		// set values
 		for (auto &s : set_encoded)
@@ -1640,37 +1747,3 @@ int main (int argc, char **argv)
 	return 0;
 }
 
-/*
- * MAG272Q
- * DEBUG: Special 01 b0 : 01 5a 40 00 00 00 00 00 00 00 00 00 00 00 00 00
- * DEBUG: Special 01 b4 : 01 5a 71 00 2f 41 00 00 00 00 00 00 00 00 00 00
- *
- * MAG321
- *
- * DEBUG: Special 01 b0 : 01 5a 35 03 00 00 00 00 00 00 00 00 00 00 00 00
- * DEBUG: Special 01 b4 : 01 5a 41 00 1e c9 00 00 00 00 00 00 00 00 00 00
- *
- * PS341WU
- *
- * DEBUG: Special 01 b0 : 01 5a 37 00 00 00 00 00 00 00 00 00 00 00 00 00
- * DEBUG: Special 01 b4 : 01 5a 41 00 19 b2 00 00 00 00 00 00 00 00 00 00
- *
- * MAG241
- *
- * DEBUG: Special 01 b0 : 01 5a 15 00 00 00 00 00 00 00 00 00 00 00 00 00
- * DEBUG: Special 01 b4 : 01 5a 02 50 20 7e 00 00 00 00 00 00 00 00 00 00
- *
- * 2f41  = 0010111101000001
- * 1ec9  = 0001111011001001
- * 19b2  = 0001100110110010
- * 207e  = 0010000001111110
- *
- * ALL   = 0000000000000000
- * MAG   = 0000000001000000
- * PS272 = 0001100010000000
- * PS341 = 0000100100000000
- *
- *
- *
- *
- */
