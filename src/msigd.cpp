@@ -95,21 +95,22 @@ static std::vector<identity_t> known_models =
 {
 	{ UNKNOWN,           "",     "", "Unknown", LT_NONE },
 	{ QUERYONLY,         "",     "", "Unknown Series", LT_NONE },
-	{ MAG32,             "00;", "V18", "MAG32 Series", LT_MYSTIC },
-	{ MAG321,            "00:", "V18", "MAG321CQR", LT_MYSTIC }, // doesn't have USBC
+	{ MAG32,             "00;", "V18", "MAG32 Series", LT_MYSTIC },                // MAG321CURV
+	// issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
+	{ MAG321,            "00:", "V18", "MAG321CQR", LT_MYSTIC }, 	               // doesn't have USBC
 	{ MAG241,            "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
-	{ MAG241,            "004", "V18", "MAG241CR Series", LT_MYSTIC }, // MAG241CR
-	{ MAG241,            "005", "V18", "MAG271CR Series", LT_MYSTIC }, // MAG271CR
-	{ MAG271CQ,          "006", "V19", "MAG271CQ Series", LT_MYSTIC }, // MAG271CQR, MAG271CQP
-	{ MAG272,            "00O", "V18", "MAG272QP Series", LT_MYSTIC }, // MAG272QP
-	{ MAG272,            "00L", "V18", "MAG272 Series", LT_MYSTIC }, // MAG272
-	{ MAG272,            "00E", "V18", "MAG272CQR Series", LT_MYSTIC }, // MAG272CQR
-	{ MAG272,            "00G", "V18", "MAG272QR Series", LT_NONE }, // MAG272QR - Mystic with 12 leds?
-	{ MAG271CQ,          "001", "V18", "MPG27 Series", LT_STEEL },   // MPG27CQ
-	{ MPG273,            "00[", "V51", "MPG273 Series", LT_MYSTIC_OPTIX },   // MPG273CQR 9 Leds in group 1 (logo) and 15 leds in group 2 (arrow)
-	{ MPG341,            "00>", "V09", "MPG341 Series", LT_STEEL },    // MPG27CQR
-	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC },  // MAG274QRF-QD FW.011
+	{ MAG241,            "004", "V18", "MAG241CR Series", LT_MYSTIC },             // MAG241CR
+	{ MAG241,            "005", "V18", "MAG271CR Series", LT_MYSTIC },             // MAG271CR
+	{ MAG271CQ,          "006", "V19", "MAG271CQ Series", LT_MYSTIC },             // MAG271CQR, MAG271CQP
+	{ MAG272,            "00O", "V18", "MAG272QP Series", LT_MYSTIC },             // MAG272QP
+	{ MAG272,            "00L", "V18", "MAG272 Series", LT_MYSTIC },               // MAG272
+	{ MAG272,            "00E", "V18", "MAG272CQR Series", LT_MYSTIC },            // MAG272CQR
+	{ MAG272,            "00G", "V18", "MAG272QR Series", LT_NONE },               // MAG272QR - Mystic with 12 leds?
+	{ MAG271CQ,          "001", "V18", "MPG27 Series", LT_STEEL },                 // MPG27CQ
+	{ MPG273,            "00[", "V51", "MPG273 Series", LT_MYSTIC_OPTIX },         // MPG273CQR 9 Leds in group 1 (logo) and 15 leds in group 2 (arrow)
+	{ MPG341,            "00>", "V09", "MPG341 Series", LT_STEEL },                // MPG27CQR
+	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC },         // MAG274QRF-QD FW.011
 	{ MAG274QRFQDNEW,    "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC },  // MAG274QRF-QD FW.015/FW.016
 	{ PS,                "00?", "V06", "PS Series", LT_NONE }
 };
@@ -546,6 +547,8 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG274QRFQDNEW,          "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema",
 	    "office", "srgb", "adobe_rgb", "dci_p3"}), //New moded added to FW.015
 	new setting_t(MAG32 | MAG321,          "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
+	new setting_t(MPG273,                  "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "anti_blue", "movie", "office", "srgb", "eco"}),
+
 	new setting_t(PS,                      "00120", "mode", {"-m0","-m1","-m2","-m3","-m4""-m5","-m6","-m7","-m8","-m9",
 		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(ALL,                     "00130", "serial"), // returns 13 blanks
@@ -1620,6 +1623,7 @@ int main (int argc, char **argv)
 				// set after MSI app 20191206 0.0.2.23
 				if (series.series != MAG241) // times out on MAG241
 					usb.debug_cmd("\x01\xd0""b00100000\r");
+
 				// queried but not supported on MAG321CURV (returns 56006)
 				//usb.debug_cmd("\x01""5800190\r");
 				//usb.debug_cmd("\x01""5800130\r");
