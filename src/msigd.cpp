@@ -366,9 +366,10 @@ struct setting_t
 			for (std::size_t i=0; i < m_values.size(); i++)
 				if (m_values[i] == val && m_values[i].substr(0, 1) != "-")
 				{
-					char buf[100];
-					snprintf(buf, 100, "%03d", static_cast<unsigned>(i));
-					return buf;
+					return msi_utos(static_cast<unsigned>(i), m_base, 3);
+					//char buf[100];
+					//snprintf(buf, 100, "%03d", static_cast<unsigned>(i));
+					//return buf;
 				}
 			return "";
 		}
@@ -581,9 +582,6 @@ static std::vector<setting_t *> settings(
 	new alarm4x_t(MAG32,                   "001f",  "alarm4x"),
 
 	// MPG341: screen_assistance returns invalid results
-	// MAG274QRF-QD FW.015: Setting the cursor works only for half the whites (the first tree, white1 to white3, not 4 to 6);
-	// The reds are working correctly. The software complains that the write to the setting fails. Reading them back after
-	// setting them from the monitor UI returns correctly white4 to white6, so I'm not sure where the issue lies.
 	new setting_t(MAG,                     "00270", "screen_assistance", 100, {"off", "red1", "red2", "red3", "red4", "red5", "red6",
 		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS,                      "00270", "screen_assistance", {"off", "center", "edge",
