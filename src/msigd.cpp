@@ -98,6 +98,8 @@ static std::vector<identity_t> known_models =
 	{ MAG32,             "00;", "V18", "MAG32 Series", LT_MYSTIC },                // MAG321CURV
 	// issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
 	{ MAG321,            "00:", "V18", "MAG321CQR", LT_MYSTIC }, 	               // doesn't have USBC
+	// FIXME: No ambient settings - needs own id
+	{ MPG273,            "00{", "V51", "MAG321QR",  LT_MYSTIC_OPTIX },             // Has MPRT, KVM -> see MPG273
 	{ MAG241,            "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241,            "004", "V18", "MAG241CR Series", LT_MYSTIC },             // MAG241CR
@@ -1714,9 +1716,10 @@ int main (int argc, char **argv)
 		}
 
 		// set values
-		for (auto &s : set_encoded)
-			if (usb.set_setting(*s.first, s.second))
-				return error(E_SETTING, "Error setting --%s", s.first->m_opt);
+		// FIXME: no_writes_for_test
+		//for (auto &s : set_encoded)
+		//	if (usb.set_setting(*s.first, s.second))
+		//		return error(E_SETTING, "Error setting --%s", s.first->m_opt);
 
 		// now query
 		if (query)
