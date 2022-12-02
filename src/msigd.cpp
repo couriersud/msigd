@@ -860,6 +860,10 @@ static_assert(sizeof(led_data_generic<0x72, 2, 24>) == 168, "size mismatch 1!");
 // Blink : 0x03
 // Random : 0x1f
 // Synched: 0x01
+// FIXME: The following are modes from issue #33 (MAG321QR) dump
+// Unknown1: 0x19
+// Unknown2: 0x21
+
 
 static int str_to_mode(std::string opt, uint8_t &mode)
 {
