@@ -102,9 +102,10 @@ static std::vector<identity_t> known_models =
 	{ UNKNOWN,           "",     "", "Unknown", LT_NONE },
 	{ QUERYONLY,         "",     "", "Unknown Series", LT_NONE },
 	{ MAG32,             "00;", "V18", "MAG32 Series", LT_MYSTIC },                // MAG321CURV
-	// issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
+	// FIXME: issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
 	{ MAG321CQR,         "00:", "V18", "MAG321CQR", LT_MYSTIC }, 	               // doesn't have USBC
-	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },             // Has MPRT, KVM -> see MPG273
+	// FIXME: see #33 - feedback on mystic required
+	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },                     // Has MPRT, KVM -> see MPG273
 	{ MAG241,            "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241,            "004", "V18", "MAG241CR Series", LT_MYSTIC },             // MAG241CR
@@ -568,7 +569,7 @@ static std::vector<setting_t *> settings(
 
 	new setting_t(MAG271CQ | MAG241,       "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
-	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241
+	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241 MAG251RX
 	// FIXME: MAG321 manual says only supported for Optix MAG322CQRV
 	new setting_t(MAG | MPG341,            "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	new setting_t(MAG | MPG341 | MPG273 | MAG321QR,
