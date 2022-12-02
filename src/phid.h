@@ -108,17 +108,23 @@ protected:
 	}
 
 	int control_msg_read(int requesttype, int request, int value, int index,
-		void *bytes, int size, int timeout)
+		void *bytes, int size, int timeout, int &ret_size)
 	{
-#if 0
-		if (int result = usb_control_msg(m_devHandle, requesttype | USB_ENDPOINT_IN,
-			request, value, index, static_cast<char *>(bytes), size, timeout) < 0)
+		auto p(static_cast<unsigned char *>(bytes));
+		// do basic checks
+		if ((value & 0xff00) != 0x0300 || (value & 0x00ff) != p[0]
+			|| requesttype != 0xa1 || request != 0x01 || index != 0)
 		{
-			m_log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
+			m_log(DEBUG, "Consistency check failed for value parameter %04x", value);
+			return 1;
+
+		}
+		if ((ret_size = hid_get_feature_report(m_devHandle, p, size)) < 0)
+		{
+			m_log(DEBUG, "Error %i reading ctrlmsg from HID device", ret_size);
 			return 1;
 		}
-#endif
-		return 1;
+		return 0;
 	}
 
 	int write(const void *data, std::size_t len)
