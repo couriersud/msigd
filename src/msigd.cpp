@@ -104,7 +104,7 @@ static std::vector<identity_t> known_models =
 	{ MAG32,             "00;", "V18", "MAG32 Series", LT_MYSTIC },                // MAG321CURV
 	// issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
 	{ MAG321CQR,         "00:", "V18", "MAG321CQR", LT_MYSTIC }, 	               // doesn't have USBC
-	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_MYSTIC_OPTIX },             // Has MPRT, KVM -> see MPG273
+	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },             // Has MPRT, KVM -> see MPG273
 	{ MAG241,            "002", "V18", "MAG241 Series", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241,            "004", "V18", "MAG241CR Series", LT_MYSTIC },             // MAG241CR
@@ -940,6 +940,13 @@ public:
 			&data, static_cast<int>(sizeof(T)), 1000);
 	}
 
+	template <typename T>
+	int read_led(uint16_t val, T &data, int &retsize)
+	{
+		return control_msg_read(0xa1, 0x01, val, 0,
+			&data, static_cast<int>(sizeof(T)), 1000, retsize);
+	}
+
 	int write_string(const std::string &s)
 	{
 		std::string s1 = "\001" + s;
@@ -1462,6 +1469,7 @@ int main (int argc, char **argv)
 	int arg_pointer = 1;
 	bool query = false;
 	bool debug = false;
+	bool dump_mystic = false;
 	bool info = false;
 	bool steel = false;
 	bool list = false;
@@ -1529,6 +1537,10 @@ int main (int argc, char **argv)
 		else if ((cur_opt == "--wait" || cur_opt == "-w") && arg_pointer + 1 < argc)
 		{
 			waitfor = argv[++arg_pointer];
+		}
+		else if (cur_opt == "--dump_mystic")
+		{
+			dump_mystic = true;
 		}
 		else if (cur_opt == "--mystic" && arg_pointer + 1 < argc)
 		{
@@ -1710,6 +1722,24 @@ int main (int argc, char **argv)
 				return error(E_SYNTAX, "Unsupported query filter elements: %d of %d", filters.size() - filters_found , filters.size());
 		}
 
+		if (dump_mystic)
+		{
+			unsigned char data[200] = {0x72, 0x00};
+			int retsize = 0;
+			if (!usb.read_led(0x0372, data, retsize))
+			{
+				pprintf("Mystic record size: %d\n", retsize);
+				for (std::size_t i = 0; i < retsize; i++)
+				{
+					if (i % 8 == 0)
+						pprintf("\n%04x: ", i);
+					pprintf("%02x ", data[i]);
+				}
+				pprintf("\n");
+			}
+
+
+		}
 		// Set mystic leds
 		if (mystic_opts.size() > 0)
 		{
