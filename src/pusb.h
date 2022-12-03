@@ -108,12 +108,17 @@ protected:
 	}
 
 	int control_msg_read(int requesttype, int request, int value, int index,
-		void *bytes, int size, int timeout)
+		void *bytes, int size, int timeout, int &ret_size)
 	{
-		if (int result = usb_control_msg(m_handle, requesttype | USB_ENDPOINT_IN,
-			request, value, index, static_cast<char *>(bytes), size, timeout) < 0)
+		auto p(static_cast<char *>(bytes));
+
+		unsigned hidreport0 = ((value & 0xff00) == 0x0300 && (value & 0x00ff) == p[0]
+			&& requesttype == 0xa1 && request == 0x01 && index == 0);
+
+		if ((ret_size = usb_control_msg(m_handle, requesttype | USB_ENDPOINT_IN,
+			request, value, index,  p /*+ hidreport0*/, size /*- hidreport0*/, timeout)) < 0)
 		{
-			m_log(DEBUG, "Error %i writing ctrlmsg to USB device", result);
+			m_log(DEBUG, "Error %i reading ctrlmsg %i from USB device", ret_size, hidreport0);
 			return 1;
 		}
 		return 0;

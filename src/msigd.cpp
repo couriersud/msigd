@@ -33,6 +33,11 @@ static const unsigned cMAX_ALARM = 99 * 60 + 59;
 static const auto cQUERY_DELAY = std::chrono::milliseconds(25); // FIXME: do we still need this - tests here say no
 static const auto cWAIT_DELAY = std::chrono::milliseconds(250);
 
+//
+// Enable writing of parameters - use for experimental brances
+//
+static constexpr const bool cWRITE_ENABLED = true;
+
 enum access_t
 {
 	READ,
@@ -58,6 +63,7 @@ enum series_t
 	MPG341CQR      = 0x00002000,
 	MPG273CQR      = 0x00004000,
 	MPG27CQ        = 0x00008000,
+	MAG321QR       = 0x00010000,
 	QUERYONLY      = 0x00100000,
 	UNKNOWN        = 0x01000000,
 
@@ -68,7 +74,7 @@ enum series_t
 	MAG     = MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP,
 	MPG     = MPG273CQR | MPG341CQR | MPG27CQ,
 
-	ALL     = MAG | PS341WU | MPG | QUERYONLY | MPG27CQ,
+	ALL     = MAG | PS341WU | MPG | QUERYONLY | MAG321QR | MPG27CQ,
 };
 
 static series_t operator | (series_t a, series_t b)
@@ -109,6 +115,8 @@ static std::vector<identity_t> known_models =
 	// issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
 	{ MAG321CURV,        "00;", "V18", "MAG321CURV", LT_MYSTIC },                // MAG321CURV
 	{ MAG321CQR,         "00:", "V18", "MAG321CQR", LT_MYSTIC }, 	               // doesn't have USBC
+	// FIXME: see #33 - feedback on mystic required
+	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },                     // Has MPRT, KVM -> see MPG273
 	{ MAG241C,           "002", "V18", "MAG241C", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241CR,          "004", "V18", "MAG241CR", LT_MYSTIC },                    // MAG241CR
@@ -559,7 +567,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG274QRFQDNEW,          "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema",
 	    "office", "srgb", "adobe_rgb", "dci_p3"}), //New moded added to FW.015
 	new setting_t(MAG321CURV | MAG321CQR,  "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
-	new setting_t(MPG273CQR,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "anti_blue", "movie", "office", "srgb", "eco"}),
+	new setting_t(MPG273CQR | MAG321QR,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "anti_blue", "movie", "office", "srgb", "eco"}),
 
 	new setting_t(PS341WU,                 "00120", "mode", {"-m0","-m1","-m2","-m3","-m4""-m5","-m6","-m7","-m8","-m9",
 		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
@@ -567,7 +575,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
 	new setting_t(PS341WU, READ,           "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS341WU
 
-	new setting_t(MAG | MPG,               "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
+	new setting_t(MAG | MPG | MAG321QR,               "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
 
 	new setting_t(MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00210", "black_tuner", 0, 20, -100),
@@ -575,20 +583,20 @@ static std::vector<setting_t *> settings(
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241GRP MPG27CQ
 	// FIXME: MAG321CQR manual says only supported for Optix MAG322CQRV
 	new setting_t(MAG | MPG341CQR,         "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
-	new setting_t(MAG | MPG,               "00240", "hdcr", {"off", "on"}),
-	new setting_t(MAG | MPG,               "00250", "refresh_display", {"off", "on"}),
-	new setting_t(MAG | MPG,               "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(MAG | MPG | MAG321QR,               "00240", "hdcr", {"off", "on"}),
+	new setting_t(MAG | MPG | MAG321QR,               "00250", "refresh_display", {"off", "on"}),
+	new setting_t(MAG | MPG | MAG321QR,               "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 
 	// MPG341: Alarm settings seem to be broken.
 	//         alarm_clock_time returns an invalid response.
-	new setting_t(MAG | PS341WU | MPG273CQR | MPG27CQ,
+	new setting_t(MAG | PS341WU | MPG273CQR | MPG27CQ | MAG321QR,
 		                                   "00260", "alarm_clock", {"off", "1", "2", "3", "4"}),
 
 	// The following have been verified only on MAG321CURV, not used in Gaming OSD
 	new setting_t(MAG321CURV,              "00261", "alarm_clock_index", 1, 4),  // FIXME: returns timeout on PS341WU
-	new setting_t(MAG321CURV | MPG273CQR,  "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS341WU
+	new setting_t(MAG321CURV | MPG273CQR | MAG321QR,  "00262", "alarm_clock_time", 0, cMAX_ALARM, -60),  // FIXME: returns timeout on PS341WU
 	new setting_t(MAG | MPG27CQ,           "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
-	new setting_t(PS341WU | MPG273CQR,     "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
+	new setting_t(PS341WU | MPG273CQR | MAG321QR,     "00263", "alarm_position", {"left_top", "right_top", "left_bottom", "right_bottom", "custom"}),
 
 	// alarm4x is only verified on MAG321CURV, used in Gaming OSD
 	new alarm4x_t(MAG321CURV,              "001f",  "alarm4x"),
@@ -599,8 +607,8 @@ static std::vector<setting_t *> settings(
 		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS341WU,                 "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
-	new setting_t(MPG273CQR,               "00270", "smart_crosshair_icon", {"off", "icon1", "icon2", "icon3", "icon4", "icon5", "icon6"}),
-	new setting_t(MPG273CQR,               "00271", "smart_crosshair_color", {"white", "red", "auto"}),
+	new setting_t(MPG273CQR | MAG321QR,               "00270", "smart_crosshair_icon", {"off", "icon1", "icon2", "icon3", "icon4", "icon5", "icon6"}),
+	new setting_t(MPG273CQR | MAG321QR,               "00271", "smart_crosshair_color", {"white", "red", "auto"}),
 	new setting_t(UNKNOWN,                 "00271", "unknown271", 0, 100),  // returns 000, read only?
 
 	// FIXME: This is working in game mode only - adaptive sync
@@ -608,17 +616,17 @@ static std::vector<setting_t *> settings(
 	new setting_t(UNKNOWN /*MAG321CURV*/,  "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 
 	// FIXME: free_sync also on MPG27CQ
-	new setting_t(MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP | MPG341CQR | MPG273CQR | MPG27CQ,
+	new setting_t(MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP | MPG341CQR | MPG273CQR | MPG27CQ | MAG321QR,
 		                                   "00280", "free_sync", {"off", "on"}),
 	new setting_t(MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MPG341CQR | MPG27CQ,
 		                                   "00290", "zero_latency", {"off", "on"}),  // returns 001
 
-	new setting_t(MAG272GRP | MPG273CQR,   "002:0", "screen_size", {"auto", "4:3", "16:9"}),
+	new setting_t(MAG272GRP | MPG273CQR | MAG321QR,   "002:0", "screen_size", {"auto", "4:3", "16:9"}),
 	// FIXME: also on MPG27CQ
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ,
 		                                   "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
 	new setting_t(PS341WU | MPG341CQR,     "002:0", "screen_size", {"auto", "4:3", "16:9", "21:9", "1:1"}),
-	new setting_t(MAG321CURV | MAG272GRP | MAG274GRP | MPG341CQR | MPG273CQR,
+	new setting_t(MAG321CURV | MAG272GRP | MAG274GRP | MPG341CQR | MPG273CQR | MAG321QR,
 										   "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
 	new setting_t(MAG272GRP,               "00300", "pro_mode", {"user", "reader", "cinema", "designer", "HDR"}),
 	new setting_t(MAG274QRFQD,             "00300", "pro_mode", {"user", "reader", "cinema", "office"}),
@@ -626,7 +634,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MAG241GRP | MPG341CQR | MPG27CQ,
 		                                   "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS341WU,                 "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
-	new setting_t(MPG273CQR,               "00300", "pro_mode", {"user", "anti_blue", "movie", "office", "srgb", "eco"}),
+	new setting_t(MPG273CQR | MAG321QR,               "00300", "pro_mode", {"user", "anti_blue", "movie", "office", "srgb", "eco"}),
 	// low blue light on MPG273
 	new setting_t(ALL,                     "00310", "eye_saver", {"off", "on"}),  // returns 000
 	new setting_t(ALL,                     "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
@@ -634,11 +642,11 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL,                     "00400", "brightness", 0, 100),  // returns 048
 	new setting_t(ALL,                     "00410", "contrast", 0, 100),  // returns 050
 	new setting_t(ALL,                     "00420", "sharpness", 0, 5),  // returns 000
-	new setting_t(MAG | MPG,               "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
+	new setting_t(MAG | MPG | MAG321QR,               "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
 	new setting_t(PS341WU,                 "00430", "color_preset", {"5000K", "5500K", "6500K", "7500K", "9300K", "10000K", "custom"}),
-	new setting_t(MAG | MPG,               "00431", "color_red", 0, 100),
-	new setting_t(MAG | MPG,               "00432", "color_green", 0, 100),
-	new setting_t(MAG | MPG,               "00433", "color_blue", 0, 100),
+	new setting_t(MAG | MPG | MAG321QR,               "00431", "color_red", 0, 100),
+	new setting_t(MAG | MPG | MAG321QR,               "00432", "color_green", 0, 100),
+	new setting_t(MAG | MPG | MAG321QR,               "00433", "color_blue", 0, 100),
 	new tripple_t(ALL,                     "00434", "color_rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
 
 	new setting_t(PS341WU,                 "00460", "gray_level", 0, 20),
@@ -651,11 +659,11 @@ static std::vector<setting_t *> settings(
 	new tripple_t(PS341WU,                 "004;0", "saturation_rgb"),
 	new tripple_t(PS341WU,                 "004;1", "saturation_cmy"),
 	new setting_t(PS341WU,                 "004:0", "gamma", {"1.8", "2", "2.2", "2.4", "2.6"}),
-	new setting_t(MAG321CURV | MAG272GRP | MAG274GRP | PS341WU | MPG341CQR | MPG273CQR,
+	new setting_t(MAG321CURV | MAG272GRP | MAG274GRP | PS341WU | MPG341CQR | MPG273CQR | MAG321QR,
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG321CQR| MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp"}),
-	new setting_t(MPG273CQR,               "00510", "auto_scan", {"off", "on"}),
+	new setting_t(MPG273CQR | MAG321QR,               "00510", "auto_scan", {"off", "on"}),
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ,
 		                                   "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(PS341WU | MPG341CQR,     "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
@@ -693,7 +701,7 @@ static std::vector<setting_t *> settings(
 	(new setting_t(PS341WU,                "00800", "osd_language", 0, 28, -100))->set_access(READ),
 	new setting_t(ALL,                     "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL,                     "00820", "osd_timeout",0, 30),  // returns 020
-	new setting_t(PS341WU | MAG274GRP | MPG273CQR,
+	new setting_t(PS341WU | MAG274GRP | MPG273CQR | MAG321QR,
 		                                   "00830", "screen_info", {"off", "on"}),
 	// Reset is considered dangerous as well
 	// Completely disable
@@ -702,15 +710,15 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS341WU | MPG341CQR | MPG27CQ,
 		                                   "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(MAG | MPG,               "00860", "rgb_led", {"off", "on"}),
+	new setting_t(MAG | MPG | MAG321QR,               "00860", "rgb_led", {"off", "on"}),
 
-	new setting_t(MPG273CQR,               "00880", "power_button", {"off", "standby"}),
-	new setting_t(MPG273CQR,               "008:0", "hdmi_cec", {"off", "on"}),
+	new setting_t(MPG273CQR | MAG321QR,               "00880", "power_button", {"off", "standby"}),
+	new setting_t(MPG273CQR | MAG321QR,               "008:0", "hdmi_cec", {"off", "on"}),
 	new setting_t(MPG273CQR,               "008<0", "ambient_brightness", {"off", "auto", "custom"}),
 	//new setting_t(MPG273CQR,                  "008<1", "test1"), // auto-brightness copy?
 	new setting_t(MPG273CQR,               "008<2", "ambient_rgb", {"off", "on"}),
 	new setting_t(MPG273CQR,               "008<3", "ambient_brightness_custom", 0, 100),
-	new setting_t(MPG273CQR,               "008>0", "kvm", {"auto", "upstream", "type_c"}),
+	new setting_t(MPG273CQR | MAG321QR,               "008>0", "kvm", {"auto", "upstream", "type_c"}),
 	new setting_t(MPG273CQR,               "008=0", "sound_tune", {"off", "on"}),
 
 	new setting_t(MPG273CQR,               "00900", "navi_up",    {"off", "brightness", "game_mode", "smart_crosshair", "alarm_clock", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
@@ -722,6 +730,11 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG272GRP,               "00910", "navi_down",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 	new setting_t(MAG272GRP,               "00920", "navi_left",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
 	new setting_t(MAG272GRP,               "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "refresh_rate" , "info"}),
+
+	new setting_t(MAG321QR,                "00900", "navi_up",    {"off", "brightness", "game_mode", "alarm_clock", "smart_crosshair", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
+	new setting_t(MAG321QR,                "00910", "navi_down",  {"off", "brightness", "game_mode", "alarm_clock", "smart_crosshair", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
+	new setting_t(MAG321QR,                "00920", "navi_left",  {"off", "brightness", "game_mode", "alarm_clock", "smart_crosshair", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
+	new setting_t(MAG321QR,                "00930", "navi_right", {"off", "brightness", "game_mode", "alarm_clock", "smart_crosshair", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
 
 	new setting_t(MAG241GRP,               "00900", "navi_up",    {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
 	new setting_t(MAG241GRP,               "00910", "navi_down",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate"}),
@@ -855,6 +868,10 @@ static_assert(sizeof(led_data_generic<0x72, 2, 24>) == 168, "size mismatch 1!");
 // Blink : 0x03
 // Random : 0x1f
 // Synched: 0x01
+// FIXME: The following are modes from issue #33 (MAG321QR) dump
+// Unknown1: 0x19
+// Unknown2: 0x21
+
 
 static int str_to_mode(std::string opt, uint8_t &mode)
 {
@@ -933,6 +950,13 @@ public:
 	{
 		return control_msg_write(0x21, 0x09, val, 0,
 			&data, static_cast<int>(sizeof(T)), 1000);
+	}
+
+	template <typename T>
+	int read_led(uint16_t val, T &data, int &retsize)
+	{
+		return control_msg_read(0xa1, 0x01, val, 0,
+			&data, static_cast<int>(sizeof(T)), 1000, retsize);
 	}
 
 	int write_string(const std::string &s)
@@ -1460,6 +1484,7 @@ int main (int argc, char **argv)
 	int arg_pointer = 1;
 	bool query = false;
 	bool debug = false;
+	bool dump_mystic = false;
 	bool info = false;
 	bool steel = false;
 	bool list = false;
@@ -1527,6 +1552,10 @@ int main (int argc, char **argv)
 		else if ((cur_opt == "--wait" || cur_opt == "-w") && arg_pointer + 1 < argc)
 		{
 			waitfor = argv[++arg_pointer];
+		}
+		else if (cur_opt == "--dump_mystic")
+		{
+			dump_mystic = true;
 		}
 		else if (cur_opt == "--mystic" && arg_pointer + 1 < argc)
 		{
@@ -1708,6 +1737,24 @@ int main (int argc, char **argv)
 				return error(E_SYNTAX, "Unsupported query filter elements: %d of %d", filters.size() - filters_found , filters.size());
 		}
 
+		if (dump_mystic)
+		{
+			unsigned char data[200] = {0x72, 0x00};
+			int retsize = 0;
+			if (!usb.read_led(0x0372, data, retsize))
+			{
+				pprintf("Mystic record size: %d\n", retsize);
+				for (std::size_t i = 0; i < retsize; i++)
+				{
+					if (i % 8 == 0)
+						pprintf("\n%04x: ", i);
+					pprintf("%02x ", data[i]);
+				}
+				pprintf("\n");
+			}
+
+
+		}
 		// Set mystic leds
 		if (mystic_opts.size() > 0)
 		{
@@ -1737,9 +1784,10 @@ int main (int argc, char **argv)
 		}
 
 		// set values
-		for (auto &s : set_encoded)
-			if (usb.set_setting(*s.first, s.second))
-				return error(E_SETTING, "Error setting --%s", s.first->m_opt);
+		if (cWRITE_ENABLED)
+			for (auto &s : set_encoded)
+				if (usb.set_setting(*s.first, s.second))
+					return error(E_SETTING, "Error setting --%s", s.first->m_opt);
 
 		// now query
 		if (query)
