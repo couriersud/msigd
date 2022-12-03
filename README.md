@@ -7,7 +7,7 @@ The `msigd` command line tool allows you to change most settings for MSI monitor
 
 **Using `msigd` may make your monitor permantently unusable.**
 
-**Please make sure you use at least msigd version 0.12**
+**Please make sure you use at least msigd version 0.13**
 
 With version 0.12 the syntax of the "--mystic" option has changed. For the 
 MPG273CQR two led groups (0 and 1) are supported. For all other mystic light
@@ -1041,4 +1041,16 @@ virtual guests booting up.
 [Michael J Brancato](https://github.com/sgtcoder) - Multi-Monitor support
 
 [Dominik Helfenstein](https://github.com/dippa-1) - WSL compile instructions
+
+[Stephen Lee](https://github.com/sl33nyc) -- MAG321QR support
+
+[Thorou](https://github.com/thorio) - MAG271CR support
+
+[Skyyblaze](https://github.com/Skyyblaze) - MAG241CR support
+
+[Deathof1](https://github.com/Deathof1) - MAG321CQR support
+
+[Maxime](https://github.com/intello21) - MAG241C support
+
+
 

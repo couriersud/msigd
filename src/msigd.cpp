@@ -26,7 +26,7 @@
 #include <string.h>
 
 static const char *appname = "msigd";
-static const char *appversion = "0.12";
+static const char *appversion = "0.13";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -575,7 +575,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
 	new setting_t(PS341WU, READ,           "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS341WU
 
-	new setting_t(MAG | MPG | MAG321QR,               "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
+	new setting_t(MAG | MPG | MAG321QR,    "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
 
 	new setting_t(MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00210", "black_tuner", 0, 20, -100),
@@ -583,9 +583,9 @@ static std::vector<setting_t *> settings(
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241GRP MPG27CQ
 	// FIXME: MAG321CQR manual says only supported for Optix MAG322CQRV
 	new setting_t(MAG | MPG341CQR,         "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
-	new setting_t(MAG | MPG | MAG321QR,               "00240", "hdcr", {"off", "on"}),
-	new setting_t(MAG | MPG | MAG321QR,               "00250", "refresh_display", {"off", "on"}),
-	new setting_t(MAG | MPG | MAG321QR,               "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
+	new setting_t(MAG | MPG | MAG321QR,    "00240", "hdcr", {"off", "on"}),
+	new setting_t(MAG | MPG | MAG321QR,    "00250", "refresh_display", {"off", "on"}),
+	new setting_t(MAG | MPG | MAG321QR,    "00251", "refresh_position", {"left_top", "right_top", "left_bottom", "right_bottom"}),
 
 	// MPG341: Alarm settings seem to be broken.
 	//         alarm_clock_time returns an invalid response.
@@ -607,8 +607,8 @@ static std::vector<setting_t *> settings(
 		"white1", "white2", "white3", "white4", "white5", "white6"}),
 	new setting_t(PS341WU,                 "00270", "screen_assistance", {"off", "center", "edge",
 		"scale_v", "scale_h", "line_v", "line_h", "grid", "thirds", "3D_assistance"}),
-	new setting_t(MPG273CQR | MAG321QR,               "00270", "smart_crosshair_icon", {"off", "icon1", "icon2", "icon3", "icon4", "icon5", "icon6"}),
-	new setting_t(MPG273CQR | MAG321QR,               "00271", "smart_crosshair_color", {"white", "red", "auto"}),
+	new setting_t(MPG273CQR | MAG321QR,    "00270", "smart_crosshair_icon", {"off", "icon1", "icon2", "icon3", "icon4", "icon5", "icon6"}),
+	new setting_t(MPG273CQR | MAG321QR,    "00271", "smart_crosshair_color", {"white", "red", "auto"}),
 	new setting_t(UNKNOWN,                 "00271", "unknown271", 0, 100),  // returns 000, read only?
 
 	// FIXME: This is working in game mode only - adaptive sync
@@ -634,7 +634,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MAG241GRP | MPG341CQR | MPG27CQ,
 		                                   "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS341WU,                 "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
-	new setting_t(MPG273CQR | MAG321QR,               "00300", "pro_mode", {"user", "anti_blue", "movie", "office", "srgb", "eco"}),
+	new setting_t(MPG273CQR | MAG321QR,    "00300", "pro_mode", {"user", "anti_blue", "movie", "office", "srgb", "eco"}),
 	// low blue light on MPG273
 	new setting_t(ALL,                     "00310", "eye_saver", {"off", "on"}),  // returns 000
 	new setting_t(ALL,                     "00340", "image_enhancement", {"off","weak","medium","strong","strongest"}),
@@ -642,11 +642,11 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL,                     "00400", "brightness", 0, 100),  // returns 048
 	new setting_t(ALL,                     "00410", "contrast", 0, 100),  // returns 050
 	new setting_t(ALL,                     "00420", "sharpness", 0, 5),  // returns 000
-	new setting_t(MAG | MPG | MAG321QR,               "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
+	new setting_t(MAG | MPG | MAG321QR,    "00430", "color_preset", {"cool", "normal", "warm", "custom"}),
 	new setting_t(PS341WU,                 "00430", "color_preset", {"5000K", "5500K", "6500K", "7500K", "9300K", "10000K", "custom"}),
-	new setting_t(MAG | MPG | MAG321QR,               "00431", "color_red", 0, 100),
-	new setting_t(MAG | MPG | MAG321QR,               "00432", "color_green", 0, 100),
-	new setting_t(MAG | MPG | MAG321QR,               "00433", "color_blue", 0, 100),
+	new setting_t(MAG | MPG | MAG321QR,    "00431", "color_red", 0, 100),
+	new setting_t(MAG | MPG | MAG321QR,    "00432", "color_green", 0, 100),
+	new setting_t(MAG | MPG | MAG321QR,    "00433", "color_blue", 0, 100),
 	new tripple_t(ALL,                     "00434", "color_rgb"),  // returns bbb  -> value = 'b' - '0' = 98-48=50
 
 	new setting_t(PS341WU,                 "00460", "gray_level", 0, 20),
@@ -710,15 +710,15 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS341WU | MPG341CQR | MPG27CQ,
 		                                   "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(MAG | MPG | MAG321QR,               "00860", "rgb_led", {"off", "on"}),
+	new setting_t(MAG | MPG | MAG321QR,    "00860", "rgb_led", {"off", "on"}),
 
-	new setting_t(MPG273CQR | MAG321QR,               "00880", "power_button", {"off", "standby"}),
-	new setting_t(MPG273CQR | MAG321QR,               "008:0", "hdmi_cec", {"off", "on"}),
+	new setting_t(MPG273CQR | MAG321QR,    "00880", "power_button", {"off", "standby"}),
+	new setting_t(MPG273CQR | MAG321QR,    "008:0", "hdmi_cec", {"off", "on"}),
 	new setting_t(MPG273CQR,               "008<0", "ambient_brightness", {"off", "auto", "custom"}),
 	//new setting_t(MPG273CQR,                  "008<1", "test1"), // auto-brightness copy?
 	new setting_t(MPG273CQR,               "008<2", "ambient_rgb", {"off", "on"}),
 	new setting_t(MPG273CQR,               "008<3", "ambient_brightness_custom", 0, 100),
-	new setting_t(MPG273CQR | MAG321QR,               "008>0", "kvm", {"auto", "upstream", "type_c"}),
+	new setting_t(MPG273CQR | MAG321QR,    "008>0", "kvm", {"auto", "upstream", "type_c"}),
 	new setting_t(MPG273CQR,               "008=0", "sound_tune", {"off", "on"}),
 
 	new setting_t(MPG273CQR,               "00900", "navi_up",    {"off", "brightness", "game_mode", "smart_crosshair", "alarm_clock", "input", "refresh_rate" , "info", "night_vision", "kvm"}),
