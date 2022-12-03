@@ -36,7 +36,7 @@ static const auto cWAIT_DELAY = std::chrono::milliseconds(250);
 //
 // Enable writing of parameters - use for experimental brances
 //
-static constexpr const bool cWRITE_ENABLED = true;
+static constexpr const bool cWRITE_ENABLED = false; //FIXME: change to true before merge with master
 
 enum access_t
 {
@@ -118,6 +118,7 @@ static std::vector<identity_t> known_models =
 	// FIXME: see #33 - feedback on mystic required
 	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },                     // Has MPRT, KVM -> see MPG273
 	{ MAG241C,           "002", "V18", "MAG241C", LT_NONE },
+	{ MAG241C,           "002", "V49", "MAG241C", LT_NONE },                       // MAG241C - issue #38
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241CR,          "004", "V18", "MAG241CR", LT_MYSTIC },                    // MAG241CR
 	{ MAG271CR,          "005", "V18", "MAG271CR", LT_MYSTIC },                    // MAG271CR
