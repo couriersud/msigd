@@ -702,6 +702,7 @@ static std::vector<setting_t *> settings(
 	(new setting_t(PS341WU,                "00800", "osd_language", 0, 28, -100))->set_access(READ),
 	new setting_t(ALL,                     "00810", "osd_transparency", 0, 5),  // returns 000
 	new setting_t(ALL,                     "00820", "osd_timeout",0, 30),  // returns 020
+	// MPG341CQR returns '__0' on screen_info
 	new setting_t(PS341WU | MAG274GRP | MPG273CQR | MAG321QR,
 		                                   "00830", "screen_info", {"off", "on"}),
 	// Reset is considered dangerous as well
