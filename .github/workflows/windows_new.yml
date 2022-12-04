@@ -43,3 +43,8 @@ jobs:
     #  run: make check
     #- name: make distcheck
     #  run: make distcheck
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: msigd executable
+        path: msigd.exe

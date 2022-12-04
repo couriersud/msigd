@@ -113,10 +113,11 @@ static std::vector<identity_t> known_models =
 	{ UNKNOWN,           "",     "", "Unknown", LT_NONE },
 	{ QUERYONLY,         "",     "", "Unknown Series", LT_NONE },
 	// issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
-	{ MAG321CURV,        "00;", "V18", "MAG321CURV", LT_MYSTIC },                // MAG321CURV
-	{ MAG321CQR,         "00:", "V18", "MAG321CQR", LT_MYSTIC }, 	               // doesn't have USBC
+	{ MAG321CURV,        "00;", "V18", "MAG321CURV", LT_MYSTIC },                  // MAG321CURV
+	{ MAG321CQR,         "00:", "V18", "MAG321CQR", LT_MYSTIC },                   // doesn't have USBC
 	// FIXME: see #33 - feedback on mystic required
 	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },                     // Has MPRT, KVM -> see MPG273
+	// FIXME: MAG241C - no led switch
 	{ MAG241C,           "002", "V18", "MAG241C", LT_NONE },
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241CR,          "004", "V18", "MAG241CR", LT_MYSTIC },                    // MAG241CR
