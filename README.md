@@ -71,46 +71,46 @@ information by opening an issue.
 
 ### 2.1. MSI Monitors
 
-| ID            | Firmware | Supported     | Version | Special | Panel |
-|:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |
-| MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              |
-| MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
-| MAG241C       | ?        | Yes           | "V18" | "002"| ?              |
-| MAG241C       | ?        | WIP           | "V49" | "002"| ?              |
-| MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |
-| MAG241CV      | ?        | Yes           | "V18" | "002"| ?              |
-| MAG241CR      | ?        | Yes           | "V18" | "004"| ?              |
-| MAG271CR      | ?        | Yes           | "V18" | "005"| ?              |
-| MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 |
-| MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              |
-| MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |
-| MAG321CURV    | ?        | WIP           | "V43" | "00;"| SAM_LSM315FP01 |
-| MPG341CQR     | ?        | WIP           | "V09" | "00>"| ?              |
-| PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              |
-| MPG273CQR     | FW.022   | Yes           | "V51" | "00["| ?              |
-| MAG251RX      | ?        | WIP           | "V18" | "00B"| ?              |
-| MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              |
-| MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |
-| MAG272        | ?        | Yes           | "V18" | "00L"| ?              |
-| MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |
-| MAG274QRF-QD  | FW.011   | Yes           | "V43" | "00e"| AUO_M270DAN08_2|
-| MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2|
-| MAG270CR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG271C       | ?        | ?             | "V18" | "002"| ?              |
-| MAG271CP      | ?        | ?             | "V18" | "002"| ?              |
-| MAG271CQP     | ?        | ?             | "V19" | "006"| ?              |
-| MAG271CV      | ?        | ?             | "V18" | "002"| ?              |
-| MAG271QR      | ?        | ?             | ?     |   ?  | ?              |
-| MAG271R       | ?        | ?             | ?     |   ?  | ?              |
-| MAG271V       | ?        | ?             | ?     |   ?  | ?              |
-| MAG272C       | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272CR      | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272CRX     | ?        | ?             | "V18" | "00O"| ?              |
-| MAG272R       | ?        | ?             | "V18" | "00O"| ?              |
-| MAG322CQR     | ?        | ?             | ?     |   ?  | ?              |
-| MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              |
-| MAG322CR      | ?        | ?             | ?     |   ?  | ?              |
-| MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              |
+| ID            | Firmware | Supported     | Version | Special | Panel | Manual |
+|:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |-------|
+| MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              | |
+| MAG241C       | ?        | Yes           | "V18" | "002"| ?              | |
+| MAG241C       | ?        | Yes           | "V18" | "002"| ?              | |
+| MAG241C       | ?        | WIP           | "V49" | "002"| ?              | |
+| MAG241CP      | ?        | Yes           | "V18" | "002"| ?              | |
+| MAG241CV      | ?        | Yes           | "V18" | "002"| ?              | |
+| MAG241CR      | ?        | Yes           | "V18" | "004"| ?              | |
+| MAG271CR      | ?        | Yes           | "V18" | "005"| ?              | |
+| MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 | |
+| MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              | |
+| MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 | |
+| MAG321CURV    | ?        | WIP           | "V43" | "00;"| SAM_LSM315FP01 | |
+| MPG341CQR     | ?        | WIP           | "V09" | "00>"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG341CQRv1.0_English.pdf)|
+| PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              | |
+| MPG273CQR     | FW.022   | Yes           | "V51" | "00["| ?              | |
+| MAG251RX      | ?        | WIP           | "V18" | "00B"| ?              | |
+| MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              | |
+| MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              | |
+| MAG272        | ?        | Yes           | "V18" | "00L"| ?              | |
+| MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              | |
+| MAG274QRF-QD  | FW.011   | Yes           | "V43" | "00e"| AUO_M270DAN08_2| |
+| MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2| |
+| MAG270CR      | ?        | ?             | ?     |   ?  | ?              | |
+| MAG271C       | ?        | ?             | "V18" | "002"| ?              | |
+| MAG271CP      | ?        | ?             | "V18" | "002"| ?              | |
+| MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | |
+| MAG271CV      | ?        | ?             | "V18" | "002"| ?              | |
+| MAG271QR      | ?        | ?             | ?     |   ?  | ?              | |
+| MAG271R       | ?        | ?             | ?     |   ?  | ?              | |
+| MAG271V       | ?        | ?             | ?     |   ?  | ?              | |
+| MAG272C       | ?        | ?             | "V18" | "00O"| ?              | |
+| MAG272CR      | ?        | ?             | "V18" | "00O"| ?              | |
+| MAG272CRX     | ?        | ?             | "V18" | "00O"| ?              | |
+| MAG272R       | ?        | ?             | "V18" | "00O"| ?              | |
+| MAG322CQR     | ?        | ?             | ?     |   ?  | ?              | |
+| MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              | |
+| MAG322CR      | ?        | ?             | ?     |   ?  | ?              | |
+| MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              | |
 
 1) Mystic support is not working. Has 12 lights - Steel series interface? 
 
