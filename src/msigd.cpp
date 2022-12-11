@@ -26,7 +26,7 @@
 #include <string.h>
 
 static const char *appname = "msigd";
-static const char *appversion = "0.13";
+static const char *appversion = "0.14";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -64,11 +64,12 @@ enum series_t
 	MPG273CQR      = 0x00004000,
 	MPG27CQ        = 0x00008000,
 	MAG321QR       = 0x00010000,
+	MAG274R        = 0x00020000,
 	QUERYONLY      = 0x00100000,
 	UNKNOWN        = 0x01000000,
 
 	MAG241GRP      = MAG241C | MAG241CR | MAG271CR,
-	MAG274GRP      = MAG274QRFQD | MAG274QRFQDNEW,
+	MAG274GRP      = MAG274QRFQD | MAG274QRFQDNEW | MAG274R,
 	MAG272GRP      = MAG272 | MAG272CQR | MAG272QP | MAG272QR,
 
 	MAG     = MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP,
@@ -130,6 +131,7 @@ static std::vector<identity_t> known_models =
 	{ MPG27CQ,           "001", "V18", "MPG27CQ", LT_STEEL },                      // MPG27CQ
 	{ MPG273CQR,         "00[", "V51", "MPG273CQR", LT_MYSTIC_OPTIX },             // MPG273CQR 9 Leds in group 1 (logo) and 15 leds in group 2 (arrow)
 	{ MPG341CQR,         "00>", "V09", "MPG341CQR", LT_STEEL },                    // MPG341CQR
+	{ MAG274R,           "00Z", "V41", "MAG274R", LT_MYSTIC },                     // MAG274R
 	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC },         // MAG274QRF-QD FW.011
 	{ MAG274QRFQDNEW,    "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC },  // MAG274QRF-QD FW.015/FW.016
 	{ PS341WU,           "00?", "V06", "PS341WU", LT_NONE }
@@ -581,7 +583,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00210", "black_tuner", 0, 20, -100),
 	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
-	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241GRP MPG27CQ
+	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241GRP MPG27CQ MAG274R
 	// FIXME: MAG321CQR manual says only supported for Optix MAG322CQRV
 	new setting_t(MAG | MPG341CQR,         "00230", "enable_dynamic", {"on", "off"}),  // returns 000 - on/off only ==> on disables ZL and HDCR in OSD
 	new setting_t(MAG | MPG | MAG321QR,    "00240", "hdcr", {"off", "on"}),
@@ -622,7 +624,8 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MPG341CQR | MPG27CQ,
 		                                   "00290", "zero_latency", {"off", "on"}),  // returns 001
 
-	new setting_t(MAG272GRP | MPG273CQR | MAG321QR,   "002:0", "screen_size", {"auto", "4:3", "16:9"}),
+	new setting_t(MAG272GRP | MPG273CQR | MAG321QR | MAG274R,
+			                               "002:0", "screen_size", {"auto", "4:3", "16:9"}),
 	// FIXME: also on MPG27CQ
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ,
 		                                   "002:0", "screen_size", {"19", "24", "4:3", "16:9"}),
@@ -632,7 +635,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG272GRP,               "00300", "pro_mode", {"user", "reader", "cinema", "designer", "HDR"}),
 	new setting_t(MAG274QRFQD,             "00300", "pro_mode", {"user", "reader", "cinema", "office"}),
 	new setting_t(MAG274QRFQDNEW,          "00300", "pro_mode", {"user", "reader", "cinema", "office", "srgb", "adobe_rgb", "dci_p3"}),
-	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MAG241GRP | MPG341CQR | MPG27CQ,
+	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MAG241GRP | MPG341CQR | MPG27CQ | MAG274R,
 		                                   "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS341WU,                 "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
 	new setting_t(MPG273CQR | MAG321QR,    "00300", "pro_mode", {"user", "anti_blue", "movie", "office", "srgb", "eco"}),
@@ -664,7 +667,8 @@ static std::vector<setting_t *> settings(
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG321CQR| MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp"}),
-	new setting_t(MPG273CQR | MAG321QR,               "00510", "auto_scan", {"off", "on"}),
+	new setting_t(MPG273CQR | MAG321QR | MAG274R,
+		                                   "00510", "auto_scan", {"off", "on"}),
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ,
 		                                   "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
 	new setting_t(PS341WU | MPG341CQR,     "00600", "pip", {"off", "pip", "pbp_x2", "pbp_x3", "pbp_x4"}),  // returns 000 0:off, 1:pip, 2:pbp
@@ -714,7 +718,8 @@ static std::vector<setting_t *> settings(
 		                                   "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(MAG | MPG | MAG321QR,    "00860", "rgb_led", {"off", "on"}),
 
-	new setting_t(MPG273CQR | MAG321QR,    "00880", "power_button", {"off", "standby"}),
+	new setting_t(MPG273CQR | MAG321QR | MAG274R,
+			                               "00880", "power_button", {"off", "standby"}),
 	new setting_t(MPG273CQR | MAG321QR,    "008:0", "hdmi_cec", {"off", "on"}),
 	new setting_t(MPG273CQR,               "008<0", "ambient_brightness", {"off", "auto", "custom"}),
 	//new setting_t(MPG273CQR,                  "008<1", "test1"), // auto-brightness copy?

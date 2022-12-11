@@ -7,7 +7,7 @@ The `msigd` command line tool allows you to change most settings for MSI monitor
 
 **Using `msigd` may make your monitor permantently unusable.**
 
-**Please make sure you use at least msigd version 0.13**
+**Please make sure you use at least msigd version 0.14**
 
 With version 0.12 the syntax of the "--mystic" option has changed. For the 
 MPG273CQR two led groups (0 and 1) are supported. For all other mystic light
@@ -93,6 +93,7 @@ information by opening an issue.
 | MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              | |
 | MAG272        | ?        | Yes           | "V18" | "00L"| ?              | |
 | MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              | |
+| MAG274R       | ?        | Yes           | "V41" | "00Z"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274_274Rv1.0_English.pdf)|
 | MAG274QRF-QD  | FW.011   | Yes           | "V43" | "00e"| AUO_M270DAN08_2| |
 | MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2| |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              | |
