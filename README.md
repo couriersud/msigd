@@ -74,13 +74,12 @@ information by opening an issue.
 | ID            | Firmware | Supported     | Version | Special | Panel | Manual |
 |:------------- |:-------- |:-------------:|:----- |:---- |:-------------- |-------|
 | MPG27CQ       | ?        | Yes           | "V18" | "001"| ?              | |
-| MAG241C       | ?        | Yes           | "V18" | "002"| ?              | |
-| MAG241C       | ?        | Yes           | "V18" | "002"| ?              | |
-| MAG241C       | ?        | WIP           | "V49" | "002"| ?              | |
-| MAG241CP      | ?        | Yes           | "V18" | "002"| ?              | |
-| MAG241CV      | ?        | Yes           | "V18" | "002"| ?              | |
-| MAG241CR      | ?        | Yes           | "V18" | "004"| ?              | |
-| MAG271CR      | ?        | Yes           | "V18" | "005"| ?              | |
+| MAG241C       | ?        | Yes           | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
+| MAG241C       | ?        | Yes           | "V49" | "002"| ?              | |
+| MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
+| MAG241CV      | ?        | Yes           | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
+| MAG241CR      | ?        | Yes           | "V18" | "004"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
+| MAG271CR      | ?        | Yes           | "V18" | "005"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 | |
 | MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              | |
 | MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 | |
@@ -89,18 +88,18 @@ information by opening an issue.
 | PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              | |
 | MPG273CQR     | FW.022   | Yes           | "V51" | "00["| ?              | |
 | MAG251RX      | ?        | WIP           | "V18" | "00B"| ?              | |
-| MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              | |
-| MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              | |
-| MAG272        | ?        | Yes           | "V18" | "00L"| ?              | |
-| MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              | |
+| MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
+| MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
+| MAG272        | ?        | Yes           | "V18" | "00L"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
+| MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG274R       | ?        | Yes           | "V41" | "00Z"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274_274Rv1.0_English.pdf)|
 | MAG274QRF-QD  | FW.011   | Yes           | "V43" | "00e"| AUO_M270DAN08_2| |
 | MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2| |
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              | |
-| MAG271C       | ?        | ?             | "V18" | "002"| ?              | |
-| MAG271CP      | ?        | ?             | "V18" | "002"| ?              | |
+| MAG271C       | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
+| MAG271CP      | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271CQP     | ?        | ?             | "V19" | "006"| ?              | |
-| MAG271CV      | ?        | ?             | "V18" | "002"| ?              | |
+| MAG271CV      | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271QR      | ?        | ?             | ?     |   ?  | ?              | |
 | MAG271R       | ?        | ?             | ?     |   ?  | ?              | |
 | MAG271V       | ?        | ?             | ?     |   ?  | ?              | |

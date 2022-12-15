@@ -26,7 +26,7 @@
 #include <string.h>
 
 static const char *appname = "msigd";
-static const char *appversion = "0.14";
+static const char *appversion = "0.15";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -75,6 +75,10 @@ enum series_t
 	MAG     = MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP,
 	MPG     = MPG273CQR | MPG341CQR | MPG27CQ,
 
+	HAS_LED_SETTING = MAG321CURV | MAG321QR | MAG321CQR | MAG272CQR | MAG272QR | MAG271CQR
+		| MAG241CR | MAG271CR | MAG274GRP | MAG274QRFQD | MAG274QRFQDNEW | MAG274R
+		| MPG273CQR | MPG341CQR,
+
 	ALL     = MAG | PS341WU | MPG | QUERYONLY | MAG321QR | MPG27CQ,
 };
 
@@ -118,15 +122,15 @@ static std::vector<identity_t> known_models =
 	{ MAG321CQR,         "00:", "V18", "MAG321CQR", LT_MYSTIC },                   // doesn't have USBC
 	// FIXME: see #33 - feedback on mystic required
 	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },                     // Has MPRT, KVM -> see MPG273
-	// FIXME: MAG241C - no led switch
 	{ MAG241C,           "002", "V18", "MAG241C", LT_NONE },
+	{ MAG241C,           "002", "V49", "MAG241C", LT_NONE },                       // MAG241C - issue #38
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241CR,          "004", "V18", "MAG241CR", LT_MYSTIC },                    // MAG241CR
 	{ MAG271CR,          "005", "V18", "MAG271CR", LT_MYSTIC },                    // MAG271CR
 	{ MAG271CQR,         "006", "V19", "MAG271CQR", LT_MYSTIC },                   // MAG271CQR, MAG271CQP?
 	{ MAG272CQR,         "00E", "V18", "MAG272CQR", LT_MYSTIC },                   // MAG272CQR
 	{ MAG272QR,          "00G", "V18", "MAG272QR", LT_NONE },                      // MAG272QR - Mystic with 12 leds?
-	{ MAG272,            "00L", "V18", "MAG272", LT_MYSTIC },                      // MAG272
+	{ MAG272,            "00L", "V18", "MAG272", LT_NONE },                      // MAG272
 	{ MAG272QP,          "00O", "V18", "MAG272QP", LT_MYSTIC },                    // MAG272QP
 	{ MPG27CQ,           "001", "V18", "MPG27CQ", LT_STEEL },                      // MPG27CQ
 	{ MPG273CQR,         "00[", "V51", "MPG273CQR", LT_MYSTIC_OPTIX },             // MPG273CQR 9 Leds in group 1 (logo) and 15 leds in group 2 (arrow)
@@ -716,7 +720,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG,                     "00850", "sound_enable", {"off", "on"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(PS341WU | MPG341CQR | MPG27CQ,
 		                                   "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
-	new setting_t(MAG | MPG | MAG321QR,    "00860", "rgb_led", {"off", "on"}),
+	new setting_t(HAS_LED_SETTING,         "00860", "rgb_led", {"off", "on"}),
 
 	new setting_t(MPG273CQR | MAG321QR | MAG274R,
 			                               "00880", "power_button", {"off", "standby"}),
@@ -1751,7 +1755,7 @@ int main (int argc, char **argv)
 			if (!usb.read_led(0x0372, data, retsize))
 			{
 				pprintf("Mystic record size: %d\n", retsize);
-				for (std::size_t i = 0; i < retsize; i++)
+				for (int i = 0; i < retsize; i++)
 				{
 					if (i % 8 == 0)
 						pprintf("\n%04x: ", i);
@@ -1792,10 +1796,15 @@ int main (int argc, char **argv)
 
 		// set values
 		if (cWRITE_ENABLED)
+		{
 			for (auto &s : set_encoded)
 				if (usb.set_setting(*s.first, s.second))
 					return error(E_SETTING, "Error setting --%s", s.first->m_opt);
-
+		}
+		else if (set_encoded.size() > 0)
+		{
+			return error(E_SETTING, "test branch - changing settings is disabled");
+		}
 		// now query
 		if (query)
 		{
