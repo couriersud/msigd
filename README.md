@@ -279,7 +279,8 @@ pursue this further here.
 
 ## 5. Usage
 
-[`msigd --help`](https://htmlpreview.github.io/?https://raw.githubusercontent.com/couriersud/msigd/master/html/msigd.html)
+[`msigd --help`](md/msigd_help.md)
+[`man msigd`](https://htmlpreview.github.io/?https://raw.githubusercontent.com/couriersud/msigd/master/html/msigd.html)
 
 ```sh
 Usage: msigd [OPTION]... 
