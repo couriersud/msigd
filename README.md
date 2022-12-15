@@ -450,5 +450,5 @@ virtual guests booting up.
 
 [Maxime](https://github.com/intello21) - MAG241C support
 
-
+[Sahil Gupte](https://github.com/Ovenoboyo) - MAG241C V49 support
 
