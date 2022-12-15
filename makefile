@@ -88,6 +88,9 @@ msigd: $(OBJ)/msigd.o $(OBJS)
 doc:
 	help2man --include=msigd.help2man --no-info ./msigd > man/msigd.1
 	groff -mandoc -Thtml man/msigd.1 > html/msigd.html
+	echo -n '```sh\n./msigd --help\n```\n\n```\n' > md/msigd_help.md
+	./msigd --help >> md/msigd_help.md
+	echo  '```' >> md/msigd_help.md
 
 #-------------------------------------------------
 # depends
