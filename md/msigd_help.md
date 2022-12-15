@@ -1,4 +1,8 @@
+```sh
+./msigd --help
+```
 
+```
 Usage: msigd [OPTION]... 
 Query or set monitor settings by usb directly on the device.
 For supported devices please refer to the documentation.
@@ -604,3 +608,4 @@ Exit status:
 
 Report bugs on <https://github.com/couriersud/msigd/issues>
 msigd home page: <https://github.com/couriersud/msigd>
+```
