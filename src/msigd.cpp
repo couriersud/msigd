@@ -26,7 +26,7 @@
 #include <string.h>
 
 static const char *appname = "msigd";
-static const char *appversion = "0.15";
+static const char *appversion = "0.16";
 
 static const unsigned cMAX_ALARM = 99 * 60 + 59;
 
@@ -130,12 +130,13 @@ static std::vector<identity_t> known_models =
 	{ MAG271CQR,         "006", "V19", "MAG271CQR", LT_MYSTIC },                   // MAG271CQR, MAG271CQP?
 	{ MAG272CQR,         "00E", "V18", "MAG272CQR", LT_MYSTIC },                   // MAG272CQR
 	{ MAG272QR,          "00G", "V18", "MAG272QR", LT_NONE },                      // MAG272QR - Mystic with 12 leds?
-	{ MAG272,            "00L", "V18", "MAG272", LT_NONE },                      // MAG272
+	{ MAG272,            "00L", "V18", "MAG272", LT_NONE },                        // MAG272
 	{ MAG272QP,          "00O", "V18", "MAG272QP", LT_MYSTIC },                    // MAG272QP
 	{ MPG27CQ,           "001", "V18", "MPG27CQ", LT_STEEL },                      // MPG27CQ
 	{ MPG273CQR,         "00[", "V51", "MPG273CQR", LT_MYSTIC_OPTIX },             // MPG273CQR 9 Leds in group 1 (logo) and 15 leds in group 2 (arrow)
 	{ MPG341CQR,         "00>", "V09", "MPG341CQR", LT_STEEL },                    // MPG341CQR
-	{ MAG274R,           "00Z", "V41", "MAG274R", LT_MYSTIC },                     // MAG274R
+	{ MAG274R,           "00Z", "V41", "MAG274R", LT_MYSTIC_OPTIX },               // MAG274R
+	// FIXME: Following may be LT_MYSTIC_OPTIX
 	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC },         // MAG274QRF-QD FW.011
 	{ MAG274QRFQDNEW,    "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC },  // MAG274QRF-QD FW.015/FW.016
 	{ PS341WU,           "00?", "V06", "PS341WU", LT_NONE }
@@ -671,7 +672,7 @@ static std::vector<setting_t *> settings(
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp", "usbc"}),  // returns 002  -> 0=hdmi1, 1=hdmi2, 2=dp, 3=usbc
 	new setting_t(MAG321CQR| MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00500", "input",  {"hdmi1", "hdmi2", "dp"}),
-	new setting_t(MPG273CQR | MAG321QR | MAG274R,
+	new setting_t(MPG273CQR | MAG321QR | MAG274GRP,
 		                                   "00510", "auto_scan", {"off", "on"}),
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ,
 		                                   "00600", "pip", {"off", "pip", "pbp"}),  // returns 000 0:off, 1:pip, 2:pbp
@@ -722,9 +723,10 @@ static std::vector<setting_t *> settings(
 		                                   "00850", "audio_source", {"analog", "digital"}),  // returns 001 - digital/anlog as on some screenshots?
 	new setting_t(HAS_LED_SETTING,         "00860", "rgb_led", {"off", "on"}),
 
-	new setting_t(MPG273CQR | MAG321QR | MAG274R,
+	new setting_t(MPG273CQR | MAG321QR | MAG274GRP,
 			                               "00880", "power_button", {"off", "standby"}),
-	new setting_t(MPG273CQR | MAG321QR,    "008:0", "hdmi_cec", {"off", "on"}),
+	new setting_t(MPG273CQR | MAG321QR | MAG274QRFQD | MAG274QRFQDNEW,
+		                                   "008:0", "hdmi_cec", {"off", "on"}),
 	new setting_t(MPG273CQR,               "008<0", "ambient_brightness", {"off", "auto", "custom"}),
 	//new setting_t(MPG273CQR,                  "008<1", "test1"), // auto-brightness copy?
 	new setting_t(MPG273CQR,               "008<2", "ambient_rgb", {"off", "on"}),
