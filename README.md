@@ -452,3 +452,4 @@ virtual guests booting up.
 
 [Sahil Gupte](https://github.com/Ovenoboyo) - MAG241C V49 support
 
+[Pontus Jensen Karlsson](https://github.com/wolfhechel) - MAG274R support
