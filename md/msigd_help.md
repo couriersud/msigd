@@ -404,6 +404,23 @@ MAG274R:
       --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
       --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
 
+MAG251RX:
+    These options apply to the MAG251RX:
+
+      --alarm_position       RW values: left_top right_top left_bottom right_bottom custom 
+      --screen_assistance     R values: off icon1 icon2 icon3 icon4 icon5 icon6 
+      --screen_size          RW values: auto 4:3 16:9 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema designer HDR 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --screen_info          RW values: off on 
+      --rgb_led              RW values: off on 
+      --power_button         RW values: off standby 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+
 MAG274QRF-QD FW.011:
     These options apply to the MAG274QRF-QD FW.011:
 

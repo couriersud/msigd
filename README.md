@@ -7,7 +7,7 @@ The `msigd` command line tool allows you to change most settings for MSI monitor
 
 **Using `msigd` may make your monitor permantently unusable.**
 
-**Please make sure you use at least msigd version 0.16**
+**Please make sure you use at least msigd version 0.17**
 
 With version 0.12 the syntax of the "--mystic" option has changed. For the 
 MPG273CQR two led groups (0 and 1) are supported. For all other mystic light
@@ -87,7 +87,7 @@ information by opening an issue.
 | MPG341CQR     | ?        | WIP           | "V09" | "00>"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG341CQRv1.0_English.pdf)|
 | PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              | |
 | MPG273CQR     | FW.022   | Yes           | "V51" | "00["| ?              | |
-| MAG251RX      | ?        | WIP           | "V18" | "00B"| ?              | |
+| MAG251RX      | ?        | WIP           | "V18" | "00B"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG251RXv1.0_English.pdf)|
 | MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG272        | ?        | Yes           | "V18" | "00L"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
