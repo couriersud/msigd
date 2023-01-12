@@ -139,10 +139,9 @@ static std::vector<identity_t> known_models =
 	{ MAG274R,           "00Z", "V41", "MAG274R", LT_MYSTIC_OPTIX },               // MAG274R
 	// FIXME: eco-friendly setting missing
 	{ MAG251RX,          "00B", "V18", "MAG251RX", LT_MYSTIC },                    // MAG251RX
-	 // FIXME: Following may be LT_MYSTIC_OPTIX
-	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC },         // MAG274QRF-QD FW.011
-	{ MAG274QRFQD16,     "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC },  // MAG274QRF-QD FW.015/FW.016
-	{ MAG274QRFQD20,     "00e", "V56", "MAG274QRF-QD FW.020", LT_MYSTIC },		   // MAG274QRF-QD FW.020
+	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC_OPTIX },        // MAG274QRF-QD FW.011
+	{ MAG274QRFQD16,     "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC_OPTIX }, // MAG274QRF-QD FW.015/FW.016
+	{ MAG274QRFQD20,     "00e", "V56", "MAG274QRF-QD FW.020", LT_MYSTIC_OPTIX },		// MAG274QRF-QD FW.020
 	{ PS341WU,           "00?", "V06", "PS341WU", LT_NONE }
 };
 

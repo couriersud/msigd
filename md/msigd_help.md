@@ -88,7 +88,6 @@ All monitors:
 MAG series monitors:
     These options apply to all MAG monitors:
 
-      --game_mode            RW values: user fps racing rts rpg 
       --enable_dynamic       RW values: on off 
       --hdcr                 RW values: off on 
       --refresh_display      RW values: off on 
@@ -442,6 +441,24 @@ MAG274QRF-QD FW.015/FW.016:
     These options apply to the MAG274QRF-QD FW.015/FW.016:
 
       --mode                 RW values: user fps racing rts rpg mode5 mode6 mode7 mode8 mode9 user reader cinema office srgb adobe_rgb dci_p3 
+      --night_vision         RW values: off normal strong strongest ai 
+      --pro_mode             RW values: user reader cinema office srgb adobe_rgb dci_p3 
+      --input                RW values: hdmi1 hdmi2 dp usbc 
+      --auto_scan            RW values: off on 
+      --screen_info          RW values: off on 
+      --rgb_led              RW values: off on 
+      --power_button         RW values: off standby 
+      --hdmi_cec             RW values: off on 
+      --navi_up              RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+      --navi_down            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+      --navi_left            RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+      --navi_right           RW values: off brightness game_mode screen_assistance alarm_clock input refresh_rate info 
+
+MAG274QRF-QD FW.020:
+    These options apply to the MAG274QRF-QD FW.020:
+
+      --mode                 RW values: user fps racing rts rpg premium_color mode6 mode7 mode8 mode9 user reader cinema office srgb adobe_rgb dci_p3 
+      --game_mode            RW values: user fps racing rts rpg premium_color 
       --night_vision         RW values: off normal strong strongest ai 
       --pro_mode             RW values: user reader cinema office srgb adobe_rgb dci_p3 
       --input                RW values: hdmi1 hdmi2 dp usbc 
