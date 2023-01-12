@@ -58,27 +58,27 @@ enum series_t
 	MAG272QP       = 0x00000100,
 	MAG272QR       = 0x00000200,
 	MAG274QRFQD    = 0x00000400,
-	MAG274QRFQDNEW = 0x00000800,
-	PS341WU        = 0x00001000,
-	MPG341CQR      = 0x00002000,
-	MPG273CQR      = 0x00004000,
-	MPG27CQ        = 0x00008000,
-	MAG321QR       = 0x00010000,
-	MAG274R        = 0x00020000,
-	MAG251RX       = 0x00040000,
+	MAG274QRFQD16  = 0x00000800,
+	MAG274QRFQD20  = 0x00001000,
+	PS341WU        = 0x00002000,
+	MPG341CQR      = 0x00004000,
+	MPG273CQR      = 0x00008000,
+	MPG27CQ        = 0x00010000,
+	MAG321QR       = 0x00020000,
+	MAG274R        = 0x00040000,
+	MAG251RX       = 0x00080000,
 	QUERYONLY      = 0x00100000,
 	UNKNOWN        = 0x01000000,
 
 	MAG241GRP      = MAG241C | MAG241CR | MAG271CR,
-	MAG274GRP      = MAG274QRFQD | MAG274QRFQDNEW | MAG274R,
+	MAG274GRP      = MAG274QRFQD | MAG274QRFQD16 | MAG274QRFQD20 | MAG274R,
 	MAG272GRP      = MAG272 | MAG272CQR | MAG272QP | MAG272QR,
 
 	MAG     = MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP,
 	MPG     = MPG273CQR | MPG341CQR | MPG27CQ,
 
 	HAS_LED_SETTING = MAG321CURV | MAG321QR | MAG321CQR | MAG272CQR | MAG272QR | MAG271CQR
-		| MAG241CR | MAG271CR | MAG274GRP | MAG274QRFQD | MAG274QRFQDNEW | MAG274R
-		| MPG273CQR | MPG341CQR | MAG251RX,
+		| MAG241CR | MAG271CR | MAG274GRP | MAG274GRP | MPG273CQR | MPG341CQR | MAG251RX,
 
 	ALL     = MAG | PS341WU | MPG | QUERYONLY | MAG321QR | MPG27CQ | MAG251RX,
 };
@@ -141,7 +141,8 @@ static std::vector<identity_t> known_models =
 	{ MAG251RX,          "00B", "V18", "MAG251RX", LT_MYSTIC },                    // MAG251RX
 	 // FIXME: Following may be LT_MYSTIC_OPTIX
 	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC },         // MAG274QRF-QD FW.011
-	{ MAG274QRFQDNEW,    "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC },  // MAG274QRF-QD FW.015/FW.016
+	{ MAG274QRFQD16,     "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC },  // MAG274QRF-QD FW.015/FW.016
+	{ MAG274QRFQD20,     "00e", "V56", "MAG274QRF-QD FW.020", LT_MYSTIC },		   // MAG274QRF-QD FW.020
 	{ PS341WU,           "00?", "V06", "PS341WU", LT_NONE }
 };
 
@@ -575,10 +576,14 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL, READ,               "00110", "macro_key", {"off", "pressed"}),  // returns 000 called frequently by OSD app, readonly
 	new setting_t(MAG272GRP,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer", "HDR"}),
 	new setting_t(MAG274QRFQD,             "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "office"}), //Supported modes in FW.011
-	new setting_t(MAG274QRFQDNEW,          "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema",
+	new setting_t(MAG274QRFQD16,
+										   "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema",
 	    "office", "srgb", "adobe_rgb", "dci_p3"}), //New moded added to FW.015
+	new setting_t(MAG274QRFQD20,
+										   "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "premium_color", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema",
+	    "office", "srgb", "adobe_rgb", "dci_p3"}), //New mode "premium color" added to FW.020
 	new setting_t(MAG321CURV | MAG321CQR,  "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer"}),
-	new setting_t(MPG273CQR | MAG321QR,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "anti_blue", "movie", "office", "srgb", "eco"}),
+	new setting_t(MPG273CQR | MAG321QR,    "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "anti_blue", "movie", "office", "srgb", "eco"}),
 
 	new setting_t(PS341WU,                 "00120", "mode", {"-m0","-m1","-m2","-m3","-m4""-m5","-m6","-m7","-m8","-m9",
 		"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
@@ -586,8 +591,9 @@ static std::vector<setting_t *> settings(
 	new setting_t(ALL,                     "00170", "frequency"),   // returns 060
 	new setting_t(PS341WU, READ,           "00180", "quick_charge", {"off", "on"}),  // returns 56006 on MAG, 000 on PS341WU
 
-	new setting_t(MAG | MPG | MAG321QR | MAG251RX,
-		                                   "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
+	new setting_t(MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274QRFQD | MAG274QRFQD16 | MAG274R | MPG | MAG321QR | MAG251RX,
+                                           "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
+	new setting_t(MAG274QRFQD20,           "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg", "premium_color"}),
 
 	new setting_t(MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00210", "black_tuner", 0, 20, -100),
@@ -652,7 +658,8 @@ static std::vector<setting_t *> settings(
 										   "002;0", "night_vision", {"off", "normal", "strong", "strongest", "ai"}),
 	new setting_t(MAG272GRP | MAG251RX,    "00300", "pro_mode", {"user", "reader", "cinema", "designer", "HDR"}),
 	new setting_t(MAG274QRFQD,             "00300", "pro_mode", {"user", "reader", "cinema", "office"}),
-	new setting_t(MAG274QRFQDNEW,          "00300", "pro_mode", {"user", "reader", "cinema", "office", "srgb", "adobe_rgb", "dci_p3"}),
+	new setting_t(MAG274QRFQD16 | MAG274QRFQD20,          
+	                                       "00300", "pro_mode", {"user", "reader", "cinema", "office", "srgb", "adobe_rgb", "dci_p3"}),
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MAG241GRP | MPG341CQR | MPG27CQ | MAG274R,
 		                                   "00300", "pro_mode", {"user", "reader", "cinema", "designer"}),
 	new setting_t(PS341WU,                 "00300", "pro_mode", {"user", "adobe_rgb", "dci_p3", "srgb", "hdr", "cinema", "reader", "bw", "dicom", "eyecare", "cal1", "cal2", "cal3"}),
@@ -742,7 +749,7 @@ static std::vector<setting_t *> settings(
 
 	new setting_t(MPG273CQR | MAG321QR | MAG274GRP | MAG251RX,
 			                               "00880", "power_button", {"off", "standby"}),
-	new setting_t(MPG273CQR | MAG321QR | MAG274QRFQD | MAG274QRFQDNEW,
+	new setting_t(MPG273CQR | MAG321QR | MAG274QRFQD | MAG274QRFQD16 | MAG274QRFQD20,
 		                                   "008:0", "hdmi_cec", {"off", "on"}),
 	new setting_t(MPG273CQR,               "008<0", "ambient_brightness", {"off", "auto", "custom"}),
 	//new setting_t(MPG273CQR,                  "008<1", "test1"), // auto-brightness copy?
@@ -781,10 +788,14 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG274GRP | MAG251RX,    "00920", "navi_left",  {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "info"}),
 	new setting_t(MAG274GRP | MAG251RX,    "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "refresh_rate", "info"}),
 
-	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
-	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, 
+	                                       "00900", "navi_up", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, 
+	                                       "00910", "navi_down", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, 
+	                                       "00920", "navi_left", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
+	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG27CQ, 
+	                                       "00930", "navi_right", {"off", "brightness", "game_mode", "screen_assistance", "alarm_clock", "input", "pip", "refresh_rate"}),
 
 	new setting_t(PS341WU,                 "00900", "navi_up",   {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS341WU,                 "00910", "navi_down", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
