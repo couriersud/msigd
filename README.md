@@ -94,7 +94,8 @@ information by opening an issue.
 | MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG274R       | ?        | Yes           | "V41" | "00Z"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274_274Rv1.0_English.pdf)|
 | MAG274QRF-QD  | FW.011   | Yes           | "V43" | "00e"| AUO_M270DAN08_2| |
-| MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2|[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274QRF_MAG274QRF-QDv1.0_English.pdf)|
+| MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2| |
+| MAG274QRF-QD  | FW.020   | Yes           | "V56" | "00e"| AUO_M270DAN08_2|[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274QRF_MAG274QRF-QDv1.0_English.pdf)|
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              | |
 | MAG271C       | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271CP      | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
