@@ -113,6 +113,7 @@ information by opening an issue.
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              | |
 | MAG322CR      | ?        | ?             | ?     |   ?  | ?              | |
 | MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              | |
+| MD272QP       | ?        | WIP           | "V51" | "00\\x85" | ?              | |
 
 1) Mystic support is not working. Has 12 lights - Steel series interface? 
 
