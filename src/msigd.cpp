@@ -36,7 +36,8 @@ static const auto cWAIT_DELAY = std::chrono::milliseconds(250);
 //
 // Enable writing of parameters - use for experimental brances
 //
-static constexpr const bool cWRITE_ENABLED = true;
+//static constexpr const bool cWRITE_ENABLED = true;
+static constexpr const bool cWRITE_ENABLED = false;
 
 enum access_t
 {
