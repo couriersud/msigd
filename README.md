@@ -82,8 +82,8 @@ information by opening an issue.
 | MAG271CR      | ?        | Yes           | "V18" | "005"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 | |
 | MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              | |
-| MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 | |
-| MAG321CURV    | ?        | WIP           | "V43" | "00;"| SAM_LSM315FP01 | |
+| MAG321CURV    | FW.009   | Yes           | "V18" | "00;"| SAM_LSM315FP01 |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG321CURV_322CQRVv1.0_English.pdf)|
+| MAG321CURV    | FW.011   | Yes           | "V43" | "00;"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG321CURV_322CQRVv1.0_English.pdf)|
 | MPG341CQR     | ?        | WIP           | "V09" | "00>"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG341CQRv1.0_English.pdf)|
 | PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              | |
 | MPG273CQR     | FW.022   | Yes           | "V51" | "00["| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG_ARTYMIS_273CQR_MAG_ARTYMIS_274CPv1.0_English.pdf)|
