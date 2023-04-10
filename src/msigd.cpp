@@ -120,8 +120,8 @@ static std::vector<identity_t> known_models =
 {
 	{ UNKNOWN,           "",     "", "Unknown", LT_NONE },
 	{ QUERYONLY,         "",     "", "Unknown Series", LT_NONE },
-	// issue #32 says MAG321CURV has "<00;>" "<V43>" combination?
-	{ MAG321CURV,        "00;", "V18", "MAG321CURV", LT_MYSTIC },                  // MAG321CURV
+	{ MAG321CURV,        "00;", "V18", "MAG321CURV", LT_MYSTIC },                  // MAG321CURV - FW.009
+	{ MAG321CURV,        "00;", "V43", "MAG321CURV", LT_MYSTIC },                  // MAG321CURV - FW.011 - supports serial - issue #32
 	{ MAG321CQR,         "00:", "V18", "MAG321CQR", LT_MYSTIC },                   // doesn't have USBC
 	// FIXME: see #33 - feedback on mystic required
 	{ MAG321QR,          "00{", "V51", "MAG321QR",  LT_NONE },                     // Has MPRT, KVM -> see MPG273
