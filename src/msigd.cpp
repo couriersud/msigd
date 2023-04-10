@@ -574,7 +574,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG321CURV, WRITE,       "00100", "power", {"off", "-on"}),
 
 	new setting_t(ALL, READ,               "00110", "macro_key", {"off", "pressed"}),  // returns 000 called frequently by OSD app, readonly
-	new setting_t(MAG272GRP,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer", "HDR"}),
+	(new setting_t(MAG272GRP,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer", "HDR"}))->set_access(READ),
 	new setting_t(MAG274QRFQD,             "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "office"}), //Supported modes in FW.011
 	new setting_t(MAG274QRFQD16,
 										   "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema",
@@ -645,7 +645,7 @@ static std::vector<setting_t *> settings(
 	// FIXME: free_sync also on MPG27CQ
 	new setting_t(MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP | MPG341CQR | MPG273CQR | MPG27CQ | MAG321QR,
 		                                   "00280", "free_sync", {"off", "on"}),
-	new setting_t(MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MPG341CQR | MPG27CQ,
+	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG341CQR | MPG27CQ,
 		                                   "00290", "zero_latency", {"off", "on"}),  // returns 001
 
 	new setting_t(MAG272GRP | MPG273CQR | MAG321QR | MAG274R | MAG251RX,
