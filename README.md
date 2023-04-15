@@ -86,7 +86,7 @@ information by opening an issue.
 | MAG321CURV    | FW.011   | Yes           | "V43" | "00;"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG321CURV_322CQRVv1.0_English.pdf)|
 | MPG341CQR     | ?        | WIP           | "V09" | "00>"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG341CQRv1.0_English.pdf)|
 | PS341WU       | FW.024   | Yes           | "V06" | "00?"| ?              | |
-| MPG273CQR     | FW.022   | Yes           | "V51" | "00["| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG_ARTYMIS_273CQR_MAG_ARTYMIS_274CPv1.0_English.pdf)|
+| MPG273CQR     | FW.022   | Yes           | "V51" | "00\["| ?             |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG_ARTYMIS_273CQR_MAG_ARTYMIS_274CPv1.0_English.pdf)|
 | MAG251RX      | ?        | WIP           | "V18" | "00B"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG251RXv1.0_English.pdf)|
 | MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
@@ -113,7 +113,7 @@ information by opening an issue.
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              | |
 | MAG322CR      | ?        | ?             | ?     |   ?  | ?              | |
 | MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              | |
-| MD272QP       | ?        | WIP           | "V51" | "00\\x85" | ?              | |
+| MD272QP       | ?        | WIP           | "V51" | "00\\x85" | ?         |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Modern_MD272P_MD272PW_MD272QP_MD272QPW_MD272QP_Ultramarinev1.2_English.pdf)|
 
 1) Mystic support is not working. Has 12 lights - Steel series interface? 
 
