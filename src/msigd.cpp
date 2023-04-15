@@ -130,6 +130,7 @@ static std::vector<identity_t> known_models =
 	{ MAG271CR,          "005", "V18", "MAG271CR", LT_MYSTIC },                    // MAG271CR
 	{ MAG271CQR,         "006", "V19", "MAG271CQR", LT_MYSTIC },                   // MAG271CQR, MAG271CQP?
 	{ MAG272CQR,         "00E", "V18", "MAG272CQR", LT_MYSTIC },                   // MAG272CQR
+	{ MAG272CQR,         "00E", "V41", "MAG272CQR", LT_MYSTIC },                   // MAG272CQR
 	{ MAG272QR,          "00G", "V18", "MAG272QR", LT_NONE },                      // MAG272QR - Mystic with 12 leds?
 	{ MAG272,            "00L", "V18", "MAG272", LT_NONE },                        // MAG272
 	{ MAG272QP,          "00O", "V18", "MAG272QP", LT_MYSTIC },                    // MAG272QP
@@ -573,7 +574,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(MAG321CURV, WRITE,       "00100", "power", {"off", "-on"}),
 
 	new setting_t(ALL, READ,               "00110", "macro_key", {"off", "pressed"}),  // returns 000 called frequently by OSD app, readonly
-	new setting_t(MAG272GRP,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer", "HDR"}),
+	(new setting_t(MAG272GRP,               "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "designer", "HDR"}))->set_access(READ),
 	new setting_t(MAG274QRFQD,             "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema", "office"}), //Supported modes in FW.011
 	new setting_t(MAG274QRFQD16,
 										   "00120", "mode", {"user", "fps", "racing", "rts", "rpg", "mode5", "mode6", "mode7", "mode8", "mode9", "user", "reader", "cinema",
@@ -644,7 +645,7 @@ static std::vector<setting_t *> settings(
 	// FIXME: free_sync also on MPG27CQ
 	new setting_t(MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP | MPG341CQR | MPG273CQR | MPG27CQ | MAG321QR,
 		                                   "00280", "free_sync", {"off", "on"}),
-	new setting_t(MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MPG341CQR | MPG27CQ,
+	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG341CQR | MPG27CQ,
 		                                   "00290", "zero_latency", {"off", "on"}),  // returns 001
 
 	new setting_t(MAG272GRP | MPG273CQR | MAG321QR | MAG274R | MAG251RX,
