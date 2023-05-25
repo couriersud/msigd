@@ -36,8 +36,8 @@ static const auto cWAIT_DELAY = std::chrono::milliseconds(250);
 //
 // Enable writing of parameters - use for experimental brances
 //
-//static constexpr const bool cWRITE_ENABLED = true;
-static constexpr const bool cWRITE_ENABLED = false;
+static constexpr const bool cWRITE_ENABLED = true;
+//static constexpr const bool cWRITE_ENABLED = false;
 
 enum access_t
 {
@@ -115,6 +115,7 @@ struct identity_t
 	std::string p150;
 	std::string name;
 	led_type_t  leds;
+	bool		ro = false;
 };
 
 static std::vector<identity_t> known_models =
@@ -146,8 +147,8 @@ static std::vector<identity_t> known_models =
 	{ MAG274QRFQD16,     "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC_OPTIX }, // MAG274QRF-QD FW.015/FW.016
 	{ MAG274QRFQD20,     "00e", "V56", "MAG274QRF-QD FW.020", LT_MYSTIC_OPTIX },		// MAG274QRF-QD FW.020
 	{ PS341WU,           "00?", "V06", "PS341WU", LT_NONE },
-	{ MAG274QRX,         "00|", "V43", "MAG274QRX", LT_MYSTIC_OPTIX },             // MAG274QRF-QD FW.011
-	{ MD272QP,           "00\x85", "V51", "MD272QP", LT_NONE },             // MAG274QRF-QD FW.011
+	{ MAG274QRX,         "00|", "V43", "MAG274QRX", LT_MYSTIC_OPTIX, true },
+	{ MD272QP,           "00\x85", "V51", "MD272QP", LT_NONE },                    // MAG274QRF-QD FW.011
 };
 
 enum encoding_t
@@ -828,10 +829,11 @@ static std::vector<setting_t *> settings(
 	new setting_t(PS341WU,                 "00920", "navi_left", {"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 	new setting_t(PS341WU,                 "00930", "navi_right",{"off", "brightness", "pro_mode", "screen_assistance", "alarm_clock", "input", "pip", "zoom_in", "info"}),
 
-	new setting_t(MD272QP,                 "00900", "navi_up",   {"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
-	new setting_t(MD272QP,                 "00910", "navi_down", {"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
-	new setting_t(MD272QP,                 "00920", "navi_left", {"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
-	new setting_t(MD272QP,                 "00930", "navi_right",{"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
+	// FIXME: see issue #44
+	//new setting_t(MD272QP,                 "00900", "navi_up",   {"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
+	//new setting_t(MD272QP,                 "00910", "navi_down", {"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
+	//new setting_t(MD272QP,                 "00920", "navi_left", {"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
+	//new setting_t(MD272QP,                 "00930", "navi_right",{"off", "brightness", "pro_mode", "alarm_clock", "input", "refresh_rate", "info", "audio_volume", "kvm"}),
 });
 
 static setting_t *get_read_setting(series_t series, std::string opt)
@@ -1776,8 +1778,11 @@ int main (int argc, char **argv)
 				return error(E_SYNTAX, "Unknown option: %s", opt.first);
 		}
 
-		if (series.series == QUERYONLY && set_encoded.size() > 0)
+		if ((series.series == QUERYONLY) && set_encoded.size() > 0)
 			return error(E_SYNTAX, "Unknown monitor - write access disabled");
+
+		if (series.ro && set_encoded.size() > 0)
+			return error(E_SYNTAX, "Tests missing - write access disabled");
 
 		// Check filters
 		if (query)

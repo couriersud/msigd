@@ -96,7 +96,7 @@ information by opening an issue.
 | MAG274QRF-QD  | FW.011   | Yes           | "V43" | "00e"| AUO_M270DAN08_2| |
 | MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2| |
 | MAG274QRF-QD  | FW.020   | Yes           | "V56" | "00e"| AUO_M270DAN08_2|[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274QRF_MAG274QRF-QDv1.0_English.pdf)|
-| MAG274QRX     | ?        | ?             | "V53" | "00\|"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274QRXv1.0_English.pdf)|
+| MAG274QRX     | ?        | Partial 2)    | "V53" | "00\|"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274QRXv1.0_English.pdf)|
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              | |
 | MAG271C       | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271CP      | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
@@ -113,9 +113,11 @@ information by opening an issue.
 | MAG322CQRV    | ?        | ?             | ?     |   ?  | ?              | |
 | MAG322CR      | ?        | ?             | ?     |   ?  | ?              | |
 | MPG341CQRV    | ?        | ?             | ?     |   ?  | ?              | |
-| MD272QP       | ?        | WIP           | "V51" | "00\\x85" | ?         |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Modern_MD272P_MD272PW_MD272QP_MD272QPW_MD272QP_Ultramarinev1.2_English.pdf)|
+| MD272QP       | ?        | Partial 3)    | "V51" | "00\\x85" | ?         |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Modern_MD272P_MD272PW_MD272QP_MD272QPW_MD272QP_Ultramarinev1.2_English.pdf)|
 
 1) Mystic support is not working. Has 12 lights - Steel series interface? 
+2) Currently only query possible until feedback is given on issue #43
+3) Audio Volume and Navi-Key not working
 
 ### 2.2. Service menu
 
