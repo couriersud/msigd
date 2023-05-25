@@ -89,6 +89,7 @@ information by opening an issue.
 | MPG273CQR     | FW.022   | Yes           | "V51" | "00\["| ?             |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MPG_ARTYMIS_273CQR_MAG_ARTYMIS_274CPv1.0_English.pdf)|
 | MAG251RX      | ?        | WIP           | "V18" | "00B"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG251RXv1.0_English.pdf)|
 | MAG272CQR     | ?        | Yes           | "V18" | "00E"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
+| MAG272CQR     | ?        | Yes           | "V41" | "00E"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG272QR      | ?        | Partial 1)    | "V18" | "00G"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG272        | ?        | Yes           | "V18" | "00L"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
 | MAG272QP      | ?        | Yes           | "V18" | "00O"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG272C_CR_CQP_CQR_CRX_272_R_QP_QRv1.0_English.pdf)|
