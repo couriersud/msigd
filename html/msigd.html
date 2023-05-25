@@ -1,5 +1,5 @@
-<!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Thu Jan 12 16:21:30 2023 -->
+<!-- Creator     : groff version 1.22.4 -->
+<!-- CreationDate: Thu May 25 17:35:00 2023 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -37,8 +37,8 @@
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">msigd &minus;
-manual page for msigd 0.17</p>
+<p style="margin-left:11%; margin-top: 1em">msigd - manual
+page for msigd 0.17</p>
 
 <h2>SYNOPSIS
 <a name="SYNOPSIS"></a>
@@ -63,8 +63,7 @@ option more than once with identical or different values.
 After processing, mystic led settings are sent first to the
 device. Afterwards all setting changes are sent to the
 device. Once completed query settings are queried. The
-<b>&minus;&minus;wait</b> option which will be executed
-last.</p>
+<b>--wait</b> option which will be executed last.</p>
 
 <p style="margin-left:11%; margin-top: 1em">All device
 settings provide which operations are possible: R: Read, W:
@@ -83,38 +82,34 @@ make your monitor permantently unusable.</p>
 </h2>
 
 
-
-<p style="margin-left:11%; margin-top: 1em"><b>&minus;q</b>,
-<b>&minus;&minus;query</b></p>
+<p style="margin-left:11%; margin-top: 1em"><b>-q</b>,
+<b>--query</b></p>
 
 <p style="margin-left:22%;">display all monitor settings.
 This will also list readonly settings.</p>
 
-<p style="margin-left:11%;"><b>&minus;l</b>,
-<b>&minus;&minus;list</b></p>
+<p style="margin-left:11%;"><b>-l</b>, <b>--list</b></p>
 
 <p style="margin-left:22%;">list all available monitors.
 Obtains a comma separated list of all MSI monitors
 connected. The first element in the list is the monitor
-number to be used as the argument to the
-<b>&minus;&minus;monitor</b> option</p>
+number to be used as the argument to the <b>--monitor</b>
+option</p>
 
-<p style="margin-left:11%;"><b>&minus;m</b>,
-<b>&minus;&minus;monitor</b></p>
+<p style="margin-left:11%;"><b>-m</b>, <b>--monitor</b></p>
 
 <p style="margin-left:22%;">logical monitor number. The
 argument to this option is the monitor number as provided by
-the <b>&minus;&minus;list</b> option If omitted, the first
-monitor found is used</p>
+the <b>--list</b> option If omitted, the first monitor found
+is used</p>
 
-<p style="margin-left:11%;"><b>&minus;s</b>,
-<b>&minus;&minus;serial</b></p>
+<p style="margin-left:11%;"><b>-s</b>, <b>--serial</b></p>
 
 <p style="margin-left:22%;">serial number of the monitor to
 control. Use the serial number to identify the target
-monitor in a multi&minus;monitor environment If omitted and
-<b>&minus;&minus;monitor</b> is omitted as well the first
-monitor found is used</p>
+monitor in a multi-monitor environment If omitted and
+<b>--monitor</b> is omitted as well the first monitor found
+is used</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -123,36 +118,32 @@ monitor found is used</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;info</b></p></td>
+<p><b>--info</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
 
 <p>display device information. This can be used with
-<b>&minus;&minus;query</b></p> </td></tr>
+<b>--query</b></p> </td></tr>
 </table>
 
-<p style="margin-left:11%;"><b>&minus;f</b>,
-<b>&minus;&minus;filter</b></p>
+<p style="margin-left:11%;"><b>-f</b>, <b>--filter</b></p>
 
 <p style="margin-left:22%;">limits query result to comma
-separated list of settings, e.g. <b>&minus;f</b>
+separated list of settings, e.g. <b>-f</b>
 contrast,gamma</p>
 
-<p style="margin-left:11%;"><b>&minus;w</b>,
-<b>&minus;&minus;wait</b></p>
+<p style="margin-left:11%;"><b>-w</b>, <b>--wait</b></p>
 
 <p style="margin-left:22%;">SETTING=VALUE. Wait for SETTING
 to become VALUE, e.g. macro_key=pressed</p>
 
-<p style="margin-left:11%;"><b>&minus;n</b>,
-<b>&minus;&minus;numeric</b></p>
+<p style="margin-left:11%;"><b>-n</b>, <b>--numeric</b></p>
 
 <p style="margin-left:22%;">monitor settings are displayed
 as numeric settings</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;mystic</b></p>
+<p style="margin-left:11%;"><b>--mystic</b></p>
 
 <p style="margin-left:22%;">Expects ledgroup:mode:colors
 ledgroup is 0 or 1, colors is a comma separated list of
@@ -165,16 +156,14 @@ monitors.</p>
 <p style="margin-left:11%; margin-top: 1em"><b>Multi
 monitor support:</b></p>
 
-<p style="margin-left:22%;">Use <b>&minus;&minus;list</b>
-to get a list of all attached monitors. If the serial
-numbers provided by this list are unique, you can use the
-serial numbers to identify monitors using the
-<b>&minus;&minus;serial</b> option. If you have multiple
-monitors of the same type this is most likely not the case.
-This is an MSI issue. In this case use the
-<b>&minus;&minus;monitor</b> option to specify the logical
-monitor number provided by the <b>&minus;&minus;list</b>
-option</p>
+<p style="margin-left:22%;">Use <b>--list</b> to get a list
+of all attached monitors. If the serial numbers provided by
+this list are unique, you can use the serial numbers to
+identify monitors using the <b>--serial</b> option. If you
+have multiple monitors of the same type this is most likely
+not the case. This is an MSI issue. In this case use the
+<b>--monitor</b> option to specify the logical monitor
+number provided by the <b>--list</b> option</p>
 
 <p style="margin-left:11%; margin-top: 1em"><b>All
 monitors:</b></p>
@@ -182,66 +171,54 @@ monitors:</b></p>
 <p style="margin-left:22%;">These options apply to all
 monitors:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;macro_key</b></p>
+<p style="margin-left:11%;"><b>--macro_key</b></p>
 
 <p style="margin-left:22%;">R values: off pressed</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;serial</b></p>
-
-<p style="margin-left:22%;">R values: 0 to 100</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;frequency</b></p>
+<p style="margin-left:11%;"><b>--serial</b></p>
 
 <p style="margin-left:22%;">R values: 0 to 100</p>
 
+<p style="margin-left:11%;"><b>--frequency</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;response_time</b></p>
+<p style="margin-left:22%;">R values: 0 to 100</p>
+
+<p style="margin-left:11%;"><b>--response_time</b></p>
 
 <p style="margin-left:22%;">RW values: normal fast
 fastest</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;eye_saver</b></p>
+<p style="margin-left:11%;"><b>--eye_saver</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;image_enhancement</b></p>
+<p style="margin-left:11%;"><b>--image_enhancement</b></p>
 
 <p style="margin-left:22%;">RW values: off weak medium
 strong strongest</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;brightness</b></p>
-
-<p style="margin-left:22%;">RW values: 0 to 100</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;contrast</b></p>
+<p style="margin-left:11%;"><b>--brightness</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 100</p>
 
+<p style="margin-left:11%;"><b>--contrast</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;sharpness</b></p>
+<p style="margin-left:22%;">RW values: 0 to 100</p>
+
+<p style="margin-left:11%;"><b>--sharpness</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 5</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_rgb</b></p>
+<p style="margin-left:11%;"><b>--color_rgb</b></p>
 
 <p style="margin-left:22%;">RW tripple: v1,v2,v3 where
 v&lt;=100</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;osd_transparency</b></p>
+<p style="margin-left:11%;"><b>--osd_transparency</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 5</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;osd_timeout</b></p>
+<p style="margin-left:11%;"><b>--osd_timeout</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 30</p>
 
@@ -251,8 +228,7 @@ monitors:</b></p>
 <p style="margin-left:22%;">These options apply to all MAG
 monitors:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;enable_dynamic</b></p>
+<p style="margin-left:11%;"><b>--enable_dynamic</b></p>
 
 <p style="margin-left:22%;">RW values: on off</p>
 
@@ -263,7 +239,7 @@ monitors:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;hdcr</b></p></td>
+<p><b>--hdcr</b></p></td>
 <td width="2%"></td>
 <td width="26%">
 
@@ -273,62 +249,51 @@ monitors:</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;refresh_display</b></p>
+<p style="margin-left:11%;"><b>--refresh_display</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;refresh_position</b></p>
+<p style="margin-left:11%;"><b>--refresh_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock</b></p>
+<p style="margin-left:11%;"><b>--alarm_clock</b></p>
 
 <p style="margin-left:22%;">RW values: off 1 2 3 4</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+<p style="margin-left:11%;"><b>--alarm_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_assistance</b></p>
+<p style="margin-left:11%;"><b>--screen_assistance</b></p>
 
 <p style="margin-left:22%;">RW values: off red1 red2 red3
 red4 red5 red6 white1 white2 white3 white4 white5 white6</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_preset</b></p>
+<p style="margin-left:11%;"><b>--color_preset</b></p>
 
 <p style="margin-left:22%;">RW values: cool normal warm
 custom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_red</b></p>
-
-<p style="margin-left:22%;">RW values: 0 to 100</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_green</b></p>
+<p style="margin-left:11%;"><b>--color_red</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 100</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_blue</b></p>
+<p style="margin-left:11%;"><b>--color_green</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 100</p>
 
+<p style="margin-left:11%;"><b>--color_blue</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;osd_language</b></p>
+<p style="margin-left:22%;">RW values: 0 to 100</p>
+
+<p style="margin-left:11%;"><b>--osd_language</b></p>
 
 <p style="margin-left:22%;">R values: 0 to 19</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;sound_enable</b></p>
+<p style="margin-left:11%;"><b>--sound_enable</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
@@ -338,8 +303,7 @@ monitors:</b></p>
 <p style="margin-left:22%;">These options apply to all MPG
 monitors:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;game_mode</b></p>
+<p style="margin-left:11%;"><b>--game_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user fps racing rts
 rpg</p>
@@ -351,7 +315,7 @@ rpg</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;hdcr</b></p></td>
+<p><b>--hdcr</b></p></td>
 <td width="2%"></td>
 <td width="26%">
 
@@ -361,40 +325,33 @@ rpg</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;refresh_display</b></p>
+<p style="margin-left:11%;"><b>--refresh_display</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;refresh_position</b></p>
+<p style="margin-left:11%;"><b>--refresh_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;free_sync</b></p>
+<p style="margin-left:11%;"><b>--free_sync</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_preset</b></p>
+<p style="margin-left:11%;"><b>--color_preset</b></p>
 
 <p style="margin-left:22%;">RW values: cool normal warm
 custom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_red</b></p>
-
-<p style="margin-left:22%;">RW values: 0 to 100</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_green</b></p>
+<p style="margin-left:11%;"><b>--color_red</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 100</p>
 
+<p style="margin-left:11%;"><b>--color_green</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;color_blue</b></p>
+<p style="margin-left:22%;">RW values: 0 to 100</p>
+
+<p style="margin-left:11%;"><b>--color_blue</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 100</p>
 
@@ -410,7 +367,7 @@ Unknown Series:</p>
 <p style="margin-left:22%;">These options apply to the
 MAG321CURV:</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power</b></p>
+<p style="margin-left:11%;"><b>--power</b></p>
 
 <p style="margin-left:22%;">W values: off</p>
 
@@ -421,7 +378,7 @@ MAG321CURV:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -430,45 +387,38 @@ MAG321CURV:</p>
 mode8 mode9 user reader cinema designer</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock_index</b></p>
+<p style="margin-left:11%;"><b>--alarm_clock_index</b></p>
 
 <p style="margin-left:22%;">RW values: 1 to 4</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock_time</b></p>
+<p style="margin-left:11%;"><b>--alarm_clock_time</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 5999</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm4x</b></p>
+<p style="margin-left:11%;"><b>--alarm4x</b></p>
 
 <p style="margin-left:22%;">W a1,a2,a3,a4,n where a&lt;5999
 and 1=&lt;n&lt;=4</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: 19 24 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
@@ -480,7 +430,7 @@ usbc</p>
 <td width="7%">
 
 
-<p><b>&minus;&minus;pip</b></p></td>
+<p><b>--pip</b></p></td>
 <td width="4%"></td>
 <td width="33%">
 
@@ -490,68 +440,192 @@ usbc</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
-usbc</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input</b></p>
+<p style="margin-left:11%;"><b>--pip_input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
+<p style="margin-left:11%;"><b>--pbp_input</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pip_size</b></p>
 
 <p style="margin-left:22%;">RW values: small medium
 large</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+<p style="margin-left:11%;"><b>--pip_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
-
-<p style="margin-left:22%;">W values: on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_sound</b></p>
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
 
 <p style="margin-left:22%;">W values: on</p>
 
+<p style="margin-left:11%;"><b>--toggle_sound</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_down</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_left</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%; margin-top: 1em"><b>MAG321CURV:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MAG321CURV:</p>
+
+<p style="margin-left:11%;"><b>--power</b></p>
+
+<p style="margin-left:22%;">W values: off</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="9%">
+
+
+<p><b>--mode</b></p></td>
+<td width="2%"></td>
+<td width="78%">
+
+
+<p>RW values: user fps racing rts rpg mode5 mode6 mode7
+mode8 mode9 user reader cinema designer</p></td></tr>
+</table>
+
+<p style="margin-left:11%;"><b>--alarm_clock_index</b></p>
+
+<p style="margin-left:22%;">RW values: 1 to 4</p>
+
+<p style="margin-left:11%;"><b>--alarm_clock_time</b></p>
+
+<p style="margin-left:22%;">RW values: 0 to 5999</p>
+
+<p style="margin-left:11%;"><b>--alarm4x</b></p>
+
+<p style="margin-left:22%;">W a1,a2,a3,a4,n where a&lt;5999
+and 1=&lt;n&lt;=4</p>
+
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--screen_size</b></p>
+
+<p style="margin-left:22%;">RW values: 19 24 4:3 16:9</p>
+
+<p style="margin-left:11%;"><b>--night_vision</b></p>
+
+<p style="margin-left:22%;">RW values: off normal strong
+strongest ai</p>
+
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
+
+<p style="margin-left:22%;">RW values: user reader cinema
+designer</p>
+
+<p style="margin-left:11%;"><b>--input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>--pip</b></p></td>
+<td width="4%"></td>
+<td width="33%">
+
+
+<p>RW values: off pip pbp</p></td>
+<td width="45%">
+</td></tr>
+</table>
+
+<p style="margin-left:11%;"><b>--pip_input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pbp_input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pip_size</b></p>
+
+<p style="margin-left:22%;">RW values: small medium
+large</p>
+
+<p style="margin-left:11%;"><b>--pip_position</b></p>
+
+<p style="margin-left:22%;">RW values: left_top right_top
+left_bottom right_bottom</p>
+
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
+
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--toggle_sound</b></p>
+
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
@@ -570,7 +644,7 @@ MAG321CQR:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -579,23 +653,20 @@ MAG321CQR:</p>
 mode8 mode9 user reader cinema designer</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: 19 24 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
@@ -606,7 +677,7 @@ designer</p>
 <td width="7%">
 
 
-<p><b>&minus;&minus;pip</b></p></td>
+<p><b>--pip</b></p></td>
 <td width="4%"></td>
 <td width="33%">
 
@@ -616,66 +687,55 @@ designer</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input</b></p>
+<p style="margin-left:11%;"><b>--pip_input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
+<p style="margin-left:11%;"><b>--pbp_input</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
+
+<p style="margin-left:11%;"><b>--pip_size</b></p>
 
 <p style="margin-left:22%;">RW values: small medium
 large</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+<p style="margin-left:11%;"><b>--pip_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
-
-<p style="margin-left:22%;">W values: on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_sound</b></p>
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
 
 <p style="margin-left:22%;">W values: on</p>
 
+<p style="margin-left:11%;"><b>--toggle_sound</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input pip
-refresh_rate</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
@@ -694,7 +754,7 @@ MAG321QR:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -703,13 +763,11 @@ MAG321QR:</p>
 mode8 mode9 user anti_blue movie office srgb eco</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock_time</b></p>
+<p style="margin-left:11%;"><b>--alarm_clock_time</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 5999</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+<p style="margin-left:11%;"><b>--alarm_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom custom</p>
@@ -721,62 +779,53 @@ left_bottom right_bottom custom</p>
 <td width="89%">
 
 
-
-<p style="margin-top: 1em"><b>&minus;&minus;smart_crosshair_icon</b>
-RW values: off icon1 icon2 icon3 icon4 icon5 icon6</p></td></tr>
+<p style="margin-top: 1em"><b>--smart_crosshair_icon</b> RW
+values: off icon1 icon2 icon3 icon4 icon5 icon6</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-
-<p style="margin-top: 1em"><b>&minus;&minus;smart_crosshair_color</b>
+<p style="margin-top: 1em"><b>--smart_crosshair_color</b>
 RW values: white red auto</p></td></tr>
 </table>
 
-<p><b>&minus;&minus;screen_size</b></p></table>
+<p><b>--screen_size</b></p></table>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user anti_blue movie
 office srgb eco</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;auto_scan</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power_button</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
 
 <p style="margin-left:22%;">RW values: off standby</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;hdmi_cec</b></p>
+<p style="margin-left:11%;"><b>--hdmi_cec</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
@@ -787,7 +836,7 @@ usbc</p>
 <td width="7%">
 
 
-<p><b>&minus;&minus;kvm</b></p></td>
+<p><b>--kvm</b></p></td>
 <td width="4%"></td>
 <td width="47%">
 
@@ -797,29 +846,25 @@ usbc</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode alarm_clock smart_crosshair input refresh_rate
-info night_vision kvm</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode alarm_clock smart_crosshair input refresh_rate
 info night_vision kvm</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode alarm_clock smart_crosshair input refresh_rate
 info night_vision kvm</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode alarm_clock smart_crosshair input refresh_rate
+info night_vision kvm</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode alarm_clock smart_crosshair input refresh_rate
@@ -831,44 +876,38 @@ info night_vision kvm</p>
 <p style="margin-left:22%;">These options apply to the
 MAG241C:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+<p style="margin-left:11%;"><b>--black_tuner</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 20</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input
-refresh_rate</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
@@ -880,44 +919,38 @@ refresh_rate</p>
 <p style="margin-left:22%;">These options apply to the
 MAG241C:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+<p style="margin-left:11%;"><b>--black_tuner</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 20</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input
-refresh_rate</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
@@ -929,49 +962,42 @@ refresh_rate</p>
 <p style="margin-left:22%;">These options apply to the
 MAG241CR:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+<p style="margin-left:11%;"><b>--black_tuner</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 20</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input
-refresh_rate</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
@@ -983,49 +1009,42 @@ refresh_rate</p>
 <p style="margin-left:22%;">These options apply to the
 MAG271CR:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+<p style="margin-left:11%;"><b>--black_tuner</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 20</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input
-refresh_rate</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input
@@ -1037,28 +1056,24 @@ refresh_rate</p>
 <p style="margin-left:22%;">These options apply to the
 MAG271CQR:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+<p style="margin-left:11%;"><b>--black_tuner</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 20</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: 19 24 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
@@ -1069,7 +1084,7 @@ designer</p>
 <td width="7%">
 
 
-<p><b>&minus;&minus;pip</b></p></td>
+<p><b>--pip</b></p></td>
 <td width="4%"></td>
 <td width="33%">
 
@@ -1079,66 +1094,55 @@ designer</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input</b></p>
+<p style="margin-left:11%;"><b>--pip_input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
+<p style="margin-left:11%;"><b>--pbp_input</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
+
+<p style="margin-left:11%;"><b>--pip_size</b></p>
 
 <p style="margin-left:22%;">RW values: small medium
 large</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+<p style="margin-left:11%;"><b>--pip_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
-
-<p style="margin-left:22%;">W values: on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_sound</b></p>
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
 
 <p style="margin-left:22%;">W values: on</p>
 
+<p style="margin-left:11%;"><b>--toggle_sound</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input pip
-refresh_rate</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
@@ -1157,7 +1161,7 @@ MAG272CQR:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -1166,61 +1170,52 @@ MAG272CQR:</p>
 mode8 mode9 user reader cinema designer HDR</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer HDR</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
@@ -1239,7 +1234,7 @@ MAG272QR:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -1248,61 +1243,52 @@ MAG272QR:</p>
 mode8 mode9 user reader cinema designer HDR</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer HDR</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
@@ -1321,7 +1307,7 @@ MAG272:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -1330,56 +1316,48 @@ MAG272:</p>
 mode8 mode9 user reader cinema designer HDR</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer HDR</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
@@ -1398,7 +1376,7 @@ MAG272QP:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -1407,56 +1385,48 @@ MAG272QP:</p>
 mode8 mode9 user reader cinema designer HDR</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer HDR</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock refresh_rate
@@ -1468,28 +1438,24 @@ info</p>
 <p style="margin-left:22%;">These options apply to the
 MPG27CQ:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;black_tuner</b></p>
+<p style="margin-left:11%;"><b>--black_tuner</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 20</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: 19 24 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
@@ -1500,7 +1466,7 @@ designer</p>
 <td width="7%">
 
 
-<p><b>&minus;&minus;pip</b></p></td>
+<p><b>--pip</b></p></td>
 <td width="4%"></td>
 <td width="33%">
 
@@ -1510,66 +1476,55 @@ designer</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input</b></p>
+<p style="margin-left:11%;"><b>--pip_input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
 
+<p style="margin-left:11%;"><b>--pbp_input</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp</p>
+
+<p style="margin-left:11%;"><b>--pip_size</b></p>
 
 <p style="margin-left:22%;">RW values: small medium
 large</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+<p style="margin-left:11%;"><b>--pip_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
-
-<p style="margin-left:22%;">W values: on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_sound</b></p>
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
 
 <p style="margin-left:22%;">W values: on</p>
 
+<p style="margin-left:11%;"><b>--toggle_sound</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;audio_source</b></p>
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--audio_source</b></p>
 
 <p style="margin-left:22%;">RW values: analog digital</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input pip
-refresh_rate</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
 refresh_rate</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input pip
+refresh_rate</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input pip
@@ -1588,7 +1543,7 @@ MPG273CQR:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -1597,13 +1552,11 @@ MPG273CQR:</p>
 mode8 mode9 user anti_blue movie office srgb eco</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_clock_time</b></p>
+<p style="margin-left:11%;"><b>--alarm_clock_time</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 5999</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+<p style="margin-left:11%;"><b>--alarm_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom custom</p>
@@ -1615,72 +1568,62 @@ left_bottom right_bottom custom</p>
 <td width="89%">
 
 
-
-<p style="margin-top: 1em"><b>&minus;&minus;smart_crosshair_icon</b>
-RW values: off icon1 icon2 icon3 icon4 icon5 icon6</p></td></tr>
+<p style="margin-top: 1em"><b>--smart_crosshair_icon</b> RW
+values: off icon1 icon2 icon3 icon4 icon5 icon6</p></td></tr>
 <tr valign="top" align="left">
 <td width="11%"></td>
 <td width="89%">
 
 
-
-<p style="margin-top: 1em"><b>&minus;&minus;smart_crosshair_color</b>
+<p style="margin-top: 1em"><b>--smart_crosshair_color</b>
 RW values: white red auto</p></td></tr>
 </table>
 
-<p><b>&minus;&minus;screen_size</b></p></table>
+<p><b>--screen_size</b></p></table>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user anti_blue movie
 office srgb eco</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;auto_scan</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power_button</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
 
 <p style="margin-left:22%;">RW values: off standby</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;hdmi_cec</b></p>
+<p style="margin-left:11%;"><b>--hdmi_cec</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
 
-<p style="margin-left:11%;"><b>&minus;&minus;ambient_brightness</b></p>
+<p style="margin-left:11%;"><b>--ambient_brightness</b></p>
 
 <p style="margin-left:22%;">RW values: off auto custom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;ambient_rgb</b></p>
+<p style="margin-left:11%;"><b>--ambient_rgb</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
@@ -1692,7 +1635,7 @@ usbc</p>
 
 
 
-<p style="margin-top: 1em"><b>&minus;&minus;ambient_brightness_custom</b>
+<p style="margin-top: 1em"><b>--ambient_brightness_custom</b>
 RW values: 0 to 100</p></td>
 <td width="17%">
 </td></tr>
@@ -1701,7 +1644,7 @@ RW values: 0 to 100</p></td>
 <td width="72%">
 
 
-<p style="margin-top: 1em"><b>&minus;&minus;kvm</b></p></td>
+<p style="margin-top: 1em"><b>--kvm</b></p></td>
 <td width="17%">
 </td></tr>
 </table>
@@ -1709,34 +1652,29 @@ RW values: 0 to 100</p></td>
 <p style="margin-left:22%; margin-top: 1em">RW values: auto
 upstream type_c</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;sound_tune</b></p>
+<p style="margin-left:11%;"><b>--sound_tune</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode smart_crosshair alarm_clock input refresh_rate
-info night_vision kvm</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode smart_crosshair alarm_clock input refresh_rate
 info night_vision kvm</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode smart_crosshair alarm_clock input refresh_rate
 info night_vision kvm</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode smart_crosshair alarm_clock input refresh_rate
+info night_vision kvm</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode smart_crosshair alarm_clock input refresh_rate
@@ -1748,30 +1686,26 @@ info night_vision kvm</p>
 <p style="margin-left:22%;">These options apply to the
 MPG341CQR:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zero_latency</b></p>
+<p style="margin-left:11%;"><b>--zero_latency</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9 21:9
 1:1</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
@@ -1783,7 +1717,7 @@ usbc</p>
 <td width="7%">
 
 
-<p><b>&minus;&minus;pip</b></p></td>
+<p><b>--pip</b></p></td>
 <td width="4%"></td>
 <td width="60%">
 
@@ -1793,92 +1727,77 @@ usbc</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
+<p style="margin-left:11%;"><b>--pip_input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+<p style="margin-left:11%;"><b>--pip_size</b></p>
 
 <p style="margin-left:22%;">RW values: small medium
 large</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+<p style="margin-left:11%;"><b>--pip_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
 
 <p style="margin-left:22%;">W values: on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_sound_source</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
-usbc</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input1</b></p>
+<p style="margin-left:11%;"><b>--pip_sound_source</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input2</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
-usbc</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input3</b></p>
+<p style="margin-left:11%;"><b>--pbp_input1</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_sound_source</b></p>
+<p style="margin-left:11%;"><b>--pbp_input2</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
+<p style="margin-left:11%;"><b>--pbp_input3</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;audio_source</b></p>
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pbp_sound_source</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--audio_source</b></p>
 
 <p style="margin-left:22%;">RW values: analog digital</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input refresh_rate
-audio_volume</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 audio_volume</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 audio_volume</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input refresh_rate
+audio_volume</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
@@ -1890,71 +1809,60 @@ audio_volume</p>
 <p style="margin-left:22%;">These options apply to the
 MAG274R:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;auto_scan</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power_button</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
 
 <p style="margin-left:22%;">RW values: off standby</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
@@ -1966,78 +1874,66 @@ info</p>
 <p style="margin-left:22%;">These options apply to the
 MAG251RX:</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+<p style="margin-left:11%;"><b>--alarm_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom custom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_assistance</b></p>
+<p style="margin-left:11%;"><b>--screen_assistance</b></p>
 
 <p style="margin-left:22%;">R values: off icon1 icon2 icon3
 icon4 icon5 icon6</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 designer HDR</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power_button</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
 
 <p style="margin-left:22%;">RW values: off standby</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
@@ -2048,7 +1944,7 @@ info</p>
 FW.011:</b></p>
 
 <p style="margin-left:22%;">These options apply to the
-MAG274QRF&minus;QD FW.011:</p>
+MAG274QRF-QD FW.011:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -2057,7 +1953,7 @@ MAG274QRF&minus;QD FW.011:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -2066,71 +1962,60 @@ MAG274QRF&minus;QD FW.011:</p>
 mode8 mode9 user reader cinema office</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 office</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;auto_scan</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power_button</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
 
 <p style="margin-left:22%;">RW values: off standby</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;hdmi_cec</b></p>
+<p style="margin-left:11%;"><b>--hdmi_cec</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
@@ -2141,7 +2026,7 @@ info</p>
 FW.015/FW.016:</b></p>
 
 <p style="margin-left:22%;">These options apply to the
-MAG274QRF&minus;QD FW.015/FW.016:</p>
+MAG274QRF-QD FW.015/FW.016:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -2150,7 +2035,7 @@ MAG274QRF&minus;QD FW.015/FW.016:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -2160,71 +2045,60 @@ mode8 mode9 user reader cinema office srgb adobe_rgb
 dci_p3</p> </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 office srgb adobe_rgb dci_p3</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;auto_scan</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power_button</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
 
 <p style="margin-left:22%;">RW values: off standby</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;hdmi_cec</b></p>
+<p style="margin-left:11%;"><b>--hdmi_cec</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
@@ -2235,7 +2109,7 @@ info</p>
 FW.020:</b></p>
 
 <p style="margin-left:22%;">These options apply to the
-MAG274QRF&minus;QD FW.020:</p>
+MAG274QRF-QD FW.020:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
@@ -2244,7 +2118,7 @@ MAG274QRF&minus;QD FW.020:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -2254,77 +2128,65 @@ mode7 mode8 mode9 user reader cinema office srgb adobe_rgb
 dci_p3</p> </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;game_mode</b></p>
+<p style="margin-left:11%;"><b>--game_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user fps racing rts
 rpg premium_color</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;night_vision</b></p>
+<p style="margin-left:11%;"><b>--night_vision</b></p>
 
 <p style="margin-left:22%;">RW values: off normal strong
 strongest ai</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user reader cinema
 office srgb adobe_rgb dci_p3</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;auto_scan</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;rgb_led</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;power_button</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
 
 <p style="margin-left:22%;">RW values: off standby</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;hdmi_cec</b></p>
+<p style="margin-left:11%;"><b>--hdmi_cec</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-game_mode screen_assistance alarm_clock input refresh_rate
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
 info</p>
 
+<p style="margin-left:11%;"><b>--navi_left</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+game_mode screen_assistance alarm_clock input refresh_rate
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 game_mode screen_assistance alarm_clock input refresh_rate
@@ -2343,7 +2205,7 @@ PS341WU:</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;mode</b></p></td>
+<p><b>--mode</b></p></td>
 <td width="2%"></td>
 <td width="78%">
 
@@ -2352,65 +2214,54 @@ PS341WU:</p>
 bw dicom eyecare cal1 cal2 cal3</p></td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;quick_charge</b></p>
+<p style="margin-left:11%;"><b>--quick_charge</b></p>
 
 <p style="margin-left:22%;">R values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;alarm_position</b></p>
+<p style="margin-left:11%;"><b>--alarm_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom custom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_assistance</b></p>
+<p style="margin-left:11%;"><b>--screen_assistance</b></p>
 
 <p style="margin-left:22%;">RW values: off center edge
 scale_v scale_h line_v line_h grid thirds 3D_assistance</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_size</b></p>
+<p style="margin-left:11%;"><b>--screen_size</b></p>
 
 <p style="margin-left:22%;">RW values: auto 4:3 16:9 21:9
 1:1</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pro_mode</b></p>
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
 
 <p style="margin-left:22%;">RW values: user adobe_rgb
 dci_p3 srgb hdr cinema reader bw dicom eyecare cal1 cal2
 cal3</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;color_preset</b></p>
+<p style="margin-left:11%;"><b>--color_preset</b></p>
 
 <p style="margin-left:22%;">RW values: 5000K 5500K 6500K
 7500K 9300K 10000K custom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;gray_level</b></p>
+<p style="margin-left:11%;"><b>--gray_level</b></p>
 
 <p style="margin-left:22%;">RW values: 0 to 20</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;low_blue_light</b></p>
-
-<p style="margin-left:22%;">RW values: off on</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;local_dimming</b></p>
+<p style="margin-left:11%;"><b>--low_blue_light</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
+<p style="margin-left:11%;"><b>--local_dimming</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;hue_rgb</b></p>
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--hue_rgb</b></p>
 
 <p style="margin-left:22%;">RW tripple: v1,v2,v3 where
 v&lt;=100</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;hue_cmy</b></p>
+<p style="margin-left:11%;"><b>--hue_cmy</b></p>
 
 <p style="margin-left:22%;">RW tripple: v1,v2,v3 where
 v&lt;=100</p>
@@ -2422,7 +2273,7 @@ v&lt;=100</p>
 <td width="9%">
 
 
-<p><b>&minus;&minus;zoom</b></p></td>
+<p><b>--zoom</b></p></td>
 <td width="2%"></td>
 <td width="26%">
 
@@ -2432,30 +2283,27 @@ v&lt;=100</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;zoom_location</b></p>
+<p style="margin-left:11%;"><b>--zoom_location</b></p>
 
 <p style="margin-left:22%;">RW values: center left_top
 right_top left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;saturation_rgb</b></p>
-
-<p style="margin-left:22%;">RW tripple: v1,v2,v3 where
-v&lt;=100</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;saturation_cmy</b></p>
+<p style="margin-left:11%;"><b>--saturation_rgb</b></p>
 
 <p style="margin-left:22%;">RW tripple: v1,v2,v3 where
 v&lt;=100</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;gamma</b></p>
+<p style="margin-left:11%;"><b>--saturation_cmy</b></p>
+
+<p style="margin-left:22%;">RW tripple: v1,v2,v3 where
+v&lt;=100</p>
+
+<p style="margin-left:11%;"><b>--gamma</b></p>
 
 <p style="margin-left:22%;">RW values: 1.8 2 2.2 2.4
 2.6</p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;input</b></p>
+<p style="margin-left:11%;"><b>--input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
@@ -2467,7 +2315,7 @@ usbc</p>
 <td width="7%">
 
 
-<p><b>&minus;&minus;pip</b></p></td>
+<p><b>--pip</b></p></td>
 <td width="4%"></td>
 <td width="60%">
 
@@ -2477,126 +2325,318 @@ usbc</p>
 </td></tr>
 </table>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_input</b></p>
+<p style="margin-left:11%;"><b>--pip_input</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_size</b></p>
+<p style="margin-left:11%;"><b>--pip_size</b></p>
 
 <p style="margin-left:22%;">RW values: small medium
 large</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_position</b></p>
+<p style="margin-left:11%;"><b>--pip_position</b></p>
 
 <p style="margin-left:22%;">RW values: left_top right_top
 left_bottom right_bottom</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;toggle_display</b></p>
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
 
 <p style="margin-left:22%;">W values: on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pip_sound_source</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
-usbc</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input1</b></p>
+<p style="margin-left:11%;"><b>--pip_sound_source</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input2</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
-usbc</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input3</b></p>
+<p style="margin-left:11%;"><b>--pbp_input1</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_input4</b></p>
-
-<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
-usbc</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;pbp_sound_source</b></p>
+<p style="margin-left:11%;"><b>--pbp_input2</b></p>
 
 <p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
 usbc</p>
 
+<p style="margin-left:11%;"><b>--pbp_input3</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;osd_language</b></p>
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pbp_input4</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pbp_sound_source</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--osd_language</b></p>
 
 <p style="margin-left:22%;">R values: 0 to 28</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;screen_info</b></p>
+<p style="margin-left:11%;"><b>--screen_info</b></p>
 
 <p style="margin-left:22%;">RW values: off on</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;audio_source</b></p>
+<p style="margin-left:11%;"><b>--audio_source</b></p>
 
 <p style="margin-left:22%;">RW values: analog digital</p>
 
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_up</b></p>
+<p style="margin-left:22%;">RW values: off brightness
+pro_mode screen_assistance alarm_clock input pip zoom_in
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_down</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+pro_mode screen_assistance alarm_clock input pip zoom_in
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_left</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+pro_mode screen_assistance alarm_clock input pip zoom_in
+info</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
 pro_mode screen_assistance alarm_clock input pip zoom_in
 info</p>
 
 
-<p style="margin-left:11%;"><b>&minus;&minus;navi_down</b></p>
+<p style="margin-left:11%; margin-top: 1em"><b>MAG274QRX:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MAG274QRX:</p>
+
+<p style="margin-left:11%;"><b>--refresh_position</b></p>
+
+<p style="margin-left:22%;">RW values: left_top right_top
+left_bottom right_bottom custom</p>
+
+<p style="margin-left:11%;"><b>--alarm_position</b></p>
+
+<p style="margin-left:22%;">RW values: left_top right_top
+left_bottom right_bottom custom</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em"><b>--smart_crosshair_icon</b> RW
+values: off icon1 icon2 icon3 icon4 icon5 icon6</p></td></tr>
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="89%">
+
+
+<p style="margin-top: 1em"><b>--smart_crosshair_color</b>
+RW values: white red auto</p></td></tr>
+</table>
+
+<p><b>--screen_size</b></p></table>
+
+<p style="margin-left:22%;">RW values: auto 4:3 16:9
+1:1</p>
+
+<p style="margin-left:11%;"><b>--night_vision</b></p>
+
+<p style="margin-left:22%;">RW values: off normal strong
+strongest ai</p>
+
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
+
+<p style="margin-left:22%;">RW values: user anti_blue movie
+office srgb adobe_rgb dci_p3 eco</p>
+
+<p style="margin-left:11%;"><b>--input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>--pip</b></p></td>
+<td width="4%"></td>
+<td width="33%">
+
+
+<p>RW values: off pip pbp</p></td>
+<td width="45%">
+</td></tr>
+</table>
+
+<p style="margin-left:11%;"><b>--pip_input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pbp_input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 hdmi2 dp
+usbc</p>
+
+<p style="margin-left:11%;"><b>--pip_size</b></p>
+
+<p style="margin-left:22%;">RW values: small medium
+large</p>
+
+<p style="margin-left:11%;"><b>--pip_position</b></p>
+
+<p style="margin-left:22%;">RW values: left_top right_top
+left_bottom right_bottom custom</p>
+
+<p style="margin-left:11%;"><b>--toggle_display</b></p>
+
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--toggle_sound</b></p>
+
+<p style="margin-left:22%;">W values: on</p>
+
+<p style="margin-left:11%;"><b>--screen_info</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--rgb_led</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
+
+<p style="margin-left:22%;">RW values: off standby</p>
+
+<p style="margin-left:11%;"><b>--hdmi_cec</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>--kvm</b></p></td>
+<td width="4%"></td>
+<td width="47%">
+
+
+<p>RW values: auto upstream type_c</p></td>
+<td width="31%">
+</td></tr>
+</table>
+
+<p style="margin-left:11%;"><b>--navi_up</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
-pro_mode screen_assistance alarm_clock input pip zoom_in
-info</p>
+game_mode smart_crosshair alarm_clock input pip_pbp_mode
+refresh_rate info night_vision optix_scope kvm</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_left</b></p>
-
-<p style="margin-left:22%;">RW values: off brightness
-pro_mode screen_assistance alarm_clock input pip zoom_in
-info</p>
-
-
-<p style="margin-left:11%;"><b>&minus;&minus;navi_right</b></p>
+<p style="margin-left:11%;"><b>--navi_down</b></p>
 
 <p style="margin-left:22%;">RW values: off brightness
-pro_mode screen_assistance alarm_clock input pip zoom_in
-info</p>
+game_mode smart_crosshair alarm_clock input pip_pbp_mode
+refresh_rate info night_vision optix_scope kvm</p>
+
+<p style="margin-left:11%;"><b>--navi_left</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode smart_crosshair alarm_clock input pip_pbp_mode
+refresh_rate info night_vision optix_scope kvm</p>
+
+<p style="margin-left:11%;"><b>--navi_right</b></p>
+
+<p style="margin-left:22%;">RW values: off brightness
+game_mode smart_crosshair alarm_clock input pip_pbp_mode
+refresh_rate info night_vision optix_scope kvm</p>
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>MD272QP:</b></p>
+
+<p style="margin-left:22%;">These options apply to the
+MD272QP:</p>
+
+<p style="margin-left:11%;"><b>--screen_size</b></p>
+
+<p style="margin-left:22%;">RW values: auto 4:3 16:9</p>
+
+<p style="margin-left:11%;"><b>--pro_mode</b></p>
+
+<p style="margin-left:22%;">RW values: eco user srgb
+anti_blue movie office black_white</p>
+
+<p style="margin-left:11%;"><b>--input</b></p>
+
+<p style="margin-left:22%;">RW values: hdmi1 dp usbc</p>
+
+<p style="margin-left:11%;"><b>--auto_scan</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--screen_info</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<p style="margin-left:11%;"><b>--power_button</b></p>
+
+<p style="margin-left:22%;">RW values: off standby</p>
+
+<p style="margin-left:11%;"><b>--hdmi_cec</b></p>
+
+<p style="margin-left:22%;">RW values: off on</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="7%">
+
+
+<p><b>--kvm</b></p></td>
+<td width="4%"></td>
+<td width="47%">
+
+
+<p>RW values: auto upstream type_c</p></td>
+<td width="31%">
+</td></tr>
+</table>
 
 <p style="margin-left:11%; margin-top: 1em"><b>General
 options:</b></p>
 
 <p style="margin-left:22%;">These options always apply:</p>
 
-<p style="margin-left:11%;"><b>&minus;d</b>,
-<b>&minus;&minus;debug</b></p>
+<p style="margin-left:11%;"><b>-d</b>, <b>--debug</b></p>
 
 <p style="margin-left:22%;">enable debug output Enables raw
 output for query command</p>
 
-<p style="margin-left:11%;"><b>&minus;h</b>,
-<b>&minus;&minus;help</b></p>
+<p style="margin-left:11%;"><b>-h</b>, <b>--help</b></p>
 
 <p style="margin-left:22%;">display this help and exit</p>
 
-
-<p style="margin-left:11%;"><b>&minus;&minus;version</b></p>
+<p style="margin-left:11%;"><b>--version</b></p>
 
 <p style="margin-left:22%;">output version information and
 exit</p>
