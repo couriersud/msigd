@@ -52,28 +52,29 @@ enum series_t
 	MAG321CQR      = 0x00000002,
 	MAG241C        = 0x00000004,
 	MAG241CR       = 0x00000008,
-	MAG271CR       = 0x00000010,
-	MAG271CQR      = 0x00000020,
-	MAG272         = 0x00000040,
-	MAG272CQR      = 0x00000080,
-	MAG272QP       = 0x00000100,
-	MAG272QR       = 0x00000200,
-	MAG274QRFQD    = 0x00000400,
-	MAG274QRFQD16  = 0x00000800,
-	MAG274QRFQD20  = 0x00001000,
-	PS341WU        = 0x00002000,
-	MPG341CQR      = 0x00004000,
-	MPG273CQR      = 0x00008000,
-	MPG27CQ        = 0x00010000,
-	MAG321QR       = 0x00020000,
-	MAG274R        = 0x00040000,
-	MAG251RX       = 0x00080000,
-	MAG274QRX      = 0x00100000, // enable in master once feedback received
-	MD272QP        = 0x00200000, // enable in master once feedback received
+	MAG271C        = 0x00000010,
+	MAG271CR       = 0x00000020,
+	MAG271CQR      = 0x00000040,
+	MAG272         = 0x00000080,
+	MAG272CQR      = 0x00000100,
+	MAG272QP       = 0x00000200,
+	MAG272QR       = 0x00000400,
+	MAG274QRFQD    = 0x00000800,
+	MAG274QRFQD16  = 0x00001000,
+	MAG274QRFQD20  = 0x00002000,
+	PS341WU        = 0x00004000,
+	MPG341CQR      = 0x00008000,
+	MPG273CQR      = 0x00010000,
+	MPG27CQ        = 0x00020000,
+	MAG321QR       = 0x00040000,
+	MAG274R        = 0x00080000,
+	MAG251RX       = 0x00100000,
+	MAG274QRX      = 0x00200000, // enable in master once feedback received
+	MD272QP        = 0x00400000, // enable in master once feedback received
 	QUERYONLY      = 0x01000000,
 	UNKNOWN        = 0x02000000,
 
-	MAG241GRP      = MAG241C | MAG241CR | MAG271CR,
+	MAG241GRP      = MAG241C | MAG241CR | MAG271C | MAG271CR,
 	MAG274GRP      = MAG274QRFQD | MAG274QRFQD16 | MAG274QRFQD20 | MAG274R,
 	MAG272GRP      = MAG272 | MAG272CQR | MAG272QP | MAG272QR,
 
@@ -131,6 +132,7 @@ static std::vector<identity_t> known_models =
 	{ MAG241C,           "002", "V49", "MAG241C", LT_NONE },                       // MAG241C - issue #38
 	// FIXME: Needs separate series (has RGB backlight OSD setting) - above not
 	{ MAG241CR,          "004", "V18", "MAG241CR", LT_MYSTIC },                    // MAG241CR
+	{ MAG271C,           "003", "V18", "MAG271C", LT_NONE },                       // MAG271C
 	{ MAG271CR,          "005", "V18", "MAG271CR", LT_MYSTIC },                    // MAG271CR
 	{ MAG271CQR,         "006", "V19", "MAG271CQR", LT_MYSTIC },                   // MAG271CQR, MAG271CQP?
 	{ MAG272CQR,         "00E", "V18", "MAG272CQR", LT_MYSTIC },                   // MAG272CQR
