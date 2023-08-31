@@ -57,7 +57,7 @@ monitors only group 1 is supported.
 All monitors for which the OSD Gaming Device App is available most likely
 should be supported. There are differences between those monitors which `msigd` 
 currently does not know about.
- 
+
 If you own an MSI monitor supported by the MSI App, please provide the following
 information by opening an issue.
 
@@ -79,6 +79,7 @@ information by opening an issue.
 | MAG241CP      | ?        | Yes           | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG241CV      | ?        | Yes           | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG241CR      | ?        | Yes           | "V18" | "004"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
+| MAG271C      | FW.008 | Yes           | "V18" | "003" | TPM270WF1_HP01 |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271CR      | ?        | Yes           | "V18" | "005"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|
 | MAG271CQR     | ?        | Yes           | "V19" | "006"| TPM270WQ1_DP01 | |
 | MAG321CQR     | ?        | Yes           | "V18" | "00:"| ?              | |
