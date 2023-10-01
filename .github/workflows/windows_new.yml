@@ -1,6 +1,6 @@
 name: Windows latest
 
-on: [push]
+on: workflow_dispatch
 
 jobs:
 
