@@ -146,7 +146,7 @@ static std::vector<identity_t> known_models =
 	{ MAG251RX,          "00B", "V18", "MAG251RX", LT_MYSTIC },                    // MAG251RX
 	{ MAG274QRFQD,       "00e", "V43", "MAG274QRF-QD FW.011", LT_MYSTIC_OPTIX },        // MAG274QRF-QD FW.011
 	{ MAG274QRFQD16,     "00e", "V48", "MAG274QRF-QD FW.015/FW.016", LT_MYSTIC_OPTIX }, // MAG274QRF-QD FW.015/FW.016
-	{ MAG274QRFQD20,     "00e", "V56", "MAG274QRF-QD FW.020", LT_MYSTIC_OPTIX },		// MAG274QRF-QD FW.020
+	{ MAG274QRFQD20,     "00e", "V56", "MAG274QRF-QD FW.020/FW.021", LT_MYSTIC_OPTIX },	// MAG274QRF-QD FW.020/FW.021
 	{ PS341WU,           "00?", "V06", "PS341WU", LT_NONE },
 	{ MAG274QRX,         "00|", "V43", "MAG274QRX", LT_MYSTIC_OPTIX, true },
 	{ MD272QP,           "00\x85", "V51", "MD272QP", LT_NONE },                    // MAG274QRF-QD FW.011
