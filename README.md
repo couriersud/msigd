@@ -97,6 +97,7 @@ information by opening an issue.
 | MAG274QRF-QD  | FW.011   | Yes           | "V43" | "00e"| AUO_M270DAN08_2| |
 | MAG274QRF-QD  | FW.015   | Yes           | "V48" | "00e"| AUO_M270DAN08_2| |
 | MAG274QRF-QD  | FW.020   | Yes           | "V56" | "00e"| AUO_M270DAN08_2|[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274QRF_MAG274QRF-QDv1.0_English.pdf)|
+| MEG342C-QD    | FW.026   | Yes           | "V58" | "00\\x90" | ?              | [Manual](https://download.msi.com/archive/mnu_exe/monitor/MEG342C_QD-OLEDv1.1_English.pdf)
 | MAG274QRX     | ?        | Partial 2)    | "V53" | "00\|"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/Optix_MAG274QRXv1.0_English.pdf)|
 | MAG270CR      | ?        | ?             | ?     |   ?  | ?              | |
 | MAG271C       | ?        | ?             | "V18" | "002"| ?              |[Manual](https://download.msi.com/archive/mnu_exe/monitor/MAG241C_CP_CR_CV_271C_CP_CR_CVv1.0_English.pdf)|

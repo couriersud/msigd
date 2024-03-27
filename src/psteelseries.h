@@ -14,6 +14,7 @@
 
 #include <array>
 #include <vector>
+#include <cstdint>
 
 struct steel_rgb_entry
 {
