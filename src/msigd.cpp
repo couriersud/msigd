@@ -1148,14 +1148,14 @@ private:
 
 };
 
-static void help_set(series_t series, series_t exclude1, series_t exclude2, series_t exclude3 = UNKNOWN)
+static void help_set(series_t series, series_t exclude1, series_t exclude2, series_t exclude3 = UNKNOWN, series_t exclude4 = UNKNOWN)
 {
 	static std::array<const char *, 3> access_str = { "R", "W", "RW" };
 	for (auto &s : settings)
 		if (/*(s->m_access == WRITE || s->m_access == READWRITE)
 			&& */((s->m_series & series) == series)
 			&& (((s->m_series & exclude1) != exclude1) && ((s->m_series & exclude2) != exclude2)
-				&& ((s->m_series & exclude3) != exclude3)))
+				&& ((s->m_series & exclude3) != exclude3) && ((s->m_series & exclude4) != exclude4)))
 		{
 			pprintf("      --%-20s %2s %s\n", s->m_opt, access_str[s->m_access], s->help());
 		}
@@ -1235,11 +1235,14 @@ static int help()
 	pprintf("%s", "\nMPG series monitors:\n");
 	pprintf("%s", "    These options apply to all MPG monitors:\n\n");
 	help_set(MPG, ALL, UNKNOWN);
+	pprintf("%s", "\nMEG series monitors:\n");
+	pprintf("%s", "    These options apply to all MAG monitors:\n\n");
+	help_set(MEG, ALL, UNKNOWN);
 	for (std::size_t i=1; i<known_models.size(); i++)
 	{
 		pprintf("\n%s:\n", known_models[i].name);
 		pprintf("    These options apply to the %s:\n\n", known_models[i].name);
-		help_set(known_models[i].series, ALL, MAG, MPG);
+		help_set(known_models[i].series, ALL, MAG, MPG, MEG);
 	}
 	pprintf("\n%s", "General options:\n");
 	pprintf("%s", "    These options always apply:\n\n");
