@@ -63,6 +63,7 @@ public:
 	static int get_device_list(logger_t &logger, unsigned idVendor, unsigned idProduct,
 		device_info_list &list)
 	{
+		(void) logger; // Unused variable
 		hid_init();
 		hid_device_info *dil_list = hid_enumerate(idVendor, idProduct);
 		hid_device_info *dil = dil_list;
@@ -91,6 +92,7 @@ protected:
 		void *bytes, int size, int timeout)
 	{
 		auto p(static_cast<const unsigned char *>(bytes));
+		(void) timeout; // Unused variable
 		// do basic checks
 		if ((value & 0xff00) != 0x0300 || (value & 0x00ff) != p[0]
 			|| requesttype != 0x21 || request != 0x09 || index != 0)
@@ -111,6 +113,7 @@ protected:
 		void *bytes, int size, int timeout, int &ret_size)
 	{
 		auto p(static_cast<unsigned char *>(bytes));
+		(void) timeout; // Unused variable
 		// do basic checks
 		if ((value & 0xff00) != 0x0300 || (value & 0x00ff) != p[0]
 			|| requesttype != 0xa1 || request != 0x01 || index != 0)

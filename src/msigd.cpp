@@ -72,6 +72,7 @@ enum series_t
 	MD272QP        = 0x00200000, // enable in master once feedback received
 	QUERYONLY      = 0x01000000,
 	UNKNOWN        = 0x02000000,
+	MEG342C_QDOLED = 0x04000000, // chosen to avoid collision with other PR's
 
 	MAG241GRP      = MAG241C | MAG241CR | MAG271CR,
 	MAG274GRP      = MAG274QRFQD | MAG274QRFQD16 | MAG274QRFQD20 | MAG274R,
@@ -79,11 +80,13 @@ enum series_t
 
 	MAG     = MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP,
 	MPG     = MPG273CQR | MPG341CQR | MPG27CQ,
+	MEG     = MEG342C_QDOLED,
 
-	HAS_LED_SETTING = MAG321CURV | MAG321QR | MAG321CQR | MAG272CQR | MAG272QR | MAG271CQR
-		| MAG241CR | MAG271CR | MAG274GRP | MAG274GRP | MPG273CQR | MPG341CQR | MAG251RX | MAG274QRX,
+	HAS_LED_SETTING = MAG321CURV | MAG321QR  | MAG321CQR | MAG272CQR | MAG272QR
+                    | MAG271CQR  | MAG241CR  | MAG271CR  | MAG274GRP | MAG274GRP 
+					| MPG273CQR  | MPG341CQR | MAG251RX  | MAG274QRX | MEG342C_QDOLED,
 
-	ALL     = MAG | PS341WU | MPG | QUERYONLY | MAG321QR | MPG27CQ | MAG251RX | MAG274QRX | MD272QP,
+	ALL     = MAG | PS341WU | MPG | QUERYONLY | MAG321QR | MPG27CQ | MAG251RX | MAG274QRX | MD272QP | MEG,
 };
 
 static series_t operator | (series_t a, series_t b)
@@ -150,6 +153,7 @@ static std::vector<identity_t> known_models =
 	{ PS341WU,           "00?", "V06", "PS341WU", LT_NONE },
 	{ MAG274QRX,         "00|", "V43", "MAG274QRX", LT_MYSTIC_OPTIX, true },
 	{ MD272QP,           "00\x85", "V51", "MD272QP", LT_NONE },                    // MAG274QRF-QD FW.011
+	{ MEG342C_QDOLED,    "00\x90", "V58", "MEG 342C QD-OLED", LT_MYSTIC_OPTIX }    // MEG 342C QD-OLED FW.026
 };
 
 enum encoding_t
@@ -606,11 +610,12 @@ static std::vector<setting_t *> settings(
 
 	new setting_t(MAG321CURV | MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274QRFQD | MAG274QRFQD16 | MAG274R | MPG | MAG321QR | MAG251RX | MAG274QRX,
                                            "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg"}),
-	new setting_t(MAG274QRFQD20,           "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg", "premium_color"}),
-
+	new setting_t(MAG274QRFQD20 | MEG342C_QDOLED,
+										   "00200", "game_mode", {"user", "fps", "racing", "rts", "rpg", "premium_color"}),
 	new setting_t(MAG271CQR | MAG241GRP | MPG27CQ,
 		                                   "00210", "black_tuner", 0, 20, -100),
-	new setting_t(ALL,                     "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
+	new setting_t((series_t) (ALL & ~(MEG342C_QDOLED)),
+										   "00220", "response_time", {"normal", "fast", "fastest"}),  // returns 000 0:normal, 1:fast, 2:fastest
 	// FIXME: anti-motion blur? -- MAG272QP MAG271 MAG241GRP MPG27CQ MAG274R
 	// FIXME: MAG321CQR manual says only supported for Optix MAG322CQRV
 	new setting_t(MAG | MPG341CQR| MAG251RX,
@@ -659,7 +664,7 @@ static std::vector<setting_t *> settings(
 	new setting_t(UNKNOWN /*MAG321CURV*/,  "00280", "unknown280"),  // returns 000, read only, write fails and monitor needs off/on cycle
 
 	// FIXME: free_sync also on MPG27CQ
-	new setting_t(MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP | MPG341CQR | MPG273CQR | MPG27CQ | MAG321QR | MD272QP,
+	new setting_t(MAG321CQR | MAG272GRP | MAG271CQR | MAG241GRP | MAG274GRP | MPG341CQR | MPG273CQR | MPG27CQ | MAG321QR | MD272QP | MEG342C_QDOLED,
 		                                   "00280", "free_sync", {"off", "on"}),
 	new setting_t(MAG321CURV | MAG321CQR | MAG271CQR | MPG341CQR | MPG27CQ,
 		                                   "00290", "zero_latency", {"off", "on"}),  // returns 001
@@ -1144,14 +1149,14 @@ private:
 
 };
 
-static void help_set(series_t series, series_t exclude1, series_t exclude2, series_t exclude3 = UNKNOWN)
+static void help_set(series_t series, series_t exclude1, series_t exclude2, series_t exclude3 = UNKNOWN, series_t exclude4 = UNKNOWN)
 {
 	static std::array<const char *, 3> access_str = { "R", "W", "RW" };
 	for (auto &s : settings)
 		if (/*(s->m_access == WRITE || s->m_access == READWRITE)
 			&& */((s->m_series & series) == series)
 			&& (((s->m_series & exclude1) != exclude1) && ((s->m_series & exclude2) != exclude2)
-				&& ((s->m_series & exclude3) != exclude3)))
+				&& ((s->m_series & exclude3) != exclude3) && ((s->m_series & exclude4) != exclude4)))
 		{
 			pprintf("      --%-20s %2s %s\n", s->m_opt, access_str[s->m_access], s->help());
 		}
@@ -1231,11 +1236,14 @@ static int help()
 	pprintf("%s", "\nMPG series monitors:\n");
 	pprintf("%s", "    These options apply to all MPG monitors:\n\n");
 	help_set(MPG, ALL, UNKNOWN);
+	pprintf("%s", "\nMEG series monitors:\n");
+	pprintf("%s", "    These options apply to all MEG monitors:\n\n");
+	help_set(MEG, ALL, UNKNOWN);
 	for (std::size_t i=1; i<known_models.size(); i++)
 	{
 		pprintf("\n%s:\n", known_models[i].name);
 		pprintf("    These options apply to the %s:\n\n", known_models[i].name);
-		help_set(known_models[i].series, ALL, MAG, MPG);
+		help_set(known_models[i].series, ALL, MAG, MPG, MEG);
 	}
 	pprintf("\n%s", "General options:\n");
 	pprintf("%s", "    These options always apply:\n\n");
