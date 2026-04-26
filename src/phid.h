@@ -249,7 +249,7 @@ private:
 
 			m_vendor_id = info.idVendor;
 			m_product_id = info.idProduct;
-			if (sProduct != m_product)
+			if (!sProduct.empty() && sProduct != m_product)
 			{
 				m_log(DEBUG, "Product Id <%s> does not match requested <%s>", m_product, sProduct);
 				return 1;
