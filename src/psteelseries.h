@@ -13,6 +13,7 @@
 #endif
 
 #include <array>
+#include <cstdint>
 #include <vector>
 
 struct steel_rgb_entry

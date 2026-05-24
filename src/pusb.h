@@ -537,7 +537,7 @@ private:
 
 				m_log(DEBUG, "Found device <%s> with serial <%s> \n", m_product, m_serial);
 
-				if (m_product == sProduct && (sSerial.empty() || sSerial == m_serial))
+				if ((sProduct.empty() || m_product == sProduct) && (sSerial.empty() || sSerial == m_serial))
 				{
 
 					/* get product name */
